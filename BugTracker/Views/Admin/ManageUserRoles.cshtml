@@ -1,0 +1,91 @@
+﻿@using BugTracker.Models;
+@using BugTracker.Helpers;
+
+@model IEnumerable<UserProfileViewModel>
+@{ 
+    var roleHelper = new UserRolesHelper();
+}
+    <section class="content">
+        <h2>Admin View</h2>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Manage User Roles</h3>
+
+                        @*<div class="box-tools">
+                            <div class="input-group input-group-sm hidden-xs" style="width: 150px;">
+                                <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
+
+                                <div class="input-group-btn">
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+                        </div>*@
+                    </div>
+                    <div class="box-body">
+                        <table id="userTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Avatar</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Display Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model)
+                                {
+                                    using (Html.BeginForm("ManageUserRoles", "Admin"))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.Hidden("userId", user.Id)
+                                        <tr>
+                                            @* ADD LINKS TO USER PROFILE VIEWS??? *@
+                                            <td>@user.AvatarUrl</td>
+                                            <td>@user.FirstName</td>
+                                            <td>@user.LastName</td>
+                                            <td>@user.DisplayName</td>
+                                            <td>@user.Email</td>
+                                            <td>@roleHelper.ListUserRoles(user.Id).FirstOrDefault()</td>
+                                            <td>
+                                                @Html.DropDownList("RoleName", null, "-- Select Role --", htmlAttributes: new { @class = "form-control" })
+                                            </td>
+                                            @*<td>
+                                                @Html.ActionLink("Manage Role", "ManageUserRole", "Admin", new { userId = user.Id }, null) |
+                                                @Html.ActionLink("Manage Projects", "ManageProjects", "Admin", new { userId = user.Id }, null)
+                                            </td>*@
+                                            <td class="form-group">
+                                                <div class="col-md-offset-2 col-md-10">
+                                                    <input type="submit" value="Assign" class="btn btn-default" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+        </div>
+    </section>
+
+@section scripts
+    {
+    <script>
+        $("#userTable").DataTable({
+            'paging': true,
+            'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+            'searching': true,
+            'ordering': true,
+            'info': true,
+            'autoWidth': false
+        });
+    </script>
+    }
