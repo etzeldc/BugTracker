@@ -1,22 +1,18 @@
 ﻿@using BugTracker.Models;
+@using BugTracker.Helpers;
 
 @model IEnumerable<UserProfileViewModel>
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>UserIndex</title>
-</head>
-<body>
-    <div> 
+@{ 
+    var roleHelper = new UserRolesHelper();
+}
+    <section class="content">
         <div class="row">
             <div class="col-xs-12">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="box-title">Manage User Roles</h3>
+                        <h3 class="box-title">User Index</h3>
 
-                        <div class="box-tools">
+                        @*<div class="box-tools">
                             <div class="input-group input-group-sm hidden-xs" style="width: 150px;">
                                 <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
 
@@ -24,37 +20,57 @@
                                     <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </div>
                             </div>
-                        </div>
+                        </div>*@
                     </div>
-                    <div class="box-body table-responsive no-padding">
-
-                        <!-- /.box-header -->
-                        <table class="table table-hover">
-                            <tr>
-                                <th>Avatar</th>
-                                <th>Id</th>
-                                <th>First Name</th>
-                                <th>Last Name</th>
-                                <th>Display Name</th>
-                                <th>Email</th>
-                            </tr>
+                    <div class="box-body">
+                        <table id="userTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Avatar</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Display Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                             @foreach (var user in Model)
                             {
-                        <tr>
-                            <td>@user.AvatarUrl</td>
-                            <td>@user.Id</td>
-                            <td>@user.FirstName</td>
-                            <td>@user.LastName</td>
-                            <td>@user.DisplayName</td>
-                            <td>@user.Email</td>
-                        </tr>
+                                <tr>
+                                    @* ADD LINKS TO USER PROFILE VIEWS??? *@
+                                    <td>@user.AvatarUrl</td>
+                                    <td>@user.FirstName</td>
+                                    <td>@user.LastName</td>
+                                    <td>@user.DisplayName</td>
+                                    <td>@user.Email</td>
+                                    <td>@roleHelper.ListUserRoles(user.Id).FirstOrDefault()</td>
+                                    <td>
+                                        @Html.ActionLink("Manage Role", "ManageUserRole", "Admin", new { userId = user.Id }, null) |
+                                    @Html.ActionLink("Manage Projects", "ManageProjects", "Admin", new { userId = user.Id }, null)</td>
+                                </tr>
                             }
+                            </tbody>
                         </table>
                     </div>
                     <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
             </div>
-        </div>    </div>
-</body>
-</html>
+        </div>
+    </section>
+
+@section scripts
+    {
+    <script>
+        $("#userTable").DataTable({
+            'paging': true,
+            'lengthChange': true,
+            'searching': true,
+            'ordering': true,
+            'info': true,
+            'autoWidth': false
+        });
+    </script>
+    }
