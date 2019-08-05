@@ -10,15 +10,22 @@ using BugTracker.Models;
 
 namespace BugTracker.Controllers
 {
+    [RequireHttps]
+    [Authorize(Roles = "Admin, Project Manager")]
+
     public class ProjectsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Projects
+        [AllowAnonymous]
+
         public ActionResult Index()
         {
             return View(db.Projects.ToList());
         }
+
+        [AllowAnonymous]
 
         // GET: Projects/Details/5
         public ActionResult Details(int? id)
@@ -46,10 +53,11 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Description,Created")] Project project)
+        public ActionResult Create([Bind(Include = "Id,Name,Description")] Project project)
         {
             if (ModelState.IsValid)
             {
+                project.Created = DateTime.Now;
                 db.Projects.Add(project);
                 db.SaveChanges();
                 return RedirectToAction("Index");

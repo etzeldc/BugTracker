@@ -1,45 +1,80 @@
-﻿@model IEnumerable<BugTracker.Models.Project>
+﻿@using Microsoft.AspNet.Identity;
+@model IEnumerable<BugTracker.Models.Project>
 
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+    <section class="content">
+        <h2>Projects</h2>
+        @Html.ActionLink("Create New Project", "Create")
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Index</h3>
+                    </div>
+                    <div class="box-body">
+                        <table id="userTable" class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Created</th>
+                                    <th>Assigned Users</th>
+                                    <th>Tickets</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a href="@Url.Action("Details", item.Id)">@Html.DisplayFor(modelItem => item.Name)</a> @*Can this Display be combined with an action link to Details? (as listed below)*@
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Description)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Created)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Users)
+                                            </td> @*Each user gets link to their profile / Add Html.ActionLink to manage user assigned to this project for Admin/PM after for lopp*@
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Tickets)
+                                            </td> @*Each ticket gets link to its Details / Add Html.ActionLink to manage tickets on this project for Admin/PM after for loop*@
+                                            <td>
+                                                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                                {
+                                                    @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                                                }
+                                                @Html.ActionLink("Details", "Details", new { id = item.Id })
+                                                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                                {
+                                                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        //User.Identity.GetUserId == Projects.UserId
+                                    }
+                                }
+                            </tbody>
+                        </table>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Created)
-        </th>
-        <th></th>
-    </tr>
+                    </div>
+                </div>
+                @Html.ActionLink("Back To Dashboard", "Index", "Home")
+            </div>
+        </div>
+    </section>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Created)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
 
-</table>
+                                

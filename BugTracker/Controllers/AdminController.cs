@@ -13,6 +13,7 @@ namespace BugTracker.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private UserRolesHelper roleHelper = new UserRolesHelper();
+
         // GET Admin
         public ActionResult ManageUserRoles()
         {
@@ -76,15 +77,9 @@ namespace BugTracker.Controllers
         //}
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult ManageUserRoles(string userId, string roleName)
         {
-            //go through list of users'
-            //if (users != null)
-            //{
-
-            //foreach (var userId in users)
-            //{
-                //remove all roles
                 foreach (var role in roleHelper.ListUserRoles(userId))
                 {
                     roleHelper.RemoveUserFromRole(userId, role);
@@ -92,12 +87,43 @@ namespace BugTracker.Controllers
                 if (!string.IsNullOrEmpty(roleName))
                 {
 
-                //add new role
                 roleHelper.AddUserToRole(userId, roleName);
                 }
-            //}
-            //}
             return RedirectToAction("ManageUserRoles");
         }
+
+        private ProjectHelper projectHelper = new ProjectHelper();
+
+        //GET
+        public ActionResult ManageUserProjects()
+        {
+            var users = db.Users.Select(u => new UserProfileViewModel
+            {
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                DisplayName = u.DisplayName,
+                AvatarUrl = u.AvartarUrl,
+                Email = u.Email
+            }).ToList();
+            ViewBag.Project = new SelectList(db.Projects.ToList(), "Name", "Name");
+            return View(users);
+        }
+
+        ////POST
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult ManageUserProjects(string userId, int project) //INT RIGHT?
+        //{
+        //    foreach (var projects in projectHelper.ListUserProjects(userId))
+        //    {
+        //        if (!string.IsNullOrEmpty(project)) //SAME STUFF, RIGHT? BUT NEEDS TO BE INT, NOT STRING.
+        //        {
+
+        //            //add new role
+        //            projectHelper.AddUserToProject(userId, project);
+        //        }
+        //    return RedirectToAction("ManageUserProjects");
+        //}
     }
 }
