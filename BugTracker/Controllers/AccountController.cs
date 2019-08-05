@@ -58,7 +58,7 @@ namespace BugTracker.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View();
+            return RedirectToAction("Login", "Home");
         }
 
         //

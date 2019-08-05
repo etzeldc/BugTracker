@@ -5,7 +5,6 @@ using System.Web;
 using BugTracker.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using System;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 
@@ -13,8 +12,23 @@ namespace BugTracker.Helpers
 {
     public class ProjectHelper
     {
-        ApplicationDbContext db = new ApplicationDbContext();
+        private ApplicationDbContext db = new ApplicationDbContext();
+        private UserRolesHelper roleHelper = new UserRolesHelper();
 
+        public List<string> UsersInRoleOnProject(int projectId, string roleName)
+        {
+            var people = new List<string>();
+
+            foreach (var user in UsersOnProject(projectId).ToList())
+            {
+                if (roleHelper.IsUserInRole(user.Id, roleName))
+                {
+                    people.Add(user.Id);
+                }
+            }
+
+            return people;
+        }
         public bool IsUserOnProject(string userId, int projectId)
         {
             var project = db.Projects.Find(projectId);

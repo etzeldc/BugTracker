@@ -19,6 +19,8 @@ namespace BugTracker.Controllers
         {
             return View();
         }
+
+        [Authorize]
         public ActionResult Index()
         {
             return View();

@@ -5,7 +5,6 @@ using System.Web;
 using BugTracker.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using System;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 

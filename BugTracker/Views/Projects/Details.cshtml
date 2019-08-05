@@ -1,11 +1,16 @@
-﻿@model BugTracker.Models.Project
+﻿@using BugTracker.Helpers;
+@model BugTracker.Models.Project
 
+@{
+    var userProjectsHelper = new UserProjectsHelper();
+}
 @{
     ViewBag.Title = "Details";
 }
 
 <section class="content">
     <h2>Projects</h2>
+    @Html.ActionLink("Create New Project", "Create")
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
@@ -36,12 +41,16 @@
                                     @Html.DisplayFor(model => model.Created)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(model => model.Users)
+                                    @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
+                                    {
+                                        @users.FullName <button @*href="@Url.Action()"*@>Remove</button><br />
+                                    }
                                 </td>
                                 <td>
                                     @Html.DisplayFor(model => model.Tickets)
                                 </td>
                                 <td>
+
                                     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
                                     @Html.ActionLink("Back to List", "Index")
                                 </td>
@@ -50,6 +59,50 @@
                     </table>
                 </div>
             </div>
+
+
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Assign Users To @Model.Name</h3>
+                </div>
+                <div class="box-body">
+                    <table id="userTable" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Project Managers</th>
+                                <th>Developers</th>
+                                <th>Submitters</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @using (Html.BeginForm("ManageProjectUsers", "Admin"))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("ProjectId", Model.Id)
+                                <tr>
+                                    <td>
+                                        @Html.ListBox("ProjectManagers")
+                                    </td>
+                                    <td>
+                                        @Html.ListBox("Developers")
+                                    </td>
+                                    <td>
+                                        @Html.ListBox("Submitters")
+                                    </td>
+                                </tr>
+                                <tr class="form-group">
+                                    <td>
+
+                                        <input type="submit" value="Assign" class="btn btn-default" />
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </section>
+
+<link href="~/Content/Custom.css" rel="stylesheet" />

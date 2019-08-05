@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
+using BugTracker.Helpers;
 
 namespace BugTracker.Controllers
 {
@@ -16,16 +17,18 @@ namespace BugTracker.Controllers
     public class ProjectsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private UserRolesHelper roleHelper = new UserRolesHelper();
+        private ProjectHelper projectHelper = new ProjectHelper();
 
         // GET: Projects
-        [AllowAnonymous]
+        [Authorize]
 
         public ActionResult Index()
         {
             return View(db.Projects.ToList());
         }
 
-        [AllowAnonymous]
+        [Authorize]
 
         // GET: Projects/Details/5
         public ActionResult Details(int? id)
@@ -39,6 +42,19 @@ namespace BugTracker.Controllers
             {
                 return HttpNotFound();
             }
+
+            var allProjectManagers = roleHelper.UsersInRole("Project Manager");
+            var currentProjectManagers = projectHelper.UsersInRoleOnProject(project.Id, "Project Manager");
+            ViewBag.ProjectManagers = new MultiSelectList(allProjectManagers, "Id", "FullName", currentProjectManagers);
+
+            var allDevelopers = roleHelper.UsersInRole("Developer");
+            var currentDevelopers = projectHelper.UsersInRoleOnProject(project.Id, "Developers");
+            ViewBag.Developers = new MultiSelectList(allDevelopers, "Id", "FullName", currentDevelopers);
+
+            var allSubmitters = roleHelper.UsersInRole("Submitter");
+            var currentSubmitters = projectHelper.UsersInRoleOnProject(project.Id, "Submitters");
+            ViewBag.Submitters = new MultiSelectList(allSubmitters, "Id", "FullName", currentSubmitters);
+
             return View(project);
         }
 

@@ -1,0 +1,8 @@
+﻿select[multiple], select[size] {
+    height: 100px;
+    width: 200px;
+    position: center;
+}
+td {
+    position: center;
+}

@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace BugTracker.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -80,15 +80,15 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ManageUserRoles(string userId, string roleName)
         {
-                foreach (var role in roleHelper.ListUserRoles(userId))
-                {
-                    roleHelper.RemoveUserFromRole(userId, role);
-                }
-                if (!string.IsNullOrEmpty(roleName))
-                {
+            foreach (var role in roleHelper.ListUserRoles(userId))
+            {
+                roleHelper.RemoveUserFromRole(userId, role);
+            }
+            if (!string.IsNullOrEmpty(roleName))
+            {
 
                 roleHelper.AddUserToRole(userId, roleName);
-                }
+            }
             return RedirectToAction("ManageUserRoles");
         }
 
@@ -106,24 +106,61 @@ namespace BugTracker.Controllers
                 AvatarUrl = u.AvartarUrl,
                 Email = u.Email
             }).ToList();
-            ViewBag.Project = new SelectList(db.Projects.ToList(), "Name", "Name");
+            ViewBag.ProjectIds = new MultiSelectList(db.Projects.ToList(), "Id", "Name");
             return View(users);
         }
 
         ////POST
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult ManageUserProjects(string userId, int project) //INT RIGHT?
-        //{
-        //    foreach (var projects in projectHelper.ListUserProjects(userId))
-        //    {
-        //        if (!string.IsNullOrEmpty(project)) //SAME STUFF, RIGHT? BUT NEEDS TO BE INT, NOT STRING.
-        //        {
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ManageUserProjects(string userId, List<int> projectIds)
+        {
+            //foreach (var project in projectHelper.ListUserProjects(userId))
+            //{
+            //    projectHelper.RemoveUserFromProject(userId, project.Id);
+            //}
+            if (projectIds != null)
+            {
+                foreach (var projectId in projectIds)
+                {
+                    projectHelper.AddUserToProject(userId, projectId);
 
-        //            //add new role
-        //            projectHelper.AddUserToProject(userId, project);
-        //        }
-        //    return RedirectToAction("ManageUserProjects");
-        //}
+                }
+            }
+            return RedirectToAction("ManageUserProjects");
+        }
+
+        ///POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public  ActionResult ManageProjectUsers(int projectId, List<string> ProjectManagers, List<string> Developers, List<string> Submitters)
+        {
+            foreach (var user in projectHelper.UsersNotOnProject(projectId).ToList())
+            {
+                projectHelper.RemoveUserFromProject(user.Id, projectId);
+            }
+            if (ProjectManagers != null)
+            {
+                foreach (var projectManagerId in ProjectManagers)
+                {
+                    projectHelper.AddUserToProject(projectManagerId, projectId);
+                }
+            }
+            if (Developers != null)
+            {
+                foreach (var developerId in Developers)
+                {
+                    projectHelper.AddUserToProject(developerId, projectId);
+                }
+            }
+            if (Submitters != null)
+            {
+                foreach (var submitterId in Submitters)
+                {
+                    projectHelper.AddUserToProject(submitterId, projectId);
+                }
+            }
+            return RedirectToAction("Details", "Projects", new { id = projectId });
+        }
     }
 }
