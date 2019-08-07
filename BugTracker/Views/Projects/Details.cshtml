@@ -1,8 +1,10 @@
 ﻿@using BugTracker.Helpers;
+@using BugTracker.Models;
 @model BugTracker.Models.Project
 
 @{
     var userProjectsHelper = new UserProjectsHelper();
+    var roleHelper = new UserRolesHelper();
 }
 @{
     ViewBag.Title = "Details";
@@ -25,6 +27,10 @@
                                 <th>Description</th>
                                 <th>Created</th>
                                 <th>Assigned Users</th>
+                                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                {
+                                    <th>Remove Users</th>
+                                }
                                 <th>Tickets</th>
                             </tr>
 
@@ -43,7 +49,17 @@
                                 <td>
                                     @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
                                     {
-                                        @users.FullName <button @*href="@Url.Action()"*@>Remove</button><br />
+                                        @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id)) {@role} )<br />
+                                        @*Html.ActionLink(label including 'users.', action, controller, new { userId = users.Id, something for manage index}, null)*@
+                                    }
+                                </td>
+                                <td>
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                    {
+                                        foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
+                                        {
+                                            @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, null)<br />
+                                        }
                                     }
                                 </td>
                                 <td>
@@ -60,47 +76,49 @@
                 </div>
             </div>
 
-
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">Assign Users To @Model.Name</h3>
-                </div>
-                <div class="box-body">
-                    <table id="userTable" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>Project Managers</th>
-                                <th>Developers</th>
-                                <th>Submitters</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @using (Html.BeginForm("ManageProjectUsers", "Admin"))
-                            {
-                                @Html.AntiForgeryToken()
-                                @Html.Hidden("ProjectId", Model.Id)
+            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+            {
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Assign Users To @Model.Name</h3>
+                    </div>
+                    <div class="box-body">
+                        <table id="userTable" class="table table-bordered table-striped">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        @Html.ListBox("ProjectManagers")
-                                    </td>
-                                    <td>
-                                        @Html.ListBox("Developers")
-                                    </td>
-                                    <td>
-                                        @Html.ListBox("Submitters")
-                                    </td>
+                                    <th>Project Managers</th>
+                                    <th>Developers</th>
+                                    <th>Submitters</th>
                                 </tr>
-                                <tr class="form-group">
-                                    <td>
+                            </thead>
+                            <tbody>
+                                @using (Html.BeginForm("ManageProjectUsers", "Admin"))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.Hidden("ProjectId", Model.Id)
+                                    <tr>
+                                        <td>
+                                            @Html.ListBox("ProjectManagers")
+                                        </td>
+                                        <td>
+                                            @Html.ListBox("Developers")
+                                        </td>
+                                        <td>
+                                            @Html.ListBox("Submitters")
+                                        </td>
+                                    </tr>
+                                    <tr class="form-group">
+                                        <td>
 
-                                        <input type="submit" value="Assign" class="btn btn-default" />
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                                            <input type="submit" value="Assign" class="btn btn-default" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            }
         </div>
     </div>
 </section>

@@ -8,14 +8,15 @@ using System.Web.Mvc;
 
 namespace BugTracker.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Project Manager")]
     public class AdminController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private UserRolesHelper roleHelper = new UserRolesHelper();
+        private ProjectHelper projectHelper = new ProjectHelper();
 
         // GET Admin
-        public ActionResult ManageUserRoles()
+        public ActionResult AssignRoles()
         {
             var users = db.Users.Select(u => new UserProfileViewModel
             {
@@ -78,7 +79,7 @@ namespace BugTracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ManageUserRoles(string userId, string roleName)
+        public ActionResult AssignRoles(string userId, string roleName)
         {
             foreach (var role in roleHelper.ListUserRoles(userId))
             {
@@ -89,13 +90,11 @@ namespace BugTracker.Controllers
 
                 roleHelper.AddUserToRole(userId, roleName);
             }
-            return RedirectToAction("ManageUserRoles");
+            return RedirectToAction("AssignRoles");
         }
 
-        private ProjectHelper projectHelper = new ProjectHelper();
-
         //GET
-        public ActionResult ManageUserProjects()
+        public ActionResult AssignProjects()
         {
             var users = db.Users.Select(u => new UserProfileViewModel
             {
@@ -113,7 +112,7 @@ namespace BugTracker.Controllers
         ////POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ManageUserProjects(string userId, List<int> projectIds)
+        public ActionResult AssignProjects(string userId, List<int> projectIds)
         {
             //foreach (var project in projectHelper.ListUserProjects(userId))
             //{
@@ -127,13 +126,13 @@ namespace BugTracker.Controllers
 
                 }
             }
-            return RedirectToAction("ManageUserProjects");
+            return RedirectToAction("AssignProjects");
         }
 
         ///POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public  ActionResult ManageProjectUsers(int projectId, List<string> ProjectManagers, List<string> Developers, List<string> Submitters)
+        public ActionResult ManageProjectUsers(int projectId, List<string> ProjectManagers, List<string> Developers, List<string> Submitters)
         {
             foreach (var user in projectHelper.UsersNotOnProject(projectId).ToList())
             {
@@ -160,6 +159,15 @@ namespace BugTracker.Controllers
                     projectHelper.AddUserToProject(submitterId, projectId);
                 }
             }
+            return RedirectToAction("Details", "Projects", new { id = projectId });
+        }
+
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult RemoveProjectUser(string userId, int projectId)
+        {
+            projectHelper.RemoveUserFromProject(userId, projectId);
             return RedirectToAction("Details", "Projects", new { id = projectId });
         }
     }

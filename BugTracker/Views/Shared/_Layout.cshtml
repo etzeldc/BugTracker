@@ -1,4 +1,12 @@
-﻿<!DOCTYPE html>
+﻿@using BugTracker.Models;
+@using Microsoft.AspNet.Identity;
+@{ 
+    var userId = User.Identity.GetUserId();
+    var db = new ApplicationDbContext();
+    var user = db.Users.Find(userId);
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -351,9 +359,9 @@
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu" data-widget="tree">
                     <li class="header">MAIN NAVIGATION</li>
-                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                    @if (User.IsInRole("Admin"))
                     {
-                        <li class="treeview">
+                        <li class="treeview active">
                             <a href="#">
                                 <i class="fa fa-share"></i> <span>User Management</span>
                                 <span class="pull-right-container">
@@ -362,46 +370,97 @@
                             </a>
                             <ul class="treeview-menu">
                                 <li class="treeview">
-                                    @if (User.IsInRole("Admin"))
-                                    {
-                                        <a href="@Url.Action("ManageUserRoles", "Admin" )">
-                                            <i class="fa fa-circle-o"></i> Manage User Roles
-                                        </a>
-                                    }
-                                </li>
-                                <li class="treeview">
-                                    <a href="@Url.Action("ManageUserProjects", "Admin" )">
-                                        <i class="fa fa-circle-o"></i> Manage User Projects
+                                    <a href="@Url.Action("AssignRoles", "Admin" )">
+                                        <i class="fa fa-circle-o"></i> User Roles
                                     </a>
                                 </li>
-                                <li><a href="#"><i class="fa fa-circle-o"></i> Level Two</a></li>
                             </ul>
                         </li>
                     }
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-share"></i> <span>Projects</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li>
-                                <a href="@Url.Action("Index", "Projects" )">
-                                    <i class="fa fa-circle-o"></i> Project Index
-                                </a>
-                            </li>
-                            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-                            {
+                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                    {
+                        <li class="treeview active">
+                            <a href="#">
+                                <i class="fa fa-share"></i> <span>Project Management</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li class="treeview active">
+                                    <a href="@Url.Action("Index", "Projects" )">
+                                        <i class="fa fa-angle-left pull-right"></i> Project Index
+                                    </a>
+                                    <ul class="treeview-menu">
+                                        @foreach (var navProject in db.Projects.Select(p => new { ProjectId = p.Id, Name = p.Name }).ToList())
+                                        {
+                                        <li class="treeview">
+                                            <a href="@Url.Action("Details", "Projects", new { Id = navProject.ProjectId})">
+                                                <i class="fa fa-circle-o"></i> @navProject.Name
+                                            </a>
+                                        </li>
+                                        }
+                                    </ul>
+                                </li>
                                 <li>
                                     <a href="@Url.Action("Create", "Projects" )">
                                         <i class="fa fa-circle-o"></i> Create
                                     </a>
                                 </li>
-                            }
-                            <li><a href="#"><i class="fa fa-circle-o"></i> Level Two</a></li>
+                                <li class="treeview">
+                                    <a href="@Url.Action("AssignProjects", "Admin" )">
+                                        <i class="fa fa-circle-o"></i> Assign Projects
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    <li class="treeview active">
+                        <a href="#">
+                            <i class="fa fa-share"></i> <span>My Projects</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class="treeview active">
+                                <a href="#">
+                                    <i class="fa fa-circle-o"></i> Project #
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li class="treeview active">
+                                        <a href="#">
+                                            <i class="fa fa-circle-o"></i> Ticket Index (AD/PM)
+                                            <span class="pull-right-container">
+                                                <i class="fa fa-angle-left pull-right"></i>
+                                            </span>
+                                        </a>
+                                        <ul class="treeview-menu">
+                                            <li><a href="#"><i class="fa fa-circle-o"></i> Ticket # (Status/Priority)</a></li>
+                                        </ul>
+                                    </li>
+                                    <li class="treeview active">
+                                        <a href="#">
+                                            <i class="fa fa-circle-o"></i> My Tickets
+                                            <span class="pull-right-container">
+                                                <i class="fa fa-angle-left pull-right"></i>
+                                            </span>
+                                        </a>
+                                        <ul class="treeview-menu active">
+                                            <li><a href="#"><i class="fa fa-circle-o"></i> Ticket # (Status/Priority)</a></li>
+                                        </ul>
+                                    </li>
+
+                                    <li><a href="#"><i class="fa fa-circle-o"></i> Create (SUB)</a></li>
+                                    <li><a href="#"><i class="fa fa-circle-o"></i> Assign Tickets (AD/PM)</a></li>
+                                    <li><a href="#"><i class="fa fa-circle-o"></i> Ticket History</a></li>
+                                </ul>
+                            </li>
                         </ul>
-                    </li>                   
+                    </li>
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-folder"></i> <span>Examples</span>

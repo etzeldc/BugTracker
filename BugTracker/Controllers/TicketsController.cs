@@ -7,19 +7,47 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
+using BugTracker.Helpers;
+using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Controllers
 {
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private UserRolesHelper rolesHelper = new UserRolesHelper();
 
         // GET: Tickets
+        [Authorize]
         public ActionResult Index()
         {
             var tickets = db.Tickets.Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
             return View(tickets.ToList());
         }
+
+        // Get My Tickets
+        [Authorize(Roles = "Project Manager, Developer, Submitter")]
+        public ActionResult MyIndex()
+        {
+            var userId = User.Identity.GetUserId();
+            var myRole = rolesHelper.ListUserRoles(userId).FirstOrDefault();
+            var myTickets = new List<Ticket>();
+
+            switch (myRole)
+            {
+                case "Developer":
+                    myTickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
+                    break;
+                case "Submitter":
+                    myTickets = db.Tickets.Where(t => t.OwnerId == userId).ToList();
+                    break;
+                case "Project Manager":
+                    myTickets = db.Users.Find(userId).Projects.SelectMany(t => t.Tickets).ToList();
+                    break;
+            }
+            return View("Index", myTickets);
+        }
+
 
         // GET: Tickets/Details/5
         public ActionResult Details(int? id)
