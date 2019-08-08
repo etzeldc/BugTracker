@@ -27,7 +27,7 @@
                             <tbody>
                                 @foreach (var user in Model)
                                 {
-                                    using (Html.BeginForm("AssignRoles", "Admin"))
+                                    using (Html.BeginForm("UserIndex", "Admin"))
                                     {
                                         @Html.AntiForgeryToken()
                                         @Html.Hidden("userId", user.Id)

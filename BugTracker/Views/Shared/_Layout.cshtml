@@ -1,5 +1,6 @@
 ﻿@using BugTracker.Models;
 @using Microsoft.AspNet.Identity;
+
 @{ 
     var userId = User.Identity.GetUserId();
     var db = new ApplicationDbContext();
@@ -345,7 +346,7 @@
                         <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
                     </div>
                 </div>
-                <!-- search form -->
+                <!-- SEARCH FORM (Make it work or take it out) -->
                 <form action="#" method="get" class="sidebar-form">
                     <div class="input-group">
                         <input type="text" name="q" class="form-control" placeholder="Search...">
@@ -357,130 +358,103 @@
                     </div>
                 </form>
                 <!-- /.search form -->
-                <!-- sidebar menu: : style can be found in sidebar.less -->
+                <!-- SIDEBAR MENU: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu" data-widget="tree">
                     <li class="header">MAIN NAVIGATION</li>
+                    <!-- USER ROLE MANAGEMENT LINK -->
                     @if (User.IsInRole("Admin"))
                     {
-                        <li class="treeview active">
+                        <li class="treeview">
+                            <a href="@Url.Action("UserIndex", "Admin")">
+                                <i class="fa fa-user-circle"></i> <span>User Role Manager</span>
+
+                            </a>
+                        </li>
+                    }
+                    <!-- PROJECT MANAGEMENT TAB -->
+                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                    {
+                        <li class="treeview" @*active*@>
                             <a href="#">
-                                <i class="fa fa-share"></i> <span>User Management</span>
+                                <i class="fa fa-list-alt"></i> <span>Project Management</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
                             <ul class="treeview-menu">
                                 <li class="treeview">
-                                    <a href="@Url.Action("AssignRoles", "Admin" )">
-                                        <i class="fa fa-circle-o"></i> User Roles
+                                    <a href="@Url.Action("Index", "Projects")">
+                                        <i class="fa fa-list"></i> Project Index
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Create", "Projects")">
+                                        <i class="fa fa-plus-circle"></i> Create Project
+                                    </a>
+                                </li>
+                                <li class="treeview">
+                                    <a href="@Url.Action("AssignProjects", "Admin")">
+                                        <i class="fa fa-plus-circle"></i> Assign Projects
                                     </a>
                                 </li>
                             </ul>
                         </li>
                     }
-                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-                    {
-                        <li class="treeview active">
-                            <a href="#">
-                                <i class="fa fa-share"></i> <span>Project Management</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li class="treeview active">
-                                    <a href="@Url.Action("Index", "Projects" )">
-                                        <i class="fa fa-angle-left pull-right"></i> Project Index
+                    <!-- MY PROJECTS TAB -->
+                    <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-list-alt"></i> <span>My Projects</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-left pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            @foreach (var myProjects in user.Projects.ToList())
+                            {
+                                <li class="treeview">
+                                    <a href="#">
+                                        <i class="fa fa-dot-circle-o"></i> @myProjects.Name
+                                        <span class="pull-right-container">
+                                            <i class="fa fa-angle-left pull-right"></i>
+                                        </span>
                                     </a>
                                     <ul class="treeview-menu">
-                                        @foreach (var navProject in db.Projects.Select(p => new { ProjectId = p.Id, Name = p.Name }).ToList())
-                                        {
+                                        @*@foreach (var myTickets in user.Tickets.ToList())
+                            {*@
                                         <li class="treeview">
-                                            <a href="@Url.Action("Details", "Projects", new { Id = navProject.ProjectId})">
-                                                <i class="fa fa-circle-o"></i> @navProject.Name
+                                            <a href="#">
+                                                <i class="fa fa-circle"></i> @*@myTickets*@ tickets
                                             </a>
                                         </li>
+                                        @*}*@
+                                        @if (User.IsInRole("Submitter"))
+                                        {
+                                            <li><a href="@Url.Action("Create", "Tickets")"><i class="fa fa-plus-circle"></i> Create T(SUB)</a></li>
+                                        }
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                        {
+                                            <li><a href="#"><i class="fa fa-plus-circle"></i> Assign Tickets</a></li>
                                         }
                                     </ul>
                                 </li>
+                            }
+                            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                            {
                                 <li>
-                                    <a href="@Url.Action("Create", "Projects" )">
-                                        <i class="fa fa-circle-o"></i> Create
+                                    <a href="@Url.Action("Create", "Projects")">
+                                        <i class="fa fa-plus-circle"></i> Create Project
                                     </a>
                                 </li>
-                                <li class="treeview">
-                                    <a href="@Url.Action("AssignProjects", "Admin" )">
-                                        <i class="fa fa-circle-o"></i> Assign Projects
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    }
-                    <li class="treeview active">
-                        <a href="#">
-                            <i class="fa fa-share"></i> <span>My Projects</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li class="treeview active">
-                                <a href="#">
-                                    <i class="fa fa-circle-o"></i> Project #
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li class="treeview active">
-                                        <a href="#">
-                                            <i class="fa fa-circle-o"></i> Ticket Index (AD/PM)
-                                            <span class="pull-right-container">
-                                                <i class="fa fa-angle-left pull-right"></i>
-                                            </span>
-                                        </a>
-                                        <ul class="treeview-menu">
-                                            <li><a href="#"><i class="fa fa-circle-o"></i> Ticket # (Status/Priority)</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="treeview active">
-                                        <a href="#">
-                                            <i class="fa fa-circle-o"></i> My Tickets
-                                            <span class="pull-right-container">
-                                                <i class="fa fa-angle-left pull-right"></i>
-                                            </span>
-                                        </a>
-                                        <ul class="treeview-menu active">
-                                            <li><a href="#"><i class="fa fa-circle-o"></i> Ticket # (Status/Priority)</a></li>
-                                        </ul>
-                                    </li>
+                            }
 
-                                    <li><a href="@Url.Action("Create", "Tickets")"><i class="fa fa-circle-o"></i> Create (SUB)</a></li>
-                                    <li><a href="#"><i class="fa fa-circle-o"></i> Assign Tickets (AD/PM)</a></li>
-                                    <li><a href="#"><i class="fa fa-circle-o"></i> Ticket History</a></li>
-                                </ul>
+                            <li class="treeview">
+                                <a href="@Url.Action("AssignProjects", "Admin")">
+                                    <i class="fa fa-plus-circle"></i> Assign Projects
+                                </a>
                             </li>
                         </ul>
                     </li>
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-folder"></i> <span>Examples</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li><a href="pages/examples/invoice.html"><i class="fa fa-circle-o"></i> Invoice</a></li>
-                            <li><a href="pages/examples/profile.html"><i class="fa fa-circle-o"></i> Profile</a></li>
-                            <li><a href="pages/examples/login.html"><i class="fa fa-circle-o"></i> Login</a></li>
-                            <li><a href="pages/examples/register.html"><i class="fa fa-circle-o"></i> Register</a></li>
-                            <li><a href="pages/examples/lockscreen.html"><i class="fa fa-circle-o"></i> Lockscreen</a></li>
-                            <li><a href="pages/examples/404.html"><i class="fa fa-circle-o"></i> 404 Error</a></li>
-                            <li><a href="pages/examples/500.html"><i class="fa fa-circle-o"></i> 500 Error</a></li>
-                            <li><a href="pages/examples/blank.html"><i class="fa fa-circle-o"></i> Blank Page</a></li>
-                            <li><a href="pages/examples/pace.html"><i class="fa fa-circle-o"></i> Pace Page</a></li>
-                        </ul>
-                    </li>
+                    <!-- MULTILEVEL EXAMPLE FOR REFERENCE -->
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-share"></i> <span>Multilevel</span>
@@ -768,6 +742,7 @@
     <script src="~/Scripts/adminlte.min.js"></script>
     <script src="~/Scripts/jquery.dataTables.min.js"></script>
     <script src="~/Scripts/dataTables.bootstrap.js"></script>
+    <script src="~/Scripts/dashboard.js"></script>
     @*<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
         <script src="~/Scripts/dashboard.js"></script>
         <!-- AdminLTE for demo purposes -->

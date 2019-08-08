@@ -65,6 +65,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
+        [Authorize(Roles = "Submitter")]
         public ActionResult Create()
         {
             ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName");
@@ -81,6 +82,7 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Submitter")]
         public ActionResult Create([Bind(Include = "ProjectId,TicketTypeId,TicketPriorityId,Title,Description")] Ticket ticket)
         {
             if (ModelState.IsValid)

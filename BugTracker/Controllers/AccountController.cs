@@ -85,7 +85,7 @@ namespace BugTracker.Controllers
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
-                    //return RedirectToAction("Register", "Home");
+                    return RedirectToAction("Login", "Home");
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
