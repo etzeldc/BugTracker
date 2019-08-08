@@ -2,12 +2,12 @@
 
 @model BugTracker.Models.ForgotPasswordViewModel
 @{
-    ViewBag.Title = "Forgot your password?";
+    ViewBag.Title = "ResendEmailConfirmation";
 }
 
 <h2>@ViewBag.Title.</h2>
 
-@using (Html.BeginForm("ForgotPasswordConfirmation", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("ForgotPassword", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
     <h4>Enter your email.</h4>

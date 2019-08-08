@@ -215,6 +215,7 @@
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\ionicons.min.css" />
     <Content Include="Content\jquery-jvectormap.css" />
+    <Content Include="Content\jquery.dataTables.min.css" />
     <Content Include="Content\morris.css" />
     <Content Include="Content\_all-skins.min.css" />
     <Content Include="favicon-16x16.png" />
@@ -341,6 +342,8 @@
     <Content Include="Views\Admin\AssignRoles.cshtml" />
     <Content Include="Views\Admin\ManageRoles.cshtml" />
     <Content Include="Views\Admin\AssignProjects.cshtml" />
+    <Content Include="Views\Account\ResendEmailConfirmation.cshtml" />
+    <Content Include="Views\Account\ConfirmationSent.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -39,7 +39,7 @@ namespace BugTracker.Controllers
                     myTickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
                     break;
                 case "Submitter":
-                    myTickets = db.Tickets.Where(t => t.OwnerId == userId).ToList();
+                    myTickets = db.Tickets.Where(t => t.OwnerUserId == userId).ToList();
                     break;
                 case "Project Manager":
                     myTickets = db.Users.Find(userId).Projects.SelectMany(t => t.Tickets).ToList();
@@ -81,17 +81,19 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,AssignedToUserId,Title,Description,Created,Updated")] Ticket ticket)
+        public ActionResult Create([Bind(Include = "ProjectId,TicketTypeId,TicketPriorityId,Title,Description")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
+                ticket.TicketStatusId = db.TicketStatuses.FirstOrDefault(t => t.Name == "New / UnAssigned").Id;
+                ticket.OwnerUserId = User.Identity.GetUserId();
+                ticket.Created = DateTime.Now;
                 db.Tickets.Add(ticket);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
 
             ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName", ticket.AssignedToUserId);
-            ViewBag.OwnerUserId = new SelectList(db.Users, "Id", "FirstName", ticket.OwnerUserId);
             ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
@@ -129,6 +131,7 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                ticket.Updated = DateTime.Now;
                 db.Entry(ticket).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

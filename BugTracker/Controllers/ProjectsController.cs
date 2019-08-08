@@ -76,7 +76,7 @@ namespace BugTracker.Controllers
                 project.Created = DateTime.Now;
                 db.Projects.Add(project);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Projects", new { id = project.Id });
             }
 
             return View(project);
@@ -106,6 +106,7 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                //project.Updated = DateTime.Now;
                 db.Entry(project).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
