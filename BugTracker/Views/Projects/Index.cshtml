@@ -4,6 +4,7 @@
 @model IEnumerable<BugTracker.Models.Project>
 @{
     var userProjectsHelper = new UserProjectsHelper();
+    var ticketHelper = new TicketHelper();
 }
 
 @{
@@ -27,7 +28,7 @@
                                 <th>Description</th>
                                 <th>Created</th>
                                 <th>Assigned Users</th>
-                                <th>Tickets (Index of links - ADall/PMmine)</th>
+                                <th>Tickets</th>
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -35,39 +36,41 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                               
-                                    <tr>
-                                        <td>
-                                            <a href="@Url.Action("Details", item.Id)">@Html.DisplayFor(modelItem => item.Name)</a> @*Can this Display be combined with an action link to Details? (as listed below)*@
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Description)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Created)
-                                        </td>
-                                        <td>
-                                            @foreach (var users in userProjectsHelper.ListUsersOnProject(item.Id).ToList())
-                                            {
-                                                @users.FullName<br />
-                                            }
-                                        </td> @*Each user gets link to their profile / Add Html.ActionLink to manage user assigned to this project for Admin/PM after for lopp*@
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Tickets)
-                                        </td> @*Each ticket gets link to its Details / Add Html.ActionLink to manage tickets on this project for Admin/PM after for loop*@
-                                        <td>
-                                            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-                                            {
-                                                @Html.ActionLink("Edit |", "Edit", new { id = item.Id })
-                                            }
-                                            @Html.ActionLink("Details", "Details", new { id = item.Id })
-                                            @if (User.IsInRole("Admin"))
-                                            {
-                                                @Html.ActionLink("| Delete", "Delete", new { id = item.Id })
-                                            }
-                                        </td>
-                                    </tr>
-                                
+                                <tr>
+                                    <td>
+                                        <a href="@Url.Action("Details", new { Id = item.Id })">@Html.DisplayFor(modelItem => item.Name)</a>
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Description)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Created)
+                                    </td>
+                                    <td>
+                                        @foreach (var users in userProjectsHelper.ListUsersOnProject(item.Id).ToList())
+                                        {
+                                            @users.FullName<br />
+                                        }
+                                    </td> @*Each user gets link to their profile / Add Html.ActionLink to manage user assigned to this project for Admin/PM after for lopp*@
+                                    <td>
+                                        @foreach (var ticket in ticketHelper.TicketsOnProject(item.Id))
+                                        {
+                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id})">@Html.DisplayFor(modelItem => ticket.Title)</a><br />
+
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                        {
+                                            @Html.ActionLink("Edit |", "Edit", new { id = item.Id })
+                                        }
+                                        @Html.ActionLink("Details", "Details", new { id = item.Id })
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            @Html.ActionLink("| Delete", "Delete", new { id = item.Id })
+                                        }
+                                    </td>
+                                </tr>
                             }
                         </tbody>
                     </table>
@@ -81,3 +84,16 @@
 
 
 
+@section scripts
+    {
+    <script>
+        $("#userTable").DataTable({
+            'paging': true,
+            'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
+            'searching': true,
+            'ordering': true,
+            'info': true,
+            'autoWidth': false
+        });
+    </script>
+}

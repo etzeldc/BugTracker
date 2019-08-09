@@ -1,0 +1,101 @@
+﻿@using BugTracker.Helpers;
+@model BugTracker.Models.Ticket
+
+@{
+    ViewBag.Title = "Dashboard";
+}
+
+<h2>Dashboard</h2>
+
+<!-- TICKET ATTACHMENTS -->
+
+<!--top row will be for entire display-->
+<div class="row">
+    <div class="col-md-12">
+        <!--
+            show attachment image or icon
+            show attachment file name without extension
+            show created date
+            show the title
+            show the description maybe
+            show the author name
+        -->
+        @foreach (var attachment in Model.TicketAttachments)
+        {
+        <div class="row">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-md-12">
+                        @if (DecisionHelper.TicketEditable(Model))
+                        {
+                            using (Html.BeginForm("Create", "TicketAttachment", FormMethod.Post, new { enctype = "Multipart/form-data" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("TicketId", Model.Id)
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @Html.TextBox("AttachmentTitle", null, new { @class = "form-control col-fill-input", placeholder = "title"})
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @Html.TextBox("AttachmentDescription", null, new { @class = "form-control col-fill-textarea", rows="5", cols="150", placeholder = "description" })
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input type="file" name="attahment" />
+                                   </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button class="btn btn-primary btn-small" type="submit">ADD ATTACHMENT</button>
+                                    </div>
+                                </div>
+                            };
+                        }
+                      @*<img src="@FileHelper.GetIonPath(attachment.AttachmentUrl)" />*@
+                                    <h2>ERRRRMAGE GOES HERE</h2>
+                                </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <a target="_blank" href="@attachment.AttachmentUrl">@Path.GetFileNameWithoutExtension(attachment.AttachmentUrl)</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-6">
+                        @attachment.Created.ToString("MMMM d, yyyy")
+                    </div>
+                    <div class="col-md-6">
+                        @attachment.User.FullName
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        @attachment.Title
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        @attachment.Description
+                    </div>
+
+                </div>
+            </div>
+        </div>
+       
+     
+
+        }
+    </div>
+    <div class="col-md-6">
+        <div class="row"></div>
+        <div class="row"></div>
+        <div class="row"></div>
+        <div class="row"></div>
+    </div>
+</div>

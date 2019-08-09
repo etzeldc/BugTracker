@@ -1,10 +1,12 @@
 ﻿@using BugTracker.Models;
 @using Microsoft.AspNet.Identity;
+@using BugTracker.Helpers;
 
 @{ 
     var userId = User.Identity.GetUserId();
     var db = new ApplicationDbContext();
     var user = db.Users.Find(userId);
+    var ticketHelper = new TicketHelper();
 }
 
 <!DOCTYPE html>
@@ -357,7 +359,6 @@
                         </span>
                     </div>
                 </form>
-                <!-- /.search form -->
                 <!-- SIDEBAR MENU: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu" data-widget="tree">
                     <li class="header">MAIN NAVIGATION</li>
@@ -374,7 +375,7 @@
                     <!-- PROJECT MANAGEMENT TAB -->
                     @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                     {
-                        <li class="treeview" @*active*@>
+                        <li class="treeview">
                             <a href="#">
                                 <i class="fa fa-list-alt"></i> <span>Project Management</span>
                                 <span class="pull-right-container">
@@ -419,17 +420,17 @@
                                         </span>
                                     </a>
                                     <ul class="treeview-menu">
-                                        @*@foreach (var myTickets in user.Tickets.ToList())
-                            {*@
-                                        <li class="treeview">
-                                            <a href="#">
-                                                <i class="fa fa-circle"></i> @*@myTickets*@ tickets
-                                            </a>
-                                        </li>
-                                        @*}*@
+                                        @foreach (var myTickets in ticketHelper.TicketsOnProject(myProjects.Id))
+                                        {
+                                            <li class="treeview">
+                                                <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })">
+                                                    <i class="fa fa-circle"></i> @myTickets.Title
+                                                </a>
+                                            </li>
+                                        }
                                         @if (User.IsInRole("Submitter"))
                                         {
-                                            <li><a href="@Url.Action("Create", "Tickets")"><i class="fa fa-plus-circle"></i> Create T(SUB)</a></li>
+                                            <li><a href="@Url.Action("Create", "Tickets")"><i class="fa fa-plus-circle"></i> Create Ticket</a></li>
                                         }
                                         @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                                         {
@@ -445,13 +446,12 @@
                                         <i class="fa fa-plus-circle"></i> Create Project
                                     </a>
                                 </li>
+                                <li class="treeview">
+                                    <a href="@Url.Action("AssignProjects", "Admin")">
+                                        <i class="fa fa-plus-circle"></i> Assign Projects
+                                    </a>
+                                </li>
                             }
-
-                            <li class="treeview">
-                                <a href="@Url.Action("AssignProjects", "Admin")">
-                                    <i class="fa fa-plus-circle"></i> Assign Projects
-                                </a>
-                            </li>
                         </ul>
                     </li>
                     <!-- MULTILEVEL EXAMPLE FOR REFERENCE -->

@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BugTracker.Models;
+using System.Web.Configuration;
 
 namespace BugTracker.Controllers
 {
@@ -158,8 +159,12 @@ namespace BugTracker.Controllers
                     DisplayName = model.DisplayName,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    Email = model.Email
+                    Email = model.Email,
+                    //AvatarUrl = WebConfigurationManager.AppSettings//MORE GOES HERE, CHECK THE RECORDING!!
                 };
+
+
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

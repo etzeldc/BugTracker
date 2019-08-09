@@ -79,5 +79,9 @@ namespace BugTracker.Helpers
             return db.Users.Where(u => u.Projects.All(p => p.Id != projectId)).ToList();
         }
 
+        public ICollection<Ticket> TicketsOnProject(int projectId)
+        {
+            return db.Projects.Find(projectId).Tickets.ToList();
+        }
     }
 }

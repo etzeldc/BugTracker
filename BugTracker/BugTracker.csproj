@@ -182,7 +182,9 @@
     <Compile Include="Controllers\TicketTypesController.cs" />
     <Compile Include="Enumerations\SystemRole.cs" />
     <Compile Include="Helpers\DecisionHelper.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\ProjectHelper.cs" />
+    <Compile Include="Helpers\TicketHelper.cs" />
     <Compile Include="Helpers\UserProjectsHelper.cs" />
     <Compile Include="Models\UserProfileViewModel.cs" />
     <Compile Include="Global.asax.cs">
@@ -345,6 +347,7 @@
     <Content Include="Views\Admin\AssignProjects.cshtml" />
     <Content Include="Views\Account\ResendEmailConfirmation.cshtml" />
     <Content Include="Views\Account\ConfirmationSent.cshtml" />
+    <Content Include="Views\Tickets\Dashboard.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
