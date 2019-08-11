@@ -89,9 +89,9 @@
                             <!-- Left col -->
                             <section class="col-lg-7 connectedSortable">
                                 <!-- Custom tabs (Charts with tabs)-->
-                                <div class="nav-tabs-custom">
+                                <div class="nav-tabs-custom box">
                                     <!-- Tabs within a box -->
-                                    <ul class="nav nav-tabs pull-right">
+                                    <ul class="nav nav-tabs pull-right bg-aqua">
                                         <li class="active"><a href="#myProjects" data-toggle="tab">My Projects</a></li>
                                         @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                                         {
@@ -102,9 +102,9 @@
                                     <div class="tab-content no-padding" id="skroll">
                                         <!-- Morris chart - Sales -->
                                         <div class="tab-pane active" id="myProjects" style="position: relative; height: 300px;">
-                                            <div class="box-body">
-                                                <table id="userTable" class="table table-bordered table-striped">
-                                                    <thead>
+                                            <div class="box-body progress-bar-aqua">
+                                                <table class="userTable table table-bordered table-striped table-hover">
+                                                    <thead class="bg-aqua-active">
                                                         <tr>
                                                             <th>Name</th>
                                                             <th>Description</th>
@@ -140,9 +140,9 @@
                                         @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                                         {
                                             <div class="tab-pane" id="allProjects" style="position: relative; height: 300px;">
-                                                <div class="box-body">
-                                                    <table id="userTable" class="table table-bordered table-striped">
-                                                        <thead>
+                                                <div class="box-body progress-bar-aqua">
+                                                    <table class="userTable table table-bordered table-striped">
+                                                        <thead class="bg-aqua-active">
                                                             <tr>
                                                                 <th>Name</th>
                                                                 <th>Description</th>
@@ -614,7 +614,7 @@
 @section scripts
     {
     <script>
-        $("#userTable").DataTable({
+        $(".userTable").DataTable({
             'paging': true,
             'lengthMenu': [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "All"] ],
             'searching': true,

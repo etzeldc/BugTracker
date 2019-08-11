@@ -27,17 +27,17 @@ namespace BugTracker.Controllers
             return View(tickets.ToList());
         }
 
-        // public ActionResult Dashboard(int id)
-        //{
-        //    var ticket = db.Tickets.Find(id);
+        public ActionResult Dashboard(int id)
+        {
+            var ticket = db.Tickets.Find(id);
 
-        //    if (ticket == null)
-        //    {
-        //        return HttpNotFound();
-        //    }
+            if (ticket == null)
+            {
+                return HttpNotFound();
+            }
 
-        //    return View(ticket);
-        //}
+            return View(ticket);
+        }
 
 
         // Get My Tickets

@@ -12,7 +12,13 @@
     <dl class="dl-horizontal">
         <dt>Update User Avatar</dt>
         <dd>
+            @*@Html.BeginForm()
+            {
+            @Html.AntiForgeryToken
 
+            }
+            @Html.Editor("Image", new { htmlAttributes = new { @class = "form-control", type = "file" } })
+            <button type="submit" name="AvatarUrl"></button>*@
         </dd>
         <dt>Update Display Name</dt>
         <dd>

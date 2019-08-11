@@ -208,6 +208,7 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Avatars\default_avatar.jpeg" />
     <Content Include="Content\AdminLTE.css" />
     <Content Include="Content\blue.css" />
     <Content Include="Content\bootstrap-datepicker.min.css" />
@@ -331,6 +332,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Attachments\" />
+    <Folder Include="Images\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\fontawesome-webfont.ttf" />

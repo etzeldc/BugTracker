@@ -9,7 +9,9 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BugTracker.Models;
+using BugTracker.Helpers;
 using System.Web.Configuration;
+using System.IO;
 
 namespace BugTracker.Controllers
 {
@@ -149,7 +151,7 @@ namespace BugTracker.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(RegisterViewModel model, HttpPostedFileBase avatar)
         {
             if (ModelState.IsValid)
             {
@@ -160,9 +162,21 @@ namespace BugTracker.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Email = model.Email,
-                    //AvatarUrl = WebConfigurationManager.AppSettings//MORE GOES HERE, CHECK THE RECORDING!!
+                    AvatarUrl = WebConfigurationManager.AppSettings["DefaultAvatar"]
                 };
 
+                //if (avatar.FileName != null)
+                //{
+                //    user.AvatarUrl = avatar.FileName;
+                //}
+
+                     //Validator
+                if (avatar != null && FileHelper.IsWebFriendlyImage(avatar))
+                {
+                    var fileName = Path.GetFileName(avatar.FileName);
+                    avatar.SaveAs(Path.Combine(Server.MapPath("~/Avatars/"), fileName));
+                    user.AvatarUrl = "/Avatars/" + fileName;
+                }
 
 
                 var result = await UserManager.CreateAsync(user, model.Password);
@@ -182,6 +196,7 @@ namespace BugTracker.Controllers
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
+            
             }
 
             // If we got this far, something failed, redisplay form

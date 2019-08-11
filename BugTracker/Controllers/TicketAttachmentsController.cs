@@ -65,7 +65,7 @@ namespace BugTracker.Controllers
                 {
                     var fileName = Path.GetFileName(attachment.FileName);
                     attachment.SaveAs(Path.Combine(Server.MapPath("~/Attachments/"), fileName));
-                    // ANOTHER LINE GOES HERE! CHECK THE RECORDING!
+                    ticketAttachment.AttachmentUrl = "/Attachments/" + fileName;
                 }
 
                 db.TicketAttachments.Add(ticketAttachment);
@@ -98,10 +98,19 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,TicketId,UserId,Title,Description,AttachmentUrl,Created")] TicketAttachment ticketAttachment)
+        public ActionResult Edit([Bind(Include = "Id,TicketId,UserId,Title,Description,AttachmentUrl,Created")] TicketAttachment ticketAttachment, string attachmentTitle, string attachmentDescription, HttpPostedFileBase attachment)
         {
             if (ModelState.IsValid)
             {
+
+                //Validator
+                if (FileHelper.IsValidAttachment(attachment))
+                {
+                    var fileName = Path.GetFileName(attachment.FileName);
+                    attachment.SaveAs(Path.Combine(Server.MapPath("~/Attachments/"), fileName));
+                    ticketAttachment.AttachmentUrl = "/Attachments/" + fileName;
+                }
+
                 db.Entry(ticketAttachment).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");

@@ -25,7 +25,7 @@ namespace BugTracker.Controllers
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 DisplayName = u.DisplayName,
-                AvatarUrl = u.AvartarUrl,
+                AvatarUrl = u.AvatarUrl,
                 Email = u.Email
             }).ToList();
             ViewBag.RoleName = new SelectList(db.Roles.ToList(), "Name", "Name");
@@ -59,7 +59,7 @@ namespace BugTracker.Controllers
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 DisplayName = u.DisplayName,
-                AvatarUrl = u.AvartarUrl,
+                AvatarUrl = u.AvatarUrl,
                 Email = u.Email
             }).ToList();
             ViewBag.ProjectIds = new MultiSelectList(db.Projects.ToList(), "Id", "Name");
