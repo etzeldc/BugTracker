@@ -12,7 +12,7 @@ namespace BugTracker.Models
         public string Name { get; set; }
         public string Description { get; set; }
 
-        //virtuakl nav
+        //virtual nav
         public virtual ICollection<Ticket> Tickets { get; set; }
         public TicketPriority()
         {

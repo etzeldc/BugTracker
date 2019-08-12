@@ -55,7 +55,7 @@
                                     <td>
                                         @foreach (var ticket in ticketHelper.TicketsOnProject(item.Id))
                                         {
-                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id})">@Html.DisplayFor(modelItem => ticket.Title)</a><br />
+                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id})">@ticket.Title</a><br />
 
                                         }
                                     </td>

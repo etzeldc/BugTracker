@@ -60,11 +60,17 @@ namespace BugTracker.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Ticket ticket = db.Tickets.Find(id);
+
+            ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
+            ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
+            ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+
             if (ticket == null)
             {
                 return HttpNotFound();
             }
             return View(ticket);
+
         }
 
         // GET: Tickets/Create
@@ -141,18 +147,19 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,AssignedToUserId,Title,Description,Created,Updated")] Ticket ticket)
+        public ActionResult Edit([Bind(Include = "Id,Description,TicketTypeId,TicketPriorityId,TicketStatusId")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
-                ticket.Updated = DateTime.Now;
-                db.Entry(ticket).State = EntityState.Modified;
+                var newTicket = db.Tickets.Find(ticket.Id);
+                newTicket.TicketTypeId = ticket.TicketTypeId;
+                newTicket.TicketPriorityId = ticket.TicketPriorityId;
+                newTicket.TicketStatusId = ticket.TicketStatusId;
+                newTicket.Description = ticket.Description;
+                newTicket.Updated = DateTime.Now;
                 db.SaveChanges();
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
-            ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName", ticket.AssignedToUserId);
-            ViewBag.OwnerUserId = new SelectList(db.Users, "Id", "FirstName", ticket.OwnerUserId);
-            ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
@@ -192,6 +199,25 @@ namespace BugTracker.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        [Authorize]
+        public ActionResult SpecialIndex()
+        {
+            var tickets = db.Tickets.Select(t => new TicketViewModel
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Created = t.Created
+            });
+            foreach (var ticket in tickets)
+            {
+                ticket.CurrentPriority = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
+                ticket.CurrentStatus = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
+                ticket.CurrentType = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+            }
+
+            return View(tickets);
         }
     }
 }

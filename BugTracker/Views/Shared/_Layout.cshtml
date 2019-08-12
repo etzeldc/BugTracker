@@ -52,7 +52,7 @@
     <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini" style="background-image: url('~/Images/PatongSunset.JPG');">
     <div class="wrapper">
 
         <header class="main-header">
@@ -393,11 +393,6 @@
                                         <i class="fa fa-plus-circle"></i> Create Project
                                     </a>
                                 </li>
-                                <li class="treeview">
-                                    <a href="@Url.Action("AssignProjects", "Admin")">
-                                        <i class="fa fa-plus-circle"></i> Assign Projects
-                                    </a>
-                                </li>
                             </ul>
                         </li>
                     }
@@ -420,11 +415,11 @@
                                         </span>
                                     </a>
                                     <ul class="treeview-menu">
-                                        @foreach (var myTickets in ticketHelper.TicketsOnProject(myProjects.Id))
+                                        @foreach (var myTickets in ticketHelper.TicketsOnProject(myProjects.Id).OrderBy(t => t.TicketPriority.Id))
                                         {
                                             <li class="treeview">
                                                 <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })">
-                                                    <i class="fa fa-circle"></i> @myTickets.Title
+                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i> @myTickets.Title
                                                 </a>
                                             </li>
                                         }
@@ -444,11 +439,6 @@
                                 <li>
                                     <a href="@Url.Action("Create", "Projects")">
                                         <i class="fa fa-plus-circle"></i> Create Project
-                                    </a>
-                                </li>
-                                <li class="treeview">
-                                    <a href="@Url.Action("AssignProjects", "Admin")">
-                                        <i class="fa fa-plus-circle"></i> Assign Projects
                                     </a>
                                 </li>
                             }

@@ -85,6 +85,8 @@ namespace BugTracker.Controllers
         // POST ASSIGN USERS PROJECTS
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [OverrideAuthorization]
+        [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult ManageProjectUsers(int projectId, List<string> ProjectManagers, List<string> Developers, List<string> Submitters)
         {
             foreach (var user in projectHelper.UsersNotOnProject(projectId).ToList())
@@ -116,10 +118,10 @@ namespace BugTracker.Controllers
         }
 
         // POST REMOVE USERS FROM PROJECT
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //[OverrideAuthorization]
-        //[Authorize(Roles = "Project Manager")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [OverrideAuthorization]
+        [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult RemoveProjectUser(string userId, int projectId)
         {
             projectHelper.RemoveUserFromProject(userId, projectId);

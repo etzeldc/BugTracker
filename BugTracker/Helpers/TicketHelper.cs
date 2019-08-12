@@ -30,6 +30,7 @@ namespace BugTracker.Helpers
 
             return people;
         }
+
         public bool IsUserOnTicket(string userId, int ticketId)
         {
             var ticket = db.Projects.Find(ticketId);
@@ -92,5 +93,29 @@ namespace BugTracker.Helpers
         {
             return db.Projects.Find(projectId).Tickets;
         }
+
+        public string TicketsByPriority(string priorityName)
+        {
+            switch (priorityName)
+            {
+                case "Immediate":
+                    return "text-red";
+                case "High":
+                    return "text-orange";
+                case "Medium":
+                    return "text-yellow";
+                case "Low":
+                    return "text-green";
+                case "None":
+                    return "text-blue";
+                default:
+                    return "";
+            }
+        }
+
+        //public ICollection<Ticket> ListTicketPriority(int ticketId)
+        //{
+        //    return db.TicketPriorities.Find(ticketId).Tickets;
+        //}
     }
 }

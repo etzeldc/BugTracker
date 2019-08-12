@@ -4,413 +4,389 @@
 
 @{
     var ticketHelper = new TicketHelper();
+    var userProjectsHelper = new UserProjectsHelper();
+    var roleHelper = new UserRolesHelper();
 }
-    <section class="content">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
-                    <div class="box-header">
-                        <h3 class="box-title">
-                            <strong>@Model.Title Dashboard</strong>
-                        </h3>
-                        <section class="content">
-                            <!-- Main row -->
-                            <div class="row">
-                                <div class="col-md-7 connectedSortable">
-                                    <div class="box box-solid bg-green-gradient">
-                                        <div class="box-header bg-green-active">
-                                            <!-- tools box -->
-                                            <h3 class="box-title">
-                                                <strong>@Model.Title Info</strong>
-                                            </h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn bg-green btn-sm" data-widget="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <button type="button" class="btn bg-green btn-sm" data-widget="remove">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">
+                        <strong>@Model.Title Dashboard</strong>
+                    </h3>
+                    <section class="content">
+                        <!-- Main row -->
+                        <div class="row">
+                            <div class="col-md-12 connectedSortable">
+                                <div class="box box-solid bg-green-gradient">
+                                    <div class="box-header bg-green-active">
+                                        <!-- tools box -->
+                                        <h3 class="box-title">
+                                            <strong>@Model.Title Info</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-green btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-green btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
                                         </div>
-                                        <div class="box-body bg-green">
-                                            <table class="table table-bordered table-striped">
-                                                <thead class="bg-green-active">
-                                                    <tr>
-                                                        <th>Submitter</th>
-                                                        <th>Priority</th>
-                                                        <th>Status</th>
-                                                        <th>Type</th>
-                                                        <th>Description</th>
-                                                        <th>Created</th>
-                                                        <th>Updated</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="color:black;">
+                                    </div>
+                                    <div class="box-body bg-green">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-green-active">
+                                                <tr>
+                                                    <th>Submitter</th>
+                                                    <th>Priority</th>
+                                                    <th>Status</th>
+                                                    <th>Type</th>
+                                                    <th>Description</th>
+                                                    <th>Created</th>
+                                                    <th>Updated</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                @using (Html.BeginForm("Edit", "Tickets"))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    @Html.HiddenFor(model => model.Id)
+                                                <tr>
+                                                    <td>@*@Model.OwnerUser.AvatarUrl @Model.OwnerUser.FullName*@</td>
+                                                    <td>
+                                                        @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("TicketStatusId", null, new { @class = "form-control" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
+                                                    </td>
+                                                    <td>
+                                                        @Html.EditorFor(model => model.Description, null, new { @class = "form-control" })
+                                                    </td>
+                                                    <td>@Model.Created</td>
+                                                    <td>@Model.Updated</td>
+                                                    <td>
+                                                        <input type="submit" value="Edit" class="btn btn-default"/>
+                                                    </td>
+                                                </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>                           
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 connectedSortable">
+                                <div class="box box-solid bg-aqua-gradient">
+                                    <div class="box-header bg-aqua-active">
+                                        <h3 class="box-title">
+                                            <strong>@Model.Project.Name Info</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-aqua btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-aqua btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body bg-aqua">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-aqua-active">
+                                                <tr>
+                                                    <th>Description</th>
+                                                    <th>Other Tickets On This Project</th>
+                                                    <th>Additional Information</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                <tr>
+                                                    <td>@Model.Project.Description</td>
+                                                    <td>
+                                                        @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id))
+                                                        {
+                                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">@ticks.Title</a><br />
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        <button><a href="@Url.Action("Details", "Projects", new { Id = Model.Project.Id })">Project Details</a></button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7 connectedSortable">
+                                <div class="box box-solid bg-teal-gradient">
+                                    <div class="box-header bg-teal-active">
+                                        <!-- tools box -->
+                                        <h3 class="box-title">
+                                            <strong>Team Info</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-teal btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-teal btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body bg-teal">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-teal-active">
+                                                <tr>
+                                                    <th>Project Members</th>
+                                                    <th>Contact</th>
+                                                    <th>Roles</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Project.Id))
+                                                {
                                                     <tr>
                                                         <td>
-                                                            @Model.OwnerUser.FullName
-                                                            @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id))
-                                                            {
-                                                            <br />
-                                                            }
+                                                            <img src="@users.AvatarUrl" style="height:20px" /> @users.FullName<br />
                                                         </td>
-                                                        <td>@Model.TicketPriority.Name</td>
-                                                        <td>@Model.TicketStatus.Name</td>
-                                                        <td>@Model.TicketType.Name</td>
-                                                        <td>@Model.Description</td>
-                                                        <td>@Model.Created</td>
-                                                        <td>@Model.Updated</td>
+                                                        <td>@users.Email</td>
+                                                        <td>@roleHelper.ListUserRoles(users.Id).FirstOrDefault()</td>
                                                     </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-5 connectedSortable">
-                                    <div class="box box-solid bg-aqua-gradient">
-                                        <div class="box-header bg-aqua-active">
-                                            <h3 class="box-title">
-                                                <strong>@Model.Project.Name Info</strong>
-                                            </h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn bg-aqua btn-sm" data-widget="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <button type="button" class="btn bg-aqua btn-sm" data-widget="remove">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="box-body bg-aqua">
-                                            <table class="table table-bordered table-striped">
-                                                <thead class="bg-aqua-active">
-                                                    <tr>
-                                                        <th>Description</th>
-                                                        <th>Other Tickets On This Project</th>
-                                                        <th>Additional Information</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="color:black;">
-                                                    <tr>
-                                                        <td>@Model.Project.Description</td>
-                                                        <td>
-                                                            @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id))
-                                                            {
-                                                                <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">@ticks.Title</a><br />
-                                                            }
-                                                        </td>
-                                                        <td>
-                                                            <button><a href="@Url.Action("Details", "Projects", new { Id = Model.Project.Id })">Project Details</a></button>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                }
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-3 connectedSortable">
-                                    <div class="box box-solid bg-orange-gradient">
-                                        <div class="box-header bg-orange-active">
-                                            <h3 class="box-title">
-                                                <strong>Attachments</strong>
-                                            </h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn bg-orange btn-sm" data-widget="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <button type="button" class="btn bg-orange btn-sm" data-widget="remove">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="box-body bg-orange">
-                                            <table class="table table-bordered table-striped">
-                                                <thead class="bg-orange-active">
-                                                    <tr>
-                                                        <th>Type</th>
-                                                        <th>Name</th>
-                                                        <th>Submitter</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="color:black;">
-                                                    <tr>
-                                                        <td>icon</td>
-                                                        <td>title</td>
-                                                        <td>name</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3 connectedSortable">
+                                <div class="box box-solid bg-orange-gradient">
+                                    <div class="box-header bg-orange-active">
+                                        <h3 class="box-title">
+                                            <strong>Attachments</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-orange btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-orange btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3 connectedSortable">
-                                    <div class="box box-solid bg-red-gradient">
-                                        <div class="box-header bg-red-active">
-                                            <h3 class="box-title">
-                                                <strong>Comments</strong>
-                                            </h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn bg-red btn-sm" data-widget="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <button type="button" class="btn bg-red btn-sm" data-widget="remove">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="box-body bg-red">
-                                            <table class="table table-bordered table-striped">
-                                                <thead class="bg-red-active">
-                                                    <tr>
-                                                        <th>Type</th>
-                                                        <th>Name</th>
-                                                        <th>Submitter</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="color:black;">
-                                                    <tr>
-                                                        <td>icon</td>
-                                                        <td>title</td>
-                                                        <td>name</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 connectedSortable">
-                                    <div class="box box-solid bg-maroon-gradient">
-                                        <div class="box-header bg-maroon-active">
-                                            <h3 class="box-title">
-                                                <strong>Notifications</strong>
-                                            </h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn bg-maroon btn-sm" data-widget="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <button type="button" class="btn bg-maroon btn-sm" data-widget="remove">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="box-body bg-maroon">
-                                            <table class="table table-bordered table-striped">
-                                                <thead class="bg-maroon-active">
-                                                    <tr>
-                                                        <th>Type</th>
-                                                        <th>Name</th>
-                                                        <th>Submitter</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="color:black;">
-                                                    <tr>
-                                                        <td>icon</td>
-                                                        <td>title</td>
-                                                        <td>name</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 connectedSortable">
-                                    <div class="box box-solid bg-purple-gradient">
-                                        <div class="box-header bg-purple-active">
-                                            <h3 class="box-title">
-                                                <strong>History</strong>
-                                            </h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn bg-purple btn-sm" data-widget="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <button type="button" class="btn bg-purple btn-sm" data-widget="remove">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="box-body bg-purple">
-                                            <table class="table table-bordered table-striped">
-                                                <thead class="bg-purple-active">
-                                                    <tr>
-                                                        <th>Type</th>
-                                                        <th>Name</th>
-                                                        <th>Submitter</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="color:black;">
-                                                    <tr>
-                                                        <td>icon</td>
-                                                        <td>title</td>
-                                                        <td>name</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                    <div class="box-body bg-orange">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-orange-active">
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Name</th>
+                                                    <th>Submitter</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                <tr>
+                                                    <td>icon</td>
+                                                    <td>title</td>
+                                                    <td>name</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-5 connectedSortable">
-                                    <div class="box box-solid bg-yellow-gradient">
-                                        <div class="box-header bg-yellow-active">
-                                            <!-- tools box -->
-                                            <h3 class="box-title">
-                                                <strong>Developer Info</strong>
-                                            </h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn bg-yellow btn-sm" data-widget="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <button type="button" class="btn bg-yellow btn-sm" data-widget="remove">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="box-body bg-yellow">
-                                            <table class="table table-bordered table-striped">
-                                                <thead class="bg-yellow-active">
-                                                    <tr>
-                                                        <th>Developer</th>
-                                                        <th>Info</th>
-                                                        <th>Stuff</th>
-                                                        <th>Here</th>
-
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="color:black;">
-                                                    <tr>
-                                                        <td>Some</td>
-                                                        <td>Thing</td>
-                                                        <td>Goes</td>
-                                                        <td>Here</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                            <div class="col-md-3 connectedSortable">
+                                <div class="box box-solid bg-red-gradient">
+                                    <div class="box-header bg-red-active">
+                                        <h3 class="box-title">
+                                            <strong>Comments</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-red btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-red btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-7 connectedSortable">
-                                    <div class="box box-solid bg-teal-gradient">
-                                        <div class="box-header bg-teal-active">
-                                            <!-- tools box -->
-                                            <h3 class="box-title">
-                                                <strong>Team Info</strong>
-                                            </h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn bg-teal btn-sm" data-widget="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <button type="button" class="btn bg-teal btn-sm" data-widget="remove">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="box-body bg-teal">
-                                            <table class="table table-bordered table-striped">
-                                                <thead class="bg-teal-active">
-                                                    <tr>
-                                                        <th>Avatars</th>
-                                                        <th>Members</th>
-                                                        <th>Contact</th>
-                                                        <th>Roles</th>
-                                                        <th>Assignments</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="color:black;">
-                                                    <tr>
-                                                        <td>Icons</td>
-                                                        <td>@Model.Project.Users</td>
-                                                        <td>Email</td>
-                                                        <td>Roles</td>
-                                                        <td>Tickets</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                    <div class="box-body bg-red">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-red-active">
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Name</th>
+                                                    <th>Submitter</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                <tr>
+                                                    <td>icon</td>
+                                                    <td>title</td>
+                                                    <td>name</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-6 connectedSortable">
-                                    <div class="box box-solid bg-olive-gradient">
-                                        <div class="box-header bg-olive-active">
-                                            <h3 class="box-title">
-                                                <strong>Add Comment</strong>
-                                            </h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn bg-olive btn-sm" data-widget="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <button type="button" class="btn bg-olive btn-sm" data-widget="remove">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="box-body bg-olive">
-                                            <table class="table table-bordered table-striped">
-                                                <thead class="bg-olive-active">
-                                                    <tr>
-                                                        <th>Avatar</th>
-                                                        <th>Submitter</th>
-                                                        <th>Comment</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="color:black;">
-                                                    <tr>
-                                                        <td>icon</td>
-                                                        <td>name</td>
-                                                        <td>comment body</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                            <div class="col-md-3 connectedSortable">
+                                <div class="box box-solid bg-maroon-gradient">
+                                    <div class="box-header bg-maroon-active">
+                                        <h3 class="box-title">
+                                            <strong>Notifications</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-maroon btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-maroon btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-md-6 connectedSortable">
-                                    <div class="box box-solid bg-blue-gradient">
-                                        <div class="box-header bg-blue-active">
-                                            <h3 class="box-title">
-                                                <strong>Add Attachment</strong>
-                                            </h3>
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn bg-blue btn-sm" data-widget="collapse">
-                                                    <i class="fa fa-minus"></i>
-                                                </button>
-                                                <button type="button" class="btn bg-blue btn-sm" data-widget="remove">
-                                                    <i class="fa fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="box-body bg-blue">
-                                            <table class="table table-bordered table-striped">
-                                                <thead class="bg-blue-active">
-                                                    <tr>
-                                                        <th>Type</th>
-                                                        <th>Name</th>
-                                                        <th>Submitter</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody style="color:black;">
-                                                    <tr>
-                                                        <td>icon</td>
-                                                        <td>title</td>
-                                                        <td>name</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                    <div class="box-body bg-maroon">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-maroon-active">
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Name</th>
+                                                    <th>Submitter</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                <tr>
+                                                    <td>icon</td>
+                                                    <td>title</td>
+                                                    <td>name</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
-                        </section>
-                    </div>
+                            <div class="col-md-3 connectedSortable">
+                                <div class="box box-solid bg-purple-gradient">
+                                    <div class="box-header bg-purple-active">
+                                        <h3 class="box-title">
+                                            <strong>History</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-purple btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-purple btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body bg-purple">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-purple-active">
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Name</th>
+                                                    <th>Submitter</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                <tr>
+                                                    <td>icon</td>
+                                                    <td>title</td>
+                                                    <td>name</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 connectedSortable">
+                                <div class="box box-solid bg-olive-gradient">
+                                    <div class="box-header bg-olive-active">
+                                        <h3 class="box-title">
+                                            <strong>Add Comment</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-olive btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-olive btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body bg-olive">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-olive-active">
+                                                <tr>
+                                                    <th>Submitter</th>
+                                                    <th>Comment</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                <tr>
+                                                    @*@Html.BeginForm("Create", "TicketComments")
+                                                        {
+                                                            @Html.AntiForgeryToken
+                                                            <textarea class="container-fluid" type="submit"></textarea>
+                                                        }*@
+                                                    <td>icon name</td>
+                                                    <td>comment body</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 connectedSortable">
+                                <div class="box box-solid bg-blue-gradient">
+                                    <div class="box-header bg-blue-active">
+                                        <h3 class="box-title">
+                                            <strong>Add Attachment</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-blue btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-blue btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body bg-blue">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-blue-active">
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Name</th>
+                                                    <th>Submitter</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                <tr>
+                                                    <td>icon</td>
+                                                    <td>title</td>
+                                                    <td>name</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
-                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-                @Html.ActionLink("Back To Dashboard", "Index", "Home")
-
             </div>
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+            @Html.ActionLink("Back To Dashboard", "Index", "Home")
         </div>
-    </section>
+    </div>
+</section>
 

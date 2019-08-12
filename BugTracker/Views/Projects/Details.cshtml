@@ -5,6 +5,7 @@
 @{
     var userProjectsHelper = new UserProjectsHelper();
     var roleHelper = new UserRolesHelper();
+    var ticketHelper = new TicketHelper();
 }
 @{
     ViewBag.Title = "Details";
@@ -63,7 +64,10 @@
                                     }
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(model => model.Tickets)
+                                    @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Id))
+                                    {
+                                        <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">@ticks.Title</a><br />
+                                    }
                                 </td>
                                 <td>
 
