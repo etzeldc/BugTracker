@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using BugTracker.Models;
 using BugTracker.Helpers;
 using Microsoft.AspNet.Identity;
+using System.Threading.Tasks;
 
 namespace BugTracker.Controllers
 {
@@ -55,12 +56,14 @@ namespace BugTracker.Controllers
         // GET: Tickets/Details/5
         public ActionResult Details(int? id)
         {
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Ticket ticket = db.Tickets.Find(id);
-
+            var allDevelopers = rolesHelper.UsersInRole("Developer");
+            ViewBag.Developer = new SelectList(allDevelopers, "Id", "FullName", ticket.AssignedToUserId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
@@ -96,6 +99,7 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                ticket.AssignedToUserId = null;
                 ticket.TicketStatusId = db.TicketStatuses.FirstOrDefault(t => t.Name == "New / Unassigned").Id;
                 ticket.OwnerUserId = User.Identity.GetUserId();
                 ticket.Created = DateTime.Now;
@@ -147,19 +151,26 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Description,TicketTypeId,TicketPriorityId,TicketStatusId")] Ticket ticket)
+        public ActionResult Edit([Bind(Include = "Id,Description,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket, string developer)
         {
+            var allDevelopers = rolesHelper.UsersInRole("Developer");
+
             if (ModelState.IsValid)
             {
+                //var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
                 var newTicket = db.Tickets.Find(ticket.Id);
+                newTicket.AssignedToUserId = developer;
                 newTicket.TicketTypeId = ticket.TicketTypeId;
                 newTicket.TicketPriorityId = ticket.TicketPriorityId;
                 newTicket.TicketStatusId = ticket.TicketStatusId;
                 newTicket.Description = ticket.Description;
                 newTicket.Updated = DateTime.Now;
                 db.SaveChanges();
+                projectHelper.AddUserToProject(newTicket.AssignedToUserId, newTicket.Project.Id);
+                //TicketHelper.CreateAssignmentNotification(oldTicket, ticket);
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
+            ViewBag.Developers = new SelectList(allDevelopers, "Id", "FullName", ticket.AssignedToUserId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
@@ -201,23 +212,64 @@ namespace BugTracker.Controllers
             base.Dispose(disposing);
         }
 
-        [Authorize]
-        public ActionResult SpecialIndex()
+        //GET
+        public ActionResult AssignTicket(int? id)
         {
-            var tickets = db.Tickets.Select(t => new TicketViewModel
-            {
-                Id = t.Id,
-                Title = t.Title,
-                Created = t.Created
-            });
-            foreach (var ticket in tickets)
-            {
-                ticket.CurrentPriority = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-                ticket.CurrentStatus = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
-                ticket.CurrentType = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
-            }
-
-            return View(tickets);
+            UserRolesHelper helper = new UserRolesHelper();
+            var ticket = db.Tickets.Find(id);
+            var users = helper.UsersInRole("Developer").ToList();
+            ViewBag.AssignedToUser = new SelectList(users, "Id", "FullName", ticket.AssignedToUserId);
+            return View(ticket);
         }
+
+        //POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AssignTicket(Ticket model)
+        {
+            var ticket = db.Tickets.Find(model.Id);
+            ticket.AssignedToUserId = model.AssignedToUserId;
+            db.SaveChanges();
+
+            var callbackUrl = Url.Action("Details", "Tickets", new { id = ticket.Id }, protocol: Request.Url.Scheme);
+            try
+            {
+                EmailService ems = new EmailService();
+                IdentityMessage msg = new IdentityMessage();
+                ApplicationUser user = db.Users.Find(model.AssignedToUserId);
+
+                msg.Body = "You have been assigned a new Ticket." + Environment.NewLine + "Please click the following link tio view the details  " + "<a href=\"" + callbackUrl + "\">NEW TICKET</A>";
+                msg.Destination = user.Email;
+                msg.Subject = "Assignment Update";
+
+                await ems.SendMailAsync(msg);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await Task.FromResult(0);
+            }
+            return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
+        }
+
+        // POST: TicketComments/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult CreateComment([Bind(Include = "Id,TicketId,AuthorId,CommentBody,Created")] TicketComment ticketComment, Ticket ticket)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var newComment = 
+        //        db.TicketComments.Add(ticketComment);
+        //        db.SaveChanges();
+        //        return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
+        //    }
+
+        //    ViewBag.AuthorId = new SelectList(db.Users, "Id", "FirstName", ticketComment.AuthorId);
+        //    ViewBag.TicketId = new SelectList(db.Tickets, "Id", "OwnerUserId", ticketComment.TicketId);
+        //    return View(ticketComment);
+        //}
     }
 }

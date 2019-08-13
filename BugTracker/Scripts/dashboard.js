@@ -121,9 +121,10 @@ $(function () {
   $('#calendar').datepicker();
 
   // SLIMSCROLL FOR CHAT WIDGET
-  $('#skroll').slimScroll({
-    height: '250px'
-  });
+    $('.skroll').slimScroll({
+        height: '250px'
+    });
+  
 
   /* Morris.js Charts */
   // Sales chart

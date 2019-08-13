@@ -1,8 +1,11 @@
 ﻿@using BugTracker.Helpers;
+@using Microsoft.AspNet.Identity;
 
 @model BugTracker.Models.Ticket
 
 @{
+    var userId = User.Identity.GetUserId();
+    var fileHelper = new FileHelper();
     var ticketHelper = new TicketHelper();
     var userProjectsHelper = new UserProjectsHelper();
     var roleHelper = new UserRolesHelper();
@@ -39,8 +42,9 @@
                                             <thead class="bg-green-active">
                                                 <tr>
                                                     <th>Submitter</th>
-                                                    <th>Priority</th>
+                                                    <th>Assigned User</th>
                                                     <th>Status</th>
+                                                    <th>Priority</th>
                                                     <th>Type</th>
                                                     <th>Description</th>
                                                     <th>Created</th>
@@ -48,17 +52,56 @@
                                                 </tr>
                                             </thead>
                                             <tbody style="color:black;">
-                                                @using (Html.BeginForm("Edit", "Tickets"))
+                                                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.ProjectId))
                                                 {
-                                                    @Html.AntiForgeryToken()
-                                                    @Html.HiddenFor(model => model.Id)
-                                                <tr>
-                                                    <td>@*@Model.OwnerUser.AvatarUrl @Model.OwnerUser.FullName*@</td>
+                                                    using (Html.BeginForm("Edit", "Tickets"))
+                                                    {
+                                                        @Html.AntiForgeryToken();
+                                                        @Html.HiddenFor(model => model.Id);
+                                                        <tr>
+                                                            <td>@Model.OwnerUser.FullName</td>
+                                                            <td>@Html.DropDownList("Developer", null, ticketHelper.TicketAssignee(Model.Id), new { @class = "form-control" })</td>
+                                                            <td>
+                                                                @Html.DropDownList("TicketStatusId", null, new { @class = "form-control" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
+                                                            </td>
+                                                            <td>
+                                                                @Html.EditorFor(model => model.Description, null, new { @class = "form-control" })
+                                                            </td>
+                                                            <td>@Model.Created.ToString("MM/d/yyyy")</td>
+                                                            <td>@Model.Updated</td>
+                                                            <td>
+                                                                <input type="submit" value="Edit" class="btn btn-default" />
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    using (Html.BeginForm("Edit", "Tickets"))
+                                                    {
+                                                        @Html.AntiForgeryToken();
+                                                        @Html.HiddenFor(model => model.Id);
+                                            <tr>
+                                                <td>@Model.OwnerUser.FullName</td>
+                                                @if (Model.AssignedToUserId == null)
+                                                {
+                                                    <td>Unassigned</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@Model.AssignedToUser.FullName</td>
+                                                }
+                                                <td>@Model.TicketStatus.Name</td>
+                                                @if (User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.ProjectId))
+                                                {
                                                     <td>
                                                         @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control" })
-                                                    </td>
-                                                    <td>
-                                                        @Html.DropDownList("TicketStatusId", null, new { @class = "form-control" })
                                                     </td>
                                                     <td>
                                                         @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
@@ -66,18 +109,23 @@
                                                     <td>
                                                         @Html.EditorFor(model => model.Description, null, new { @class = "form-control" })
                                                     </td>
-                                                    <td>@Model.Created</td>
-                                                    <td>@Model.Updated</td>
-                                                    <td>
-                                                        <input type="submit" value="Edit" class="btn btn-default"/>
-                                                    </td>
-                                                </tr>
+                                                }
+                                                else
+                                                {
+                                                    <td>@Model.TicketPriority.Name</td>
+                                                    <td>@Model.TicketType.Name</td>
+                                                    <td>@Model.Description</td>
+                                                }
+                                                <td>@Model.Created.ToString("MM/d/yyyy")</td>
+                                                <td>@Model.Updated</td>
+                                            </tr>
+                                                    }
                                                 }
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                            </div>                           
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-5 connectedSortable">
@@ -108,9 +156,11 @@
                                                 <tr>
                                                     <td>@Model.Project.Description</td>
                                                     <td>
-                                                        @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id))
+                                                        @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id).OrderBy(t => t.TicketPriority.Id))
                                                         {
-                                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">@ticks.Title</a><br />
+                                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">
+                                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title
+                                                            </a><br />
                                                         }
                                                     </td>
                                                     <td>
@@ -152,7 +202,12 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            <img src="@users.AvatarUrl" style="height:20px" /> @users.FullName<br />
+                                                            <img src="@users.AvatarUrl" style="height:20px" /> @users.FullName
+                                                            @if (users.Id == Model.AssignedToUserId)
+                                                            {
+                                                                @Html.Display(" - Assignee");
+                                                            }
+                                                            <br />
                                                         </td>
                                                         <td>@users.Email</td>
                                                         <td>@roleHelper.ListUserRoles(users.Id).FirstOrDefault()</td>
@@ -165,77 +220,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-3 connectedSortable">
-                                <div class="box box-solid bg-orange-gradient">
-                                    <div class="box-header bg-orange-active">
-                                        <h3 class="box-title">
-                                            <strong>Attachments</strong>
-                                        </h3>
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn bg-orange btn-sm" data-widget="collapse">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-orange btn-sm" data-widget="remove">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="box-body bg-orange">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="bg-orange-active">
-                                                <tr>
-                                                    <th>Type</th>
-                                                    <th>Name</th>
-                                                    <th>Submitter</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style="color:black;">
-                                                <tr>
-                                                    <td>icon</td>
-                                                    <td>title</td>
-                                                    <td>name</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 connectedSortable">
-                                <div class="box box-solid bg-red-gradient">
-                                    <div class="box-header bg-red-active">
-                                        <h3 class="box-title">
-                                            <strong>Comments</strong>
-                                        </h3>
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn bg-red btn-sm" data-widget="collapse">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-red btn-sm" data-widget="remove">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="box-body bg-red">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="bg-red-active">
-                                                <tr>
-                                                    <th>Type</th>
-                                                    <th>Name</th>
-                                                    <th>Submitter</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style="color:black;">
-                                                <tr>
-                                                    <td>icon</td>
-                                                    <td>title</td>
-                                                    <td>name</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3 connectedSortable">
+                            <div class="col-md-6 connectedSortable">
                                 <div class="box box-solid bg-maroon-gradient">
                                     <div class="box-header bg-maroon-active">
                                         <h3 class="box-title">
@@ -270,7 +255,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3 connectedSortable">
+                            <div class="col-md-6 connectedSortable">
                                 <div class="box box-solid bg-purple-gradient">
                                     <div class="box-header bg-purple-active">
                                         <h3 class="box-title">
@@ -308,6 +293,94 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 connectedSortable">
+                                <div class="box box-solid bg-red-gradient">
+                                    <div class="box-header bg-red-active">
+                                        <h3 class="box-title">
+                                            <strong>Comments</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-red btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-red btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body bg-red">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-red-active">
+                                                <tr>
+                                                    <th>Type</th>
+                                                    <th>Name</th>
+                                                    <th>Submitter</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                @foreach (var comment in Model.TicketComments)
+                                                {
+                                                    <tr>
+                                                        <td>@comment.Author.AvatarUrl @comment.Author.FullName</td>
+                                                        <td>@comment.CommentBody <br /></td>
+                                                        <td>name</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 connectedSortable">
+                                <div class="box box-solid bg-orange-gradient">
+                                    <div class="box-header bg-orange-active">
+                                        <h3 class="box-title">
+                                            <strong>Attachments</strong>
+                                        </h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn bg-orange btn-sm" data-widget="collapse">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-orange btn-sm" data-widget="remove">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body bg-orange">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="bg-orange-active">
+                                                <tr>
+                                                    <th>Image</th>
+                                                    <th>File Name</th>
+                                                    <th>Title</th>
+                                                    <th>Description</th>
+                                                    <th>Created</th>
+                                                    <th>Submitter</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="color:black;">
+                                                @foreach (var attachment in Model.TicketAttachments)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <img src="@FileHelper.GetIconPath(attachment.AttachmentUrl)" />
+                                                        </td>
+                                                        <td>
+                                                            <a target="_blank" href="@attachment.AttachmentUrl">@Path.GetFileNameWithoutExtension(attachment.AttachmentUrl)</a>
+                                                        </td>
+                                                        <td>@attachment.Title</td>
+                                                        <td>@attachment.Description</td>
+                                                        <td>@attachment.Created.ToString("MMMM d, yyyy")</td>
+                                                        <td>@attachment.User.FullName</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 connectedSortable">
                                 <div class="box box-solid bg-olive-gradient">
                                     <div class="box-header bg-olive-active">
                                         <h3 class="box-title">
@@ -332,13 +405,15 @@
                                             </thead>
                                             <tbody style="color:black;">
                                                 <tr>
-                                                    @*@Html.BeginForm("Create", "TicketComments")
-                                                        {
-                                                            @Html.AntiForgeryToken
-                                                            <textarea class="container-fluid" type="submit"></textarea>
-                                                        }*@
                                                     <td>icon name</td>
-                                                    <td>comment body</td>
+                                                    <td>
+                                                        @using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
+                                                        {
+                                                            @Html.AntiForgeryToken()
+                                                            <textarea class="container-fluid" name="CommentBody" placeholder="Add Comment..."></textarea>
+                                                            <button class="btn btn-default" type="submit">Comment</button>
+                                                        }
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -361,22 +436,55 @@
                                         </div>
                                     </div>
                                     <div class="box-body bg-blue">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="bg-blue-active">
-                                                <tr>
-                                                    <th>Type</th>
-                                                    <th>Name</th>
-                                                    <th>Submitter</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style="color:black;">
-                                                <tr>
-                                                    <td>icon</td>
-                                                    <td>title</td>
-                                                    <td>name</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                @if (DecisionHelper.TicketEditable(Model))
+                                                {
+                                                    using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "Multipart/form-data" }))
+                                                    {
+                                                        @Html.AntiForgeryToken()
+                                                        @Html.Hidden("TicketId", Model.Id)
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                @Html.TextBox("AttachmentTitle", null, new { @class = "form-control col-fill-input", placeholder = "title" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                @Html.TextBox("AttachmentDescription", null, new { @class = "form-control col-fill-textarea", rows = "5", cols = "150", placeholder = "description" })
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <input type="file" name="attahment" />
+                                                            </div>
+                                                        </div>
+                                                        <br />
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <button class="btn btn-primary btn-small" type="submit">ADD ATTACHMENT</button>
+                                                            </div>
+                                                        </div>
+                                                    };
+                                                }
+                                            </div>
+                                        </div>
+                                        @*<table class="table table-bordered table-striped">
+                                                <thead class="bg-blue-active">
+                                                    <tr>
+                                                        <th>Type</th>
+                                                        <th>Name</th>
+                                                        <th>Submitter</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody style="color:black;">
+                                                    <tr>
+                                                        <td>icon</td>
+                                                        <td>title</td>
+                                                        <td>name</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>*@
                                     </div>
                                 </div>
                             </div>

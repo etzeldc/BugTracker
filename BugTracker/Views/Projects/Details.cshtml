@@ -1,8 +1,11 @@
 ﻿@using BugTracker.Helpers;
 @using BugTracker.Models;
+@using Microsoft.AspNet.Identity;
+
 @model BugTracker.Models.Project
 
 @{
+    var userId = User.Identity.GetUserId();
     var userProjectsHelper = new UserProjectsHelper();
     var roleHelper = new UserRolesHelper();
     var ticketHelper = new TicketHelper();
@@ -28,7 +31,7 @@
                                 <th>Description</th>
                                 <th>Created</th>
                                 <th>Assigned Users</th>
-                                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.Id))
                                 {
                                     <th>Remove Users</th>
                                 }
@@ -50,19 +53,19 @@
                                 <td>
                                     @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
                                     {
-                                        @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id)) {@role} )<br />
-                                        @*Html.ActionLink(label including 'users.', action, controller, new { userId = users.Id, something for manage index}, null)*@
+                                        @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
+                                        {@role} )<br />
                                     }
                                 </td>
-                                <td>
-                                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.Id))
                                     {
-                                        foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
-                                        {
-                                            @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, null)<br />
-                                        }
+                                        <td>
+                                            @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
+                                            {
+                                                @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, null)<br />
+                                            }
+                                        </td>
                                     }
-                                </td>
                                 <td>
                                     @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Id))
                                     {
@@ -70,8 +73,10 @@
                                     }
                                 </td>
                                 <td>
-
-                                    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+                                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.Id))
+                                    {
+                                        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) @: | 
+                                    }
                                     @Html.ActionLink("Back to List", "Index")
                                 </td>
                             </tr>
@@ -80,7 +85,7 @@
                 </div>
             </div>
 
-            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.Id))
             {
                 <div class="box">
                     <div class="box-header">

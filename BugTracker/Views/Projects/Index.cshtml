@@ -53,9 +53,11 @@
                                         }
                                     </td> @*Each user gets link to their profile / Add Html.ActionLink to manage user assigned to this project for Admin/PM after for lopp*@
                                     <td>
-                                        @foreach (var ticket in ticketHelper.TicketsOnProject(item.Id))
+                                        @foreach (var ticket in ticketHelper.TicketsOnProject(item.Id).OrderBy(t => t.TicketPriority.Id))
                                         {
-                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id})">@ticket.Title</a><br />
+                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id})">
+                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticket.TicketPriority.Name)"></i> @ticket.Title
+                                            </a><br />
 
                                         }
                                     </td>

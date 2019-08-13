@@ -113,9 +113,50 @@ namespace BugTracker.Helpers
             }
         }
 
-        //public ICollection<Ticket> ListTicketPriority(int ticketId)
+        public string TicketAssignee(int ticketId)
+        {
+            return db.Tickets.Find(ticketId).AssignedToUserId;
+        }
+
+        //public static void CreateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
         //{
-        //    return db.TicketPriorities.Find(ticketId).Tickets;
+        //    var noChange = (oldTicket.AssignedToUserId == newTicket.AssignedToUserId);
+        //    var assignment = (string.IsNullOrEmpty(oldTicket.AssignedToUserId));
+        //    var unassignment = (string.IsNullOrEmpty(newTicket.AssignedToUserId));
+
+        //    if (noChange)
+        //        return;
+
+        //    if (assignment)
+        //        GenerateAssignmentNotification(oldTicket, newTicket);
+        //    else if (unassignment)
+        //        GenerateUnAssignmentNotification(oldTicket, newTicket);
+        //    else
+        //    {
+        //        GenerateAssignmentNotification(oldTicket, newTicket);
+        //        GenerateUnAssignmentNotification(oldTicket, newTicket);
+        //    }
+        //}
+
+        //private static void GenerateUnAssignmentNotification(Ticket oldTicket, Ticket newTicket)
+        //{
+        //    throw new NotImplementedException();
+        //}
+        //private static void GenerateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
+        //{
+        //    var notification = new TicketNotification
+        //    {
+        //        Created = DateTime.Now,
+        //        NotificationBody = $"You have been assigned to TicketId {newTicket.Id} on {DateTime.Now}",
+        //        Read = false,
+        //        RecipientId = newTicket.AssignedToUserId,
+        //        SenderId = HttpContext.Current.User.Identity.GetUserId(),
+        //        NotificationBody = $"Please acknowledge that you have read this notification by marking it as read",
+        //        TicketId = newTicket.Id,
+        //    };
+
+        //    db.TicketNotifications.Add(notification);
+        //    db.SaveChanges();
         //}
     }
 }

@@ -6,7 +6,8 @@
     var userId = User.Identity.GetUserId();
     var db = new ApplicationDbContext();
     var user = db.Users.Find(userId);
-    var ticketHelper = new TicketHelper();
+    
+var ticketHelper = new TicketHelper();
 }
 
 <!DOCTYPE html>
@@ -52,7 +53,7 @@
     <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 </head>
-<body class="hold-transition skin-blue sidebar-mini" style="background-image: url('~/Images/PatongSunset.JPG');">
+<body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
 
         <header class="main-header">
@@ -417,11 +418,15 @@
                                     <ul class="treeview-menu">
                                         @foreach (var myTickets in ticketHelper.TicketsOnProject(myProjects.Id).OrderBy(t => t.TicketPriority.Id))
                                         {
-                                            <li class="treeview">
-                                                <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })">
-                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i> @myTickets.Title
-                                                </a>
-                                            </li>
+                                            if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
+                                            {
+                                                <li class="treeview">
+                                                    <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })">
+                                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i> @myTickets.Title
+                                                    </a>
+                                                </li>
+                                            }
+
                                         }
                                         @if (User.IsInRole("Submitter"))
                                         {
@@ -444,46 +449,6 @@
                             }
                         </ul>
                     </li>
-                    <!-- MULTILEVEL EXAMPLE FOR REFERENCE -->
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-share"></i> <span>Multilevel</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li><a href="#"><i class="fa fa-circle-o"></i> Level One</a></li>
-                            <li class="treeview">
-                                <a href="#">
-                                    <i class="fa fa-circle-o"></i> Level One
-                                    <span class="pull-right-container">
-                                        <i class="fa fa-angle-left pull-right"></i>
-                                    </span>
-                                </a>
-                                <ul class="treeview-menu">
-                                    <li><a href="#"><i class="fa fa-circle-o"></i> Level Two</a></li>
-                                    <li class="treeview">
-                                        <a href="#">
-                                            <i class="fa fa-circle-o"></i> Level Two
-                                            <span class="pull-right-container">
-                                                <i class="fa fa-angle-left pull-right"></i>
-                                            </span>
-                                        </a>
-                                        <ul class="treeview-menu">
-                                            <li><a href="#"><i class="fa fa-circle-o"></i> Level Three</a></li>
-                                            <li><a href="#"><i class="fa fa-circle-o"></i> Level Three</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li><a href="#"><i class="fa fa-circle-o"></i> Level One</a></li>
-                        </ul>
-                    </li>
-                    <li class="header">LABELS</li>
-                    <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>Important</span></a></li>
-                    <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>Warning</span></a></li>
-                    <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>Information</span></a></li>
                 </ul>
             </section>
             <!-- /.sidebar -->
