@@ -14,16 +14,16 @@ namespace BugTracker.Models
         public int TicketPriorityId { get; set; }
         public int TicketStatusId { get; set; }
 
-        //[Display(Name = "Submitter")]
+        [Display(Name = "Submitter")]
         public string OwnerUserId { get; set; }
 
-        //[Display(Name = "Developer")]
+        [Display(Name = "Developer")]
         public string AssignedToUserId { get; set; }
 
-        //[StringLength(50, ErrorMessage = "The title must be between {2} and {1} characters long.", MinimumLength = 5)]
+        [StringLength(50, ErrorMessage = "The title must be between {2} and {1} characters long.", MinimumLength = 5)]
         public string Title { get; set; }
 
-        //[StringLength(250, ErrorMessage = "The Description must be between {2} and {1} characters long.", MinimumLength = 5)]
+        [StringLength(250, ErrorMessage = "The Description must be between {2} and {1} characters long.", MinimumLength = 1)]
         public string Description { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }

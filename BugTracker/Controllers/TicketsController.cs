@@ -157,7 +157,8 @@ namespace BugTracker.Controllers
 
             if (ModelState.IsValid)
             {
-                //var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
+                var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
+
                 var newTicket = db.Tickets.Find(ticket.Id);
                 newTicket.AssignedToUserId = developer;
                 newTicket.TicketTypeId = ticket.TicketTypeId;
@@ -167,7 +168,8 @@ namespace BugTracker.Controllers
                 newTicket.Updated = DateTime.Now;
                 db.SaveChanges();
                 projectHelper.AddUserToProject(newTicket.AssignedToUserId, newTicket.Project.Id);
-                //TicketHelper.CreateAssignmentNotification(oldTicket, ticket);
+                TicketHelper.CreateAssignmentNotification(oldTicket, ticket);
+                TicketHelper.CreateChangeNotification(oldTicket, ticket);
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
             ViewBag.Developers = new SelectList(allDevelopers, "Id", "FullName", ticket.AssignedToUserId);
@@ -255,21 +257,24 @@ namespace BugTracker.Controllers
         // POST: TicketComments/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult CreateComment([Bind(Include = "Id,TicketId,AuthorId,CommentBody,Created")] TicketComment ticketComment, Ticket ticket)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var newComment = 
-        //        db.TicketComments.Add(ticketComment);
-        //        db.SaveChanges();
-        //        return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
-        //    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult CreateComment([Bind(Include = "Id,TicketId,AuthorId,CommentBody,Created")] TicketComment ticketComment, string commentBody, int ticketId)
+        {
+            if (ModelState.IsValid)
+            {
+                ticketComment.AuthorId = User.Identity.GetUserId();
+                ticketComment.CommentBody = commentBody;
+                ticketComment.Created = DateTime.Now;
+                db.TicketComments.Add(ticketComment);
+                db.SaveChanges();
+                return RedirectToAction("Details", "Tickets", new { id = ticketId });
+            }
 
-        //    ViewBag.AuthorId = new SelectList(db.Users, "Id", "FirstName", ticketComment.AuthorId);
-        //    ViewBag.TicketId = new SelectList(db.Tickets, "Id", "OwnerUserId", ticketComment.TicketId);
-        //    return View(ticketComment);
-        //}
+            ViewBag.AuthorId = new SelectList(db.Users, "Id", "FirstName", ticketComment.AuthorId);
+            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "OwnerUserId", ticketComment.TicketId);
+            return View(ticketComment);
+        }
     }
 }

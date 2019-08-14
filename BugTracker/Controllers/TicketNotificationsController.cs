@@ -7,19 +7,27 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
+using BugTracker.Helpers;
+using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Controllers
 {
     public class TicketNotificationsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
-
+        private TicketHelper ticketHelper = new TicketHelper();
         // GET: TicketNotifications
         public ActionResult Index()
         {
             var ticketNotifications = db.TicketNotifications.Include(t => t.Recipient).Include(t => t.Sender).Include(t => t.Ticket);
             return View(ticketNotifications.ToList());
         }
+
+        //public ActionResult MyNotifications()
+        //{
+        //    var userId = User.Identity.GetUserId();
+        //    TicketHelper
+        //}
 
         // GET: TicketNotifications/Details/5
         public ActionResult Details(int? id)
@@ -135,6 +143,17 @@ namespace BugTracker.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult MarkAsRead(int id)
+        {
+            var notification = db.TicketNotifications.Find(id);
+            notification.Read = true;
+            db.SaveChanges();
+
+            return RedirectToAction("Details", "Tickets", new { Id = notification.Ticket.Id });
         }
     }
 }

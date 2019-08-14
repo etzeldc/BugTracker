@@ -6,8 +6,8 @@
     var userId = User.Identity.GetUserId();
     var db = new ApplicationDbContext();
     var user = db.Users.Find(userId);
-    
-var ticketHelper = new TicketHelper();
+    var ticketHelper = new TicketHelper();
+    var roleHelper = new UserRolesHelper();
 }
 
 <!DOCTYPE html>
@@ -56,7 +56,7 @@ var ticketHelper = new TicketHelper();
 <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
 
-        <header class="main-header">
+        <header class="main-header" style="position:fixed">
             <!-- Logo -->
             <a href="@Url.Action("Index", "Home")">
                 <div class="logo">
@@ -67,7 +67,7 @@ var ticketHelper = new TicketHelper();
                 </div>
             </a>
             <!-- Header Navbar: style can be found in header.less -->
-            <nav class="navbar navbar-static-top">
+            <nav class="navbar navbar-fixed-top">
                 <!-- Sidebar toggle button-->
                 <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
                     <span class="sr-only">Toggle navigation</span>
@@ -157,121 +157,89 @@ var ticketHelper = new TicketHelper();
                         <li class="dropdown notifications-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-bell-o"></i>
-                                <span class="label label-warning">10</span>
+                                @if (TicketHelper.GetNewUserNotificationCount() != 0)
+                                {
+                                    <span class="label label-warning">
+                                        @TicketHelper.GetNewUserNotificationCount()
+                                    </span>
+                                }
                             </a>
+                            <!--Generate notifications here-->
                             <ul class="dropdown-menu">
-                                <li class="header">You have 10 notifications</li>
+                                <li class="header">New</li>
                                 <li>
                                     <!-- inner menu: contains the actual data -->
                                     <ul class="menu">
-                                        <li>
-                                            <a href="#">
-                                                <i class="fa fa-users text-aqua"></i> 5 new members joined today
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <i class="fa fa-warning text-yellow"></i> Very long description here that may not fit into the
-                                                page and may cause design problems
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <i class="fa fa-users text-red"></i> 5 new members joined
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <i class="fa fa-shopping-cart text-green"></i> 25 sales made
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                <i class="fa fa-user text-red"></i> You changed your username
-                                            </a>
-                                        </li>
+                                        @foreach (var notification in TicketHelper.GetUnreadNotifications().OrderByDescending(t => t.Created).Take(5))
+                                        {
+                                            using (Html.BeginForm("MarkAsRead", "TicketNotifications", new { name = "ReadForm" }))
+                                            {
+                                                @Html.AntiForgeryToken()
+                                                @Html.Hidden("Id", notification.Id)
+                                                <li class="hover">
+                                                    <a onclick="$(this).closest('form').submit();" href="@Url.Action("Details", "Tickets", new { Id = notification.Ticket.Id })">
+                                                        <img src="@notification.Sender.AvatarUrl" class="img-circle"/> @notification.NotificationBody
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
                                     </ul>
                                 </li>
-                                <li class="footer"><a href="#">View all</a></li>
+                                <li class="header">Earlier</li>
+                                <li>
+                                    <ul>
+                                        @foreach (var notification in TicketHelper.GetReadNotifications().OrderByDescending(t =>t.Created).Take(5 - TicketHelper.GetNewUserNotificationCount()))
+                                        {
+                                        <li>
+                                            <a href="@Url.Action("Details", "Tickets", new { Id = notification.Ticket.Id })">
+                                                <img src="@notification.Sender.AvatarUrl" class="img-circle" /> @notification.NotificationBody
+                                            </a>
+                                        </li>
+                                        }
+                                    </ul>
+                                </li>
+                                @*<li class="footer"><a href="@Url.Action("Index", "TicketNotifications")">View all</a></li>*@
                             </ul>
                         </li>
-                        <!-- Tasks: style can be found in dropdown.less -->
+                        <!-- Tickets: style can be found in dropdown.less -->
                         <li class="dropdown tasks-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-flag-o"></i>
-                                <span class="label label-danger">9</span>
+                                @if (ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() != 0)
+                                {
+                                    <span class="label label-danger">
+                                        @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count()
+                                    </span>
+                                }
                             </a>
+                            <!--Generate a ticketlist here-->
                             <ul class="dropdown-menu">
-                                <li class="header">You have 9 tasks</li>
+                                <li class="header">
+                                    You have @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() tickets
+                                </li>
+                                @foreach (var ticket in ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()))
+                                {
                                 <li>
-                                    <!-- inner menu: contains the actual data -->
                                     <ul class="menu">
                                         <li>
-                                            <!-- Task item -->
-                                            <a href="#">
+                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id })">
                                                 <h3>
-                                                    Design some buttons
-                                                    <small class="pull-right">20%</small>
+                                                    @ticket.Title
+                                                    <i class="fa fa-circle pull-left @ticketHelper.TicketsByPriority(ticket.TicketPriority.Name)"></i>
+                                                    <small class="label label-default pull-right">@ticket.TicketStatus.Name</small>
                                                 </h3>
-                                                <div class="progress xs">
-                                                    <div class="progress-bar progress-bar-aqua" style="width: 20%" role="progressbar"
-                                                         aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                        <span class="sr-only">20% Complete</span>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <!-- end task item -->
-                                        <li>
-                                            <!-- Task item -->
-                                            <a href="#">
-                                                <h3>
-                                                    Create a nice theme
-                                                    <small class="pull-right">40%</small>
-                                                </h3>
-                                                <div class="progress xs">
-                                                    <div class="progress-bar progress-bar-green" style="width: 40%" role="progressbar"
-                                                         aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                        <span class="sr-only">40% Complete</span>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <!-- end task item -->
-                                        <li>
-                                            <!-- Task item -->
-                                            <a href="#">
-                                                <h3>
-                                                    Some task I need to do
-                                                    <small class="pull-right">60%</small>
-                                                </h3>
-                                                <div class="progress xs">
-                                                    <div class="progress-bar progress-bar-red" style="width: 60%" role="progressbar"
-                                                         aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                        <span class="sr-only">60% Complete</span>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <!-- end task item -->
-                                        <li>
-                                            <!-- Task item -->
-                                            <a href="#">
-                                                <h3>
-                                                    Make beautiful transitions
-                                                    <small class="pull-right">80%</small>
-                                                </h3>
-                                                <div class="progress xs">
-                                                    <div class="progress-bar progress-bar-yellow" style="width: 80%" role="progressbar"
-                                                         aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-                                                        <span class="sr-only">80% Complete</span>
-                                                    </div>
+                                                <div>
+                                                    @ticket.Project.Name - 
+
+                                                    @ticket.TicketPriority.Name
+                                                    
                                                 </div>
                                             </a>
                                         </li>
                                         <!-- end task item -->
                                     </ul>
                                 </li>
+                                }
                                 <li class="footer">
                                     <a href="#">View all tasks</a>
                                 </li>
@@ -455,7 +423,7 @@ var ticketHelper = new TicketHelper();
         </aside>
 
         <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
+        <div class="content-wrapper" style="margin-top:50px">
             @RenderBody()
         </div>
 

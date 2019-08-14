@@ -5,6 +5,7 @@
 @{
     var userProjectsHelper = new UserProjectsHelper();
     var ticketHelper = new TicketHelper();
+    var userId = User.Identity.GetUserId();
 }
 
 @{
@@ -62,7 +63,7 @@
                                         }
                                     </td>
                                     <td>
-                                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, item.Id))
                                         {
                                             @Html.ActionLink("Edit |", "Edit", new { id = item.Id })
                                         }

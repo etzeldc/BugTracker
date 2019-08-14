@@ -16,77 +16,16 @@
     var pWord = pCount == 1 ? "Project" : "Projects";
     //var tWord = tCount == 1 ? "Ticket" : "Tickets";
 }
-<section class="content" @*style="background-image: url('/Images/PatongSunset.JPG'); background-repeat: no-repeat;"*@>
+<section class="content" style="background-image: url('/Images/PatongSunset.JPG');  background-size:cover">
     <div class="row">
         <div class="col-xs-12">
+            <div style="color:transparent; opacity:.5;"></div>
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">Dashboard</h3>
 
                     <section class="content">
-                        <!-- Small boxes (Stat box) -->
-                        <div class="row">
-                            <div class="col-lg-3 col-xs-6">
-                                <!-- small box -->
-                                <div class="small-box bg-aqua">
-                                    <div class="inner">
-                                        <h3>@user.Projects.Count <sup style="font-size: 20px">@pWord</sup></h3>
-                                        <p>New Orders</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-bag"></i>
-                                    </div>
-                                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                            <div class="col-lg-3 col-xs-6">
-                                <!-- small box -->
-                                <div class="small-box bg-green">
-                                    <div class="inner">
-                                        <h3>@*@db.Tickets.Count()*@ <sup style="font-size: 20px">@*@tWord*@</sup></h3>
 
-                                        <p>Bounce Rate</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-stats-bars"></i>
-                                    </div>
-                                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                            <div class="col-lg-3 col-xs-6">
-                                <!-- small box -->
-                                <div class="small-box bg-yellow">
-                                    <div class="inner">
-                                        <h3>44</h3>
-
-                                        <p>User Registrations</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-person-add"></i>
-                                    </div>
-                                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                            <div class="col-lg-3 col-xs-6">
-                                <!-- small box -->
-                                <div class="small-box bg-red">
-                                    <div class="inner">
-                                        <h3>65</h3>
-
-                                        <p>Unique Visitors</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-pie-graph"></i>
-                                    </div>
-                                    <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                        </div>
-                        <!-- /.row -->
                         <!-- Main row -->
                         <div class="row">
                             <!-- Left col -->
@@ -184,11 +123,12 @@
                                                                         @allProjects.Created
                                                                     </td>
                                                                     <td>
-                                                                        @foreach (var tick in ticketHelper.TicketsOnProject(allProjects.Id))
+                                                                        @foreach (var tick in ticketHelper.TicketsOnProject(allProjects.Id).OrderBy(t => t.TicketPriority.Id))
                                                                         {
 
-                                                                            <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })">@Html.DisplayFor(modelItem => tick.Title)</a><br />
-                                                                        }
+                                                                            <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })">
+                                                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i> @tick.Title
+                                                                            </a><br />}
 
                                                                     </td>
                                                                 </tr>
@@ -223,5 +163,6 @@
             'info': true,
             'autoWidth': false
         });
+        $("div").siblings(".sibling").css( "color", "grey" );
     </script>
 }

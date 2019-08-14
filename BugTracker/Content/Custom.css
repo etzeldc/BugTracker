@@ -8,6 +8,42 @@ td {
     position: center;
 }
 
-.opaque {
-    opacity: 0.4;
+#notify.fullscreen {
+    z-index: 9999;
+    width: inherit;
+    height: 100%;
+    position: fixed;
+    top: 50px;
+    left: 230px;
+}
+
+#history.fullscreen {
+    z-index: 9999;
+    width: inherit;
+    height: 100%;
+    position: fixed;
+    top: 50px;
+    left: 230px;
+}
+
+#comm.fullscreen {
+    z-index: 9999;
+    width: inherit;
+    height: 100%;
+    position: fixed;
+    top: 50px;
+    left: 230px;
+}
+
+#attachment.fullscreen {
+    z-index: 9999;
+    width: inherit;
+    height: 100%;
+    position: fixed;
+    top: 50px;
+    left: 230px;
+}
+
+aside.main-sidebar {
+    position:fixed;
 }

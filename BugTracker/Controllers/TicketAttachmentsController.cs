@@ -51,7 +51,8 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TicketId")] TicketAttachment ticketAttachment, string attachmentTitle, string attachmentDescription, HttpPostedFileBase attachment)
+        [Authorize]
+        public ActionResult Create([Bind(Include = "TicketId")] TicketAttachment ticketAttachment, string attachmentTitle, string attachmentDescription, HttpPostedFileBase attachment, int ticketId)
         {
             if (ModelState.IsValid)
             {
@@ -70,7 +71,7 @@ namespace BugTracker.Controllers
 
                 db.TicketAttachments.Add(ticketAttachment);
                 db.SaveChanges();
-                return RedirectToAction("Index"); //Need to redirect to somewhere other than the ticket attachment index
+                return RedirectToAction("Details", "Tickets", new { id = ticketId });
             }
 
             ViewBag.UserId = new SelectList(db.Users, "Id", "FirstName", ticketAttachment.UserId);

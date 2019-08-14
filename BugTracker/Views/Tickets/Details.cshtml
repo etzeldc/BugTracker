@@ -10,6 +10,8 @@
     var userProjectsHelper = new UserProjectsHelper();
     var roleHelper = new UserRolesHelper();
 }
+<link href="~/Content/Custom.css" rel="stylesheet" />
+
 <section class="content">
     <div class="row">
         <div class="col-xs-12">
@@ -58,6 +60,8 @@
                                                     {
                                                         @Html.AntiForgeryToken();
                                                         @Html.HiddenFor(model => model.Id);
+                                                        @Html.HiddenFor(model => model.ProjectId);
+                                                        @Html.HiddenFor(model => model.Created);
                                                         <tr>
                                                             <td>@Model.OwnerUser.FullName</td>
                                                             <td>@Html.DropDownList("Developer", null, ticketHelper.TicketAssignee(Model.Id), new { @class = "form-control" })</td>
@@ -87,38 +91,40 @@
                                                     {
                                                         @Html.AntiForgeryToken();
                                                         @Html.HiddenFor(model => model.Id);
-                                            <tr>
-                                                <td>@Model.OwnerUser.FullName</td>
-                                                @if (Model.AssignedToUserId == null)
-                                                {
-                                                    <td>Unassigned</td>
-                                                }
-                                                else
-                                                {
-                                                    <td>@Model.AssignedToUser.FullName</td>
-                                                }
-                                                <td>@Model.TicketStatus.Name</td>
-                                                @if (User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.ProjectId))
-                                                {
-                                                    <td>
-                                                        @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control" })
-                                                    </td>
-                                                    <td>
-                                                        @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
-                                                    </td>
-                                                    <td>
-                                                        @Html.EditorFor(model => model.Description, null, new { @class = "form-control" })
-                                                    </td>
-                                                }
-                                                else
-                                                {
-                                                    <td>@Model.TicketPriority.Name</td>
-                                                    <td>@Model.TicketType.Name</td>
-                                                    <td>@Model.Description</td>
-                                                }
-                                                <td>@Model.Created.ToString("MM/d/yyyy")</td>
-                                                <td>@Model.Updated</td>
-                                            </tr>
+                                                        @Html.HiddenFor(model => model.ProjectId);
+                                                        @Html.HiddenFor(model => model.Created);
+                                                        <tr>
+                                                            <td>@Model.OwnerUser.FullName</td>
+                                                            @if (Model.AssignedToUserId == null)
+                                                            {
+                                                                <td>Unassigned</td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@Model.AssignedToUser.FullName</td>
+                                                            }
+                                                            <td>@Model.TicketStatus.Name</td>
+                                                            @if (User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.ProjectId))
+                                                            {
+                                                                <td>
+                                                                    @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
+                                                                </td>
+                                                                <td>
+                                                                    @Html.EditorFor(model => model.Description, null, new { @class = "form-control" })
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>@Model.TicketPriority.Name</td>
+                                                                <td>@Model.TicketType.Name</td>
+                                                                <td>@Model.Description</td>
+                                                            }
+                                                            <td>@Model.Created.ToString("MM/d/yyyy")</td>
+                                                            <td>@Model.Updated</td>
+                                                        </tr>
                                                     }
                                                 }
                                             </tbody>
@@ -193,6 +199,7 @@
                                             <thead class="bg-teal-active">
                                                 <tr>
                                                     <th>Project Members</th>
+                                                    <th>Ticket Count</th>
                                                     <th>Contact</th>
                                                     <th>Roles</th>
                                                 </tr>
@@ -202,13 +209,14 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            <img src="@users.AvatarUrl" style="height:20px" /> @users.FullName
+                                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName
                                                             @if (users.Id == Model.AssignedToUserId)
                                                             {
-                                                                @Html.Display(" - Assignee");
+                                                                @: - Assigned User
                                                             }
                                                             <br />
                                                         </td>
+                                                        <td>@ticketHelper.MyTickets(users.Id, roleHelper.ListUserRoles(users.Id).FirstOrDefault()).Count()</td>
                                                         <td>@users.Email</td>
                                                         <td>@roleHelper.ListUserRoles(users.Id).FirstOrDefault()</td>
                                                     </tr>
@@ -221,7 +229,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 connectedSortable">
-                                <div class="box box-solid bg-maroon-gradient">
+                                <div class="box box-solid bg-maroon-gradient" id="notify">
                                     <div class="box-header bg-maroon-active">
                                         <h3 class="box-title">
                                             <strong>Notifications</strong>
@@ -229,6 +237,9 @@
                                         <div class="box-tools pull-right">
                                             <button type="button" class="btn bg-maroon btn-sm" data-widget="collapse">
                                                 <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-maroon btn-sm" id="notBtn">
+                                                <i class="fa fa-expand"></i>
                                             </button>
                                             <button type="button" class="btn bg-maroon btn-sm" data-widget="remove">
                                                 <i class="fa fa-times"></i>
@@ -256,7 +267,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6 connectedSortable">
-                                <div class="box box-solid bg-purple-gradient">
+                                <div class="box box-solid bg-purple-gradient" id="history">
                                     <div class="box-header bg-purple-active">
                                         <h3 class="box-title">
                                             <strong>History</strong>
@@ -264,6 +275,9 @@
                                         <div class="box-tools pull-right">
                                             <button type="button" class="btn bg-purple btn-sm" data-widget="collapse">
                                                 <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-purple btn-sm" id="hisBtn">
+                                                <i class="fa fa-expand"></i>
                                             </button>
                                             <button type="button" class="btn bg-purple btn-sm" data-widget="remove">
                                                 <i class="fa fa-times"></i>
@@ -293,7 +307,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 connectedSortable">
-                                <div class="box box-solid bg-red-gradient">
+                                <div class="box box-solid bg-red-gradient" id="comm">
                                     <div class="box-header bg-red-active">
                                         <h3 class="box-title">
                                             <strong>Comments</strong>
@@ -301,6 +315,9 @@
                                         <div class="box-tools pull-right">
                                             <button type="button" class="btn bg-red btn-sm" data-widget="collapse">
                                                 <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-red btn-sm" id="comBtn">
+                                                <i class="fa fa-expand"></i>
                                             </button>
                                             <button type="button" class="btn bg-red btn-sm" data-widget="remove">
                                                 <i class="fa fa-times"></i>
@@ -311,9 +328,8 @@
                                         <table class="table table-bordered table-striped">
                                             <thead class="bg-red-active">
                                                 <tr>
-                                                    <th>Type</th>
-                                                    <th>Name</th>
-                                                    <th>Submitter</th>
+                                                    <th>Commentor</th>
+                                                    <th>Message</th>
                                                 </tr>
                                             </thead>
                                             <tbody style="color:black;">
@@ -322,7 +338,6 @@
                                                     <tr>
                                                         <td>@comment.Author.AvatarUrl @comment.Author.FullName</td>
                                                         <td>@comment.CommentBody <br /></td>
-                                                        <td>name</td>
                                                     </tr>
                                                 }
                                             </tbody>
@@ -331,7 +346,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6 connectedSortable">
-                                <div class="box box-solid bg-orange-gradient">
+                                <div class="box box-solid bg-orange-gradient" id="attachment">
                                     <div class="box-header bg-orange-active">
                                         <h3 class="box-title">
                                             <strong>Attachments</strong>
@@ -339,6 +354,9 @@
                                         <div class="box-tools pull-right">
                                             <button type="button" class="btn bg-orange btn-sm" data-widget="collapse">
                                                 <i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn bg-orange btn-sm" id="attBtn">
+                                                <i class="fa fa-expand"></i>
                                             </button>
                                             <button type="button" class="btn bg-orange btn-sm" data-widget="remove">
                                                 <i class="fa fa-times"></i>
@@ -404,17 +422,22 @@
                                                 </tr>
                                             </thead>
                                             <tbody style="color:black;">
-                                                <tr>
-                                                    <td>icon name</td>
-                                                    <td>
-                                                        @using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
-                                                        {
-                                                            @Html.AntiForgeryToken()
-                                                            <textarea class="container-fluid" name="CommentBody" placeholder="Add Comment..."></textarea>
-                                                            <button class="btn btn-default" type="submit">Comment</button>
-                                                        }
-                                                    </td>
-                                                </tr>
+                                                @if (User.Identity.IsAuthenticated)
+                                                {
+                                                    <tr>
+                                                        <td>icon name</td>
+                                                        <td>
+                                                            @using (Html.BeginForm("CreateComment", "Tickets", FormMethod.Post))
+                                                            {
+                                                                @Html.AntiForgeryToken()
+                                                                @Html.HiddenFor(model => model.Id);
+                                                                @Html.Hidden("TicketId", Model.Id);
+                                                                <textarea class="container-fluid" name="CommentBody" placeholder="Add Comment..."></textarea>
+                                                                <button class="btn btn-default" type="submit">Comment</button>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
                                             </tbody>
                                         </table>
                                     </div>
@@ -443,6 +466,7 @@
                                                     using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "Multipart/form-data" }))
                                                     {
                                                         @Html.AntiForgeryToken()
+                                                        @Html.HiddenFor(model => model.Id);
                                                         @Html.Hidden("TicketId", Model.Id)
                                                         <div class="row">
                                                             <div class="col-md-12">
@@ -498,3 +522,19 @@
     </div>
 </section>
 
+@section scripts{
+    <script>
+        $("#notBtn").click(function (e) {
+            $("#notify").toggleClass("fullscreen");
+        });
+        $("#hisBtn").click(function (e) {
+            $("#history").toggleClass("fullscreen");
+        });
+        $("#comBtn").click(function (e) {
+            $("#comm").toggleClass("fullscreen");
+        });
+        $("#attBtn").click(function (e) {
+            $("#attachment").toggleClass("fullscreen");
+        });
+    </script>
+}

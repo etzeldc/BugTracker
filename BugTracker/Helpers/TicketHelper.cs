@@ -7,13 +7,13 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
-
+using System.Web.Configuration;
 
 namespace BugTracker.Helpers
 {
     public class TicketHelper
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private static ApplicationDbContext db = new ApplicationDbContext();
         private UserRolesHelper roleHelper = new UserRolesHelper();
 
         public List<string> UsersInRoleOnTicket(int ticketId, string roleName)
@@ -118,45 +118,109 @@ namespace BugTracker.Helpers
             return db.Tickets.Find(ticketId).AssignedToUserId;
         }
 
-        //public static void CreateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
-        //{
-        //    var noChange = (oldTicket.AssignedToUserId == newTicket.AssignedToUserId);
-        //    var assignment = (string.IsNullOrEmpty(oldTicket.AssignedToUserId));
-        //    var unassignment = (string.IsNullOrEmpty(newTicket.AssignedToUserId));
+        public static void CreateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
+        {
+            var noChange = (oldTicket.AssignedToUserId == newTicket.AssignedToUserId);
+            var assignment = (string.IsNullOrEmpty(oldTicket.AssignedToUserId));
+            var unassignment = (string.IsNullOrEmpty(newTicket.AssignedToUserId));
 
-        //    if (noChange)
-        //        return;
+            if (noChange)
+                return;
 
-        //    if (assignment)
-        //        GenerateAssignmentNotification(oldTicket, newTicket);
-        //    else if (unassignment)
-        //        GenerateUnAssignmentNotification(oldTicket, newTicket);
-        //    else
-        //    {
-        //        GenerateAssignmentNotification(oldTicket, newTicket);
-        //        GenerateUnAssignmentNotification(oldTicket, newTicket);
-        //    }
-        //}
+            if (assignment)
+                GenerateAssignmentNotification(oldTicket, newTicket);
+            else if (unassignment)
+                GenerateUnAssignmentNotification(oldTicket, newTicket);
+            else
+            {
+                GenerateAssignmentNotification(oldTicket, newTicket);
+                GenerateUnAssignmentNotification(oldTicket, newTicket);
+            }
+        }
 
-        //private static void GenerateUnAssignmentNotification(Ticket oldTicket, Ticket newTicket)
-        //{
-        //    throw new NotImplementedException();
-        //}
-        //private static void GenerateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
-        //{
-        //    var notification = new TicketNotification
-        //    {
-        //        Created = DateTime.Now,
-        //        NotificationBody = $"You have been assigned to TicketId {newTicket.Id} on {DateTime.Now}",
-        //        Read = false,
-        //        RecipientId = newTicket.AssignedToUserId,
-        //        SenderId = HttpContext.Current.User.Identity.GetUserId(),
-        //        NotificationBody = $"Please acknowledge that you have read this notification by marking it as read",
-        //        TicketId = newTicket.Id,
-        //    };
+        private static void GenerateUnAssignmentNotification(Ticket oldTicket, Ticket newTicket)
+        {
+            return;
+        }
 
-        //    db.TicketNotifications.Add(notification);
-        //    db.SaveChanges();
-        //}
+        private static void GenerateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
+        {
+            var notification = new TicketNotification
+            {
+                Created = DateTime.Now,
+                Subject = $"You have been assigned to Ticket {newTicket.Id} on {DateTime.Now}",
+                Read = false,
+                RecipientId = newTicket.AssignedToUserId,
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"Please acknowledge that you have read this notification by marking it as read",
+                TicketId = newTicket.Id,
+            };
+
+            db.TicketNotifications.Add(notification);
+            db.SaveChanges();
+        }
+
+        public static void CreateChangeNotification(Ticket oldTicket, Ticket newTicket)
+        {
+            foreach (var property in WebConfigurationManager.AppSettings["TrackedTicketProperties"].Split(','))
+            {
+                var oldValue = oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null);
+                var newValue = newTicket.GetType().GetProperty(property).GetValue(property, null);
+                if (oldValue != newValue)
+                    GenerateChangeNotification(property, oldValue, newValue, newTicket.AssignedToUserId, newTicket.Id);
+            }
+
+        }
+
+        private static void GenerateChangeNotification(string property, object oldValue, object newValue, string recipientId, int ticketId)
+        {
+            var notification = new TicketNotification
+            {
+                Created = DateTime.Now,
+                Subject = $"A change has occurred in the Ticket {ticketId} on {DateTime.Now}",
+                Read = false,
+                RecipientId = recipientId,
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"A change to property {property} was made at {DateTime.Now}. The old value was {oldValue.ToString()}, and the new value is {newValue.ToString()}.",
+                TicketId = ticketId,
+            };
+
+            db.TicketNotifications.Add(notification);
+            db.SaveChanges();
+        }
+
+        public static int GetNewUserNotificationCount()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.TicketNotifications.Where(t => t.RecipientId == userId && !t.Read).Count();
+        }
+
+        public static int GetReadUserNotificationCount()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.TicketNotifications.Where(t => t.RecipientId == userId && t.Read).Count();
+        }
+        public static int GetAllUserNotificationCount()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.TicketNotifications.Where(t => t.RecipientId == userId).Count();
+        }
+
+        public static List<TicketNotification> GetUnreadNotifications()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.TicketNotifications.Where(t => t.RecipientId == userId && !t.Read).ToList();
+        }
+        public static List<TicketNotification> GetReadNotifications()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.TicketNotifications.Where(t => t.RecipientId == userId && t.Read).ToList();
+        }
+
+        public static List<TicketNotification> GetAllUserNotifications()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.TicketNotifications.Where(t => t.RecipientId == userId).ToList();
+        }
     }
 }
