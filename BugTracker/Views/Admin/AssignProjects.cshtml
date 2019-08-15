@@ -37,7 +37,7 @@
                                     @Html.Hidden("userId", user.Id)
                                     <tr>
                                         @* ADD LINKS TO USER PROFILE VIEWS??? *@
-                                        <td>@user.AvatarUrl</td>
+                                        <td><img src="@user.AvatarUrl" class="img-circle"/></td>
                                         <td>@user.FirstName</td>
                                         <td>@user.LastName</td>
                                         <td>@user.Email</td>

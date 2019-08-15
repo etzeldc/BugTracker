@@ -48,7 +48,7 @@ namespace BugTracker.Helpers
                 var extValid = false;
                 foreach (var ext in WebConfigurationManager.AppSettings["AllowedAttachmentExtensions"].Split(','))
                 {
-                    if (Path.GetFileName(file.FileName) == ext)
+                    if (Path.GetExtension(file.FileName) == ext)
                     {
                         extValid = true;
                         break;

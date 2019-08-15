@@ -26,10 +26,10 @@ td {
     left: 230px;
 }
 
-#comm.fullscreen {
+#comments.fullscreen {
     z-index: 9999;
     width: inherit;
-    height: 100%;
+    height: auto;
     position: fixed;
     top: 50px;
     left: 230px;
@@ -38,7 +38,7 @@ td {
 #attachment.fullscreen {
     z-index: 9999;
     width: inherit;
-    height: 100%;
+    height: auto;
     position: fixed;
     top: 50px;
     left: 230px;

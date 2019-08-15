@@ -17,7 +17,6 @@
                         <table id="userTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Avatar</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Assign Role</th>
@@ -33,8 +32,7 @@
                                         @Html.Hidden("userId", user.Id)
                                         <tr>
                                             @* ADD LINKS TO USER PROFILE VIEWS??? *@
-                                            <td><img src="@user.AvatarUrl" style="height:50px" /></td>
-                                            <td>@user.LastName, @user.FirstName</td>
+                                            <td><img src="@user.AvatarUrl" class="img-circle" style="height:25px" />  @user.FirstName @user.LastName</td>
                                             <td>@user.Email</td>
                                             <td>
                                                 @Html.DropDownList("RoleName", null, roleHelper.ListUserRoles(user.Id).FirstOrDefault(), htmlAttributes: new { @class = "form-control" })

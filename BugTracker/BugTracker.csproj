@@ -361,6 +361,7 @@
     <Content Include="Views\Tickets\Dashboard.cshtml" />
     <Content Include="private.config" />
     <None Include="Properties\PublishProfiles\DavidEtzelBugTracker - Web Deploy.pubxml" />
+    <Content Include="Views\Home\UserProfile.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

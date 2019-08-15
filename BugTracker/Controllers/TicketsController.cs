@@ -168,8 +168,8 @@ namespace BugTracker.Controllers
                 newTicket.Updated = DateTime.Now;
                 db.SaveChanges();
                 projectHelper.AddUserToProject(newTicket.AssignedToUserId, newTicket.Project.Id);
-                TicketHelper.CreateAssignmentNotification(oldTicket, ticket);
-                TicketHelper.CreateChangeNotification(oldTicket, ticket);
+                TicketHelper.CreateAssignmentNotification(oldTicket, newTicket);
+                TicketHelper.CreateChangeNotification(oldTicket, newTicket);
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
             ViewBag.Developers = new SelectList(allDevelopers, "Id", "FullName", ticket.AssignedToUserId);

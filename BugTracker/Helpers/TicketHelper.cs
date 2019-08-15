@@ -165,7 +165,7 @@ namespace BugTracker.Helpers
             foreach (var property in WebConfigurationManager.AppSettings["TrackedTicketProperties"].Split(','))
             {
                 var oldValue = oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null);
-                var newValue = newTicket.GetType().GetProperty(property).GetValue(property, null);
+                var newValue = newTicket.GetType().GetProperty(property).GetValue(newTicket, null);
                 if (oldValue != newValue)
                     GenerateChangeNotification(property, oldValue, newValue, newTicket.AssignedToUserId, newTicket.Id);
             }
