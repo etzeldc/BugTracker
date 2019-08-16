@@ -13,69 +13,69 @@
 }
 
 
-                <div class="box-header">
-                    <h3 class="box-title">Project Index</h3>
+<div class="box-header" style="position:fixed;">
+    <h3 class="box-title">Project Index</h3>
     @Html.ActionLink("Create New Project", "Create")
-                </div>
-                <div class="box-body">
-                    <section class="content">
-                        <table id="userTable" class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Created</th>
-                                    <th>Assigned Users</th>
-                                    <th>Tickets</th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    <tr>
-                                        <td>
-                                            <a href="@Url.Action("Details", new { Id = item.Id })">@Html.DisplayFor(modelItem => item.Name)</a>
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Description)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Created)
-                                        </td>
-                                        <td>
-                                            @foreach (var users in userProjectsHelper.ListUsersOnProject(item.Id).ToList())
-                                            {
-                                                @users.FullName<br />
-                                            }
-                                        </td> @*Each user gets link to their profile / Add Html.ActionLink to manage user assigned to this project for Admin/PM after for lopp*@
-                                        <td>
-                                            @foreach (var ticket in ticketHelper.TicketsOnProject(item.Id).OrderBy(t => t.TicketPriority.Id))
-                                            {
-                                                <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id})">
-                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticket.TicketPriority.Name)"></i> @ticket.Title
-                                                </a><br />
-                                            }
-                                        </td>
-                                        <td>
-                                            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, item.Id))
-                                            {
-                                                @Html.ActionLink("Edit |", "Edit", new { id = item.Id })
-                                            }
-                                            @Html.ActionLink("Details", "Details", new { id = item.Id })
-                                            @if (User.IsInRole("Admin"))
-                                            {
-                                                @Html.ActionLink("| Delete", "Delete", new { id = item.Id })
-                                            }
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-            @Html.ActionLink("Back To Dashboard", "Index", "Home")
-                    </section>
-                </div>
+</div>
+<div class="box-body">
+<section class="content">
+    <table id="userTable" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Created</th>
+                <th>Assigned Users</th>
+                <th>Tickets</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <a href="@Url.Action("Details", new { Id = item.Id })">@Html.DisplayFor(modelItem => item.Name)</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Created)
+                    </td>
+                    <td>
+                        @foreach (var users in userProjectsHelper.ListUsersOnProject(item.Id).ToList())
+                        {
+                            @users.FullName<br />
+                        }
+                    </td> @*Each user gets link to their profile / Add Html.ActionLink to manage user assigned to this project for Admin/PM after for lopp*@
+                    <td>
+                        @foreach (var ticket in ticketHelper.TicketsOnProject(item.Id).OrderBy(t => t.TicketPriority.Id))
+                        {
+                            <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id})">
+                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticket.TicketPriority.Name)"></i> @ticket.Title
+                            </a><br />
+                        }
+                    </td>
+                    <td>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, item.Id))
+                        {
+                            @Html.ActionLink("Edit |", "Edit", new { id = item.Id })
+                        }
+                        @Html.ActionLink("Details", "Details", new { id = item.Id })
+                        @if (User.IsInRole("Admin"))
+                        {
+                            @Html.ActionLink("| Delete", "Delete", new { id = item.Id })
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+@Html.ActionLink("Back To Dashboard", "Index", "Home")
+</section>
+</div>
   
 
 

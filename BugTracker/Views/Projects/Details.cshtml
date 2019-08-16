@@ -16,7 +16,6 @@
 
 <section class="content">
     <h2>Projects</h2>
-    @Html.ActionLink("Create New Project", "Create")
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
@@ -29,13 +28,13 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Description</th>
-                                <th>Created</th>
                                 <th>Assigned Users</th>
                                 @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.Id))
                                 {
                                     <th>Remove Users</th>
                                 }
                                 <th>Tickets</th>
+                                <th>Created</th>
                             </tr>
 
                         </thead>
@@ -48,24 +47,21 @@
                                     @Html.DisplayFor(model => model.Description)
                                 </td>
                                 <td>
-                                    @Html.DisplayFor(model => model.Created)
-                                </td>
-                                <td>
                                     @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
                                     {
                                         @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
                                         {@role} )<br />
                                     }
                                 </td>
-                                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.Id))
-                                    {
-                                        <td>
-                                            @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
-                                            {
-                                                @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, null)<br />
-                                            }
-                                        </td>
-                                    }
+                                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.Id))
+                                {
+                                    <td>
+                                        @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
+                                        {
+                                            @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, null)<br />
+                                        }
+                                    </td>
+                                }
                                 <td>
                                     @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Id))
                                     {
@@ -73,11 +69,13 @@
                                     }
                                 </td>
                                 <td>
+                                    @Html.DisplayFor(model => model.Created)
+                                </td>
+                                <td>
                                     @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.Id))
                                     {
-                                        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) @: | 
+                                        @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
                                     }
-                                    @Html.ActionLink("Back to List", "Index")
                                 </td>
                             </tr>
                         </tbody>

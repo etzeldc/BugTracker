@@ -28,8 +28,8 @@ namespace BugTracker.Controllers
             return View(db.Projects.ToList());
         }
 
-        [Authorize]
-
+        [OverrideAuthorization]
+        [Authorize(Roles = "Admin, Project Manager, Developer, Submitter")]
         // GET: Projects/Details/5
         public ActionResult Details(int? id)
         {

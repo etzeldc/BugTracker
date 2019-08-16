@@ -1,0 +1,56 @@
+﻿@using BugTracker.Helpers;
+
+@{
+    var ticketHelper = new TicketHelper();
+}
+
+    <li class="dropdown notifications-menu">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-bell-o"></i>
+            @if (TicketHelper.GetNewUserNotificationCount() != 0)
+            {
+                <span class="label label-warning">
+                    @TicketHelper.GetNewUserNotificationCount()
+                </span>
+            }
+        </a>
+        <!--Generate notifications here-->
+        <ul class="dropdown-menu">
+            @if (TicketHelper.GetNewUserNotificationCount() != 0)
+            {
+                <li class="header">New</li>
+            }
+            <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                    @foreach (var notification in TicketHelper.GetUnreadNotifications().OrderByDescending(t => t.Created).Take(5))
+                    {
+                        using (Html.BeginForm("MarkAsRead", "TicketNotifications", FormMethod.Post, new { name = "ReadForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("NotificationId", notification.Id)
+                            <li class="hover">
+                                <a href="#" onclick="$(this).closest('form').submit();">
+                                    <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.Sender.FirstName @notification.NotificationBody
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </li>
+            <li class="header">Earlier</li>
+            <li>
+                <ul class="menu">
+                    @foreach (var notification in TicketHelper.GetReadNotifications().OrderByDescending(t => t.Created).Take(5 - TicketHelper.GetNewUserNotificationCount()))
+                    {
+                        <li>
+                            <a href="@Url.Action("Details", "Tickets", new { Id = notification.Ticket.Id })">
+                                <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.NotificationBody
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </li>
+            <li class="footer"><a href="@Url.Action("Index", "TicketNotifications")">View all</a></li>
+        </ul>
+    </li>

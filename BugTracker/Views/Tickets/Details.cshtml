@@ -13,194 +13,191 @@
 <link href="~/Content/Custom.css" rel="stylesheet" />
 
 
-<div class="box-header">
+<div class="box-header" style="position:fixed;">
     <h3 class="box-title">
         <strong>@Model.Title Dashboard</strong>
     </h3>
 </div>
 <div class="box-body">
-                    <section class="content">
-                        <!-- Main row -->
-                        <div class="row">
-                            <div class="col-md-12 connectedSortable">
-                                
-                                @Html.Partial("TicketsPartial")
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 connectedSortable">
-                                <div class="box box-solid bg-aqua-gradient">
-                                    <div class="box-header bg-aqua-active">
-                                        <h3 class="box-title">
-                                            <strong>@Model.Project.Name Info</strong>
-                                        </h3>
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn bg-aqua btn-sm" data-widget="collapse">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-aqua btn-sm" data-widget="remove">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="box-body bg-aqua">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="bg-aqua-active">
-                                                <tr>
-                                                    <th>Description</th>
-                                                    <th>Other Tickets On This Project</th>
-                                                    <th>Additional Information</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style="color:black;">
-                                                <tr>
-                                                    <td>@Model.Project.Description</td>
-                                                    <td>
-                                                        @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id).OrderBy(t => t.TicketPriority.Id))
-                                                        {
-                                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">
-                                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title
-                                                            </a><br />
-                                                        }
-                                                    </td>
-                                                    <td>
-                                                        <button><a href="@Url.Action("Details", "Projects", new { Id = Model.Project.Id })">Project Details</a></button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="box box-solid bg-maroon-gradient" id="notify">
-                                    <div class="box-header bg-maroon-active">
-                                        <h3 class="box-title">
-                                            <strong>Notifications</strong>
-                                        </h3>
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn bg-maroon btn-sm" data-widget="collapse">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-maroon btn-sm" id="notBtn">
-                                                <i class="fa fa-expand"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-maroon btn-sm" data-widget="remove">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="box-body bg-maroon">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="bg-maroon-active">
-                                                <tr>
-                                                    <th>Type</th>
-                                                    <th>Name</th>
-                                                    <th>Submitter</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style="color:black;">
-                                                <tr>
-                                                    <td>icon</td>
-                                                    <td>title</td>
-                                                    <td>name</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                @Html.Partial("CommentsPartial")
-                                
-                            </div>
-                            <div class="col-md-6 connectedSortable">
-                                <div class="box box-solid bg-teal-gradient">
-                                    <div class="box-header bg-teal-active">
-                                        <!-- tools box -->
-                                        <h3 class="box-title">
-                                            <strong>Team Info</strong>
-                                        </h3>
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn bg-teal btn-sm" data-widget="collapse">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-teal btn-sm" data-widget="remove">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="box-body bg-teal">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="bg-teal-active">
-                                                <tr>
-                                                    <th>Project Members</th>
-                                                    <th>Ticket Count</th>
-                                                    <th>Contact</th>
-                                                    <th>Roles</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style="color:black;">
-                                                @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Project.Id))
-                                                {
-                                                    <tr>
-                                                        <td>
-                                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName
-                                                            @if (users.Id == Model.AssignedToUserId)
-                                                            {
-                                                                @: - Assigned User
-                                                            }
-                                                            <br />
-                                                        </td>
-                                                        <td>@ticketHelper.MyTickets(users.Id, roleHelper.ListUserRoles(users.Id).FirstOrDefault()).Count()</td>
-                                                        <td>@users.Email</td>
-                                                        <td>@roleHelper.ListUserRoles(users.Id).FirstOrDefault()</td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="box box-solid bg-purple-gradient" id="history">
-                                    <div class="box-header bg-purple-active">
-                                        <h3 class="box-title">
-                                            <strong>History</strong>
-                                        </h3>
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn bg-purple btn-sm" data-widget="collapse">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-purple btn-sm" id="hisBtn">
-                                                <i class="fa fa-expand"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-purple btn-sm" data-widget="remove">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="box-body bg-purple">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="bg-purple-active">
-                                                <tr>
-                                                    <th>Type</th>
-                                                    <th>Name</th>
-                                                    <th>Submitter</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style="color:black;">
-                                                <tr>
-                                                    <td>icon</td>
-                                                    <td>title</td>
-                                                    <td>name</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                @Html.Partial("AttachmentsPartial")
-                                
-                            </div>
-                        </div>
-                    </section>
+<section class="content render-box" style="margin:25px">
+    <!-- Main row -->
+    <div class="row">
+        <div class="col-md-12 connectedSortable">
+            @Html.Partial("TicketsPartial")
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 connectedSortable">
+            <div class="box box-solid bg-aqua-gradient">
+                <div class="box-header bg-aqua-active">
+                    <h3 class="box-title">
+                        <strong>@Model.Project.Name Info</strong>
+                    </h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn bg-aqua btn-sm" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn bg-aqua btn-sm" data-widget="remove">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
                 </div>
-            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-            @Html.ActionLink("Back To Dashboard", "Index", "Home")
+                <div class="box-body bg-aqua">
+                    <table class="table table-bordered table-striped">
+                        <thead class="bg-aqua-active">
+                            <tr>
+                                <th>Description</th>
+                                <th>Other Tickets On This Project</th>
+                                <th>Additional Information</th>
+                            </tr>
+                        </thead>
+                        <tbody style="color:black;">
+                            <tr>
+                                <td>@Model.Project.Description</td>
+                                <td>
+                                    @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id).OrderBy(t => t.TicketPriority.Id))
+                                    {
+                                        <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">
+                                            <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title
+                                        </a><br />
+                                    }
+                                </td>
+                                <td>
+                                    <button><a href="@Url.Action("Details", "Projects", new { Id = Model.Project.Id })">Project Details</a></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="box box-solid bg-maroon-gradient" id="notify">
+                <div class="box-header bg-maroon-active">
+                    <h3 class="box-title">
+                        <strong>Notifications</strong>
+                    </h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn bg-maroon btn-sm" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn bg-maroon btn-sm" id="notBtn">
+                            <i class="fa fa-expand"></i>
+                        </button>
+                        <button type="button" class="btn bg-maroon btn-sm" data-widget="remove">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body bg-maroon">
+                    <table class="table table-bordered table-striped">
+                        <thead class="bg-maroon-active">
+                            <tr>
+                                <th>Type</th>
+                                <th>Name</th>
+                                <th>Submitter</th>
+                            </tr>
+                        </thead>
+                        <tbody style="color:black;">
+                            <tr>
+                                <td>icon</td>
+                                <td>title</td>
+                                <td>name</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @Html.Partial("CommentsPartial")
+                                
+        </div>
+    <div class="col-md-6 connectedSortable">
+        <div class="box box-solid bg-teal-gradient">
+            <div class="box-header bg-teal-active">
+                <!-- tools box -->
+                <h3 class="box-title">
+                    <strong>Team Info</strong>
+                </h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn bg-teal btn-sm" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn bg-teal btn-sm" data-widget="remove">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body bg-teal">
+                <table class="table table-bordered table-striped">
+                    <thead class="bg-teal-active">
+                        <tr>
+                            <th>Project Members</th>
+                            <th>Ticket Count</th>
+                            <th>Contact</th>
+                            <th>Roles</th>
+                        </tr>
+                    </thead>
+                    <tbody style="color:black;">
+                        @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Project.Id))
+                        {
+                            <tr>
+                                <td>
+                                    <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName
+                                    @if (users.Id == Model.AssignedToUserId)
+                                    {
+                                        @: - Assigned User
+                                    }
+                                    <br />
+                                </td>
+                                <td>@ticketHelper.MyTickets(users.Id, roleHelper.ListUserRoles(users.Id).FirstOrDefault()).Count()</td>
+                                <td>@users.Email</td>
+                                <td>@roleHelper.ListUserRoles(users.Id).FirstOrDefault()</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="box box-solid bg-purple-gradient" id="history">
+            <div class="box-header bg-purple-active">
+                <h3 class="box-title">
+                    <strong>History</strong>
+                </h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn bg-purple btn-sm" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn bg-purple btn-sm" id="hisBtn">
+                        <i class="fa fa-expand"></i>
+                    </button>
+                    <button type="button" class="btn bg-purple btn-sm" data-widget="remove">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body bg-purple">
+                <table class="table table-bordered table-striped">
+                    <thead class="bg-purple-active">
+                        <tr>
+                            <th>Type</th>
+                            <th>Name</th>
+                            <th>Submitter</th>
+                        </tr>
+                    </thead>
+                    <tbody style="color:black;">
+                        <tr>
+                            <td>icon</td>
+                            <td>title</td>
+                            <td>name</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @Html.Partial("AttachmentsPartial")
+                                
+    </div>
+    </div>
+</section>
+</div>
 
 @section scripts{
     <script>
@@ -215,8 +212,5 @@
             $("#comments").toggleClass("fullscreen");
         });
 
-        $("#attEx").click(function (e) {
-            $("#attachment").toggleClass("fullscreen");
-        });
     </script>
 }

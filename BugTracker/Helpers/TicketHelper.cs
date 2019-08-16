@@ -160,29 +160,51 @@ namespace BugTracker.Helpers
             db.SaveChanges();
         }
 
-        public static void CreateChangeNotification(Ticket oldTicket, Ticket newTicket)
+        public static void CreateHistory(Ticket oldTicket, Ticket newTicket)
         {
             foreach (var property in WebConfigurationManager.AppSettings["TrackedTicketProperties"].Split(','))
             {
                 var oldValue = oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null);
                 var newValue = newTicket.GetType().GetProperty(property).GetValue(newTicket, null);
                 if (oldValue != newValue)
-                    GenerateChangeNotification(property, oldValue, newValue, newTicket.AssignedToUserId, newTicket.Id);
+                    GenerateHistory(property, oldValue, newValue, newTicket.AssignedToUserId, newTicket.Id);
             }
+        }
+
+        private static void GenerateHistory(string property, object oldValue, object newValue, string assignedToUserId, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+
+        public static void CreateChangeNotification(Ticket oldTicket, Ticket newTicket)
+        {
+            var changes = new List<string>();
+            foreach (var property in WebConfigurationManager.AppSettings["TrackedTicketProperties"].Split(','))
+            {
+                var oldValue = oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null).ToString();
+                var newValue = newTicket.GetType().GetProperty(property).GetValue(newTicket, null).ToString();
+                if (oldValue != newValue)
+                    changes.Add(property);
+            }
+            if (changes.Count() > 0)
+                GenerateChangeNotification(changes, newTicket);
 
         }
 
-        private static void GenerateChangeNotification(string property, object oldValue, object newValue, string recipientId, int ticketId)
+        private static void GenerateChangeNotification(List<string> changes, Ticket newTicket)
         {
             var notification = new TicketNotification
             {
                 Created = DateTime.Now,
-                Subject = $"A change has occurred in the Ticket {ticketId} on {DateTime.Now}",
+                Subject = $"A change has occurred in the Ticket {newTicket.Title} on {newTicket.Updated}",
                 Read = false,
-                RecipientId = recipientId,
+                RecipientId = newTicket.AssignedToUserId,
                 SenderId = HttpContext.Current.User.Identity.GetUserId(),
-                NotificationBody = $"A change to property {property} was made at {DateTime.Now}. The old value was {oldValue.ToString()}, and the new value is {newValue.ToString()}.",
-                TicketId = ticketId,
+                NotificationBody = $"has made change(s) to property {string.Join(", ", changes)} was made at {newTicket.Updated}.",
+                TicketId = newTicket.Id,
             };
 
             db.TicketNotifications.Add(notification);
@@ -209,7 +231,7 @@ namespace BugTracker.Helpers
         public static List<TicketNotification> GetUnreadNotifications()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            return db.TicketNotifications.Where(t => t.RecipientId == userId && !t.Read).ToList();
+            return db.TicketNotifications.AsNoTracking().Where(t => t.RecipientId == userId && !t.Read).ToList();
         }
         public static List<TicketNotification> GetReadNotifications()
         {

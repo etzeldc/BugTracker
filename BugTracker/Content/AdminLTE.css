@@ -144,7 +144,7 @@ body {
 }
 /* Content */
 .content {
-  min-height: 250px;
+  min-height: unset;
   padding: 15px;
   margin-right: auto;
   margin-left: auto;

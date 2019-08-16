@@ -154,71 +154,25 @@
                             </ul>
                         </li>
                         <!-- Notifications: style can be found in dropdown.less -->
-                        <li class="dropdown notifications-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-bell-o"></i>
-                                @if (TicketHelper.GetNewUserNotificationCount() != 0)
-                                {
-                                    <span class="label label-warning">
-                                        @TicketHelper.GetNewUserNotificationCount()
-                                    </span>
-                                }
-                            </a>
-                            <!--Generate notifications here-->
-                            <ul class="dropdown-menu">
-                                <li class="header">New</li>
-                                <li>
-                                    <!-- inner menu: contains the actual data -->
-                                    <ul class="menu">
-                                        @*@foreach (var notification in TicketHelper.GetUnreadNotifications().OrderByDescending(t => t.Created).Take(5))
-                                        {
-                                            using (Html.BeginForm("MarkAsRead", "TicketNotifications", new { name = "ReadForm" }))
-                                            {
-                                                @Html.AntiForgeryToken()
-                                                @Html.Hidden("Id", notification.Id)
-                                                <li class="hover">
-                                                    <a onclick="$(this).closest('form').submit();" href="@Url.Action("Details", "Tickets", new { Id = notification.Ticket.Id })">
-                                                        <img src="@notification.Sender.AvatarUrl" class="img-circle"/> @notification.NotificationBody
-                                                    </a>
-                                                </li>
-                                            }
-                                        }*@
-                                    </ul>
-                                </li>
-                                <li class="header">Earlier</li>
-                                <li>
-                                    <ul>
-                                        @foreach (var notification in TicketHelper.GetReadNotifications().OrderByDescending(t =>t.Created).Take(5 - TicketHelper.GetNewUserNotificationCount()))
-                                        {
-                                        <li>
-                                            <a href="@Url.Action("Details", "Tickets", new { Id = notification.Ticket.Id })">
-                                                <img src="@notification.Sender.AvatarUrl" class="img-circle" /> @notification.NotificationBody
-                                            </a>
-                                        </li>
-                                        }
-                                    </ul>
-                                </li>
-                                @*<li class="footer"><a href="@Url.Action("Index", "TicketNotifications")">View all</a></li>*@
-                            </ul>
-                        </li>
+                        @Html.Partial("NotificationsPartial")
                         <!-- Tickets: style can be found in dropdown.less -->
-                        <li class="dropdown tasks-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-flag-o"></i>
-                                @if (ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() != 0)
-                                {
-                                    <span class="label label-danger">
-                                        @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count()
-                                    </span>
-                                }
-                            </a>
-                            <!--Generate a ticketlist here-->
-                            <ul class="dropdown-menu">
-                                <li class="header">
-                                    You have @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() tickets
-                                </li>
-                                @foreach (var ticket in ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()))
-                                {
+                    <li class="dropdown tasks-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-flag-o"></i>
+                            @if (ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() != 0)
+                            {
+                                <span class="label label-danger">
+                                    @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count()
+                                </span>
+                            }
+                        </a>
+                        <!--Generate a ticketlist here-->
+                        <ul class="dropdown-menu">
+                            <li class="header">
+                                You have @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() tickets
+                            </li>
+                            @foreach (var ticket in ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()))
+                            {
                                 <li>
                                     <ul class="menu">
                                         <li>
@@ -229,22 +183,22 @@
                                                     <small class="label label-default pull-right">@ticket.TicketStatus.Name</small>
                                                 </h3>
                                                 <div>
-                                                    @ticket.Project.Name - 
+                                                    @ticket.Project.Name -
 
                                                     @ticket.TicketPriority.Name
-                                                    
+
                                                 </div>
                                             </a>
                                         </li>
                                         <!-- end task item -->
                                     </ul>
                                 </li>
-                                }
-                                <li class="footer">
-                                    <a href="#">View all tasks</a>
-                                </li>
-                            </ul>
-                        </li>
+                            }
+                            <li class="footer">
+                                <a href="#">View all tasks</a>
+                            </li>
+                        </ul>
+                    </li>
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -310,7 +264,7 @@
                     </div>
                     <div class="pull-left info">
                         <p>@user.FullName</p>
-                        <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+                        <a href="#"><i class="fa fa-circle"></i> @roleHelper.ListUserRoles(user.Id).FirstOrDefault()</a>
                     </div>
                 </div>
                 <!-- SEARCH FORM (Make it work or take it out) -->
@@ -380,6 +334,11 @@
                                         </span>
                                     </a>
                                     <ul class="treeview-menu">
+                                        <li>
+                                            <a href="@Url.Action("Details", "Projects", new { Id = myProjects.Id })">
+                                                <i class="fa fa-info-circle"></i> Project Details
+                                            </a>
+                                        </li>
                                         @foreach (var myTickets in ticketHelper.TicketsOnProject(myProjects.Id).OrderBy(t => t.TicketPriority.Id))
                                         {
                                             if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
@@ -414,32 +373,35 @@
                         </ul>
                     </li>
                 </ul>
+                <!---->
+                <!---->
+                <!---->
+                <div class="pull-right hidden-xs">
+                    <b>Version</b> 2.4.13
+                </div>
+                <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE</a>.</strong> All rights
+                reserved.
+                <!---->
+                <!---->
+                <!---->
             </section>
             <!-- /.sidebar -->
         </aside>
 
         <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper" style="margin-top:50px; background-image: url('/Images/PatongSunset.JPG');  background-size:cover; " >
-            <section class="content">
+        <div class="content-wrapper" style="margin-top:50px; background-image: url('/Images/Emerald.JPG'); background-size:cover;">
+            <div class="content">
                 <div class="row">
-                    <div class="col-xs-12">
-                        <div class="box" style="height:750px; margin-bottom:0;">
-                            <div class="contain"> @*chat-box ---onto something here!!!*@
+                    <div class="col-xs-12"style="">
+                        <div style="height: 90vh; margin-bottom: 0; background-image: url('/Images/semitransparentWhite-25.png');">
+                            <section class="contain">
                                 @RenderBody()
-                            </div>
+                            </section>
                         </div>
                     </div>
                 </div>
-            </section>
-        </div>
-
-        <footer class="main-footer" style="position:fixed">
-            <div class="pull-right hidden-xs">
-                <b>Version</b> 2.4.13
             </div>
-            <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE</a>.</strong> All rights
-            reserved.
-        </footer>
+        </div>
     </div>
 
     <!-- Control Sidebar -->
@@ -676,6 +638,32 @@
         <script src="~/Scripts/dashboard.js"></script>
         <!-- AdminLTE for demo purposes -->
         <script src="~/Scripts/demo.js"></script>*@
+    @*<script>
+        $("#my-box").refreshBox({
+          // The URL for the source.
+          source: '',
+          // GET query paramaters (example: {search_term: 'layout'}, which renders to URL/?search_term=layout).
+          params: {},
+          // The CSS selector to the refresh button.
+          trigger: '.refresh-btn',
+          // The CSS selector to the target where the content should be rendered. This selector should exist within the box.
+          content: '.box-body',
+          // Whether to automatically render the content.
+          loadInContent: true,
+          // Response type (example: 'json' or 'html')
+          responseType: '',
+          // The HTML template for the ajax spinner.
+          overlayTemplate: '<div class="overlay"><div class="fa fa-refresh fa-spin"></div></div>',
+          // Called before the ajax request is made.
+          onLoadStart: function() {
+            // Do something before sending the request.
+          },
+          // Called after the ajax request is made.
+          onLoadDone: function(response) {
+            // Do something after receiving a response.
+          }
+        })
+    </script>*@
 </body>
 
 </html>

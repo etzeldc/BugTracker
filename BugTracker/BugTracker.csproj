@@ -229,9 +229,13 @@
     <Content Include="Global.asax" />
     <Content Include="Images\doc.png" />
     <Content Include="Images\docx.png" />
+    <Content Include="Images\Emerald.JPG" />
     <Content Include="Images\other.png" />
     <Content Include="Images\PatongSunset.JPG" />
     <Content Include="Images\pdf.png" />
+    <Content Include="Images\semitransparentWhite-25.png" />
+    <Content Include="Images\semitransparentWhite-50.png" />
+    <Content Include="Images\semitransparentWhite.png" />
     <Content Include="Images\xls.png" />
     <Content Include="Images\xlsx.png" />
     <Content Include="Images\zip.png" />
@@ -365,6 +369,7 @@
     <Content Include="Views\Shared\AttachmentsPartial.cshtml" />
     <Content Include="Views\Shared\CommentsPartial.cshtml" />
     <Content Include="Views\Shared\TicketsPartial.cshtml" />
+    <Content Include="Views\Shared\NotificationsPartial.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -35,14 +35,6 @@ td {
     left: 230px;
 }
 
-#attachment.fullscreen {
-    z-index: 9999;
-    width: inherit;
-    height: auto;
-    position: fixed;
-    top: 50px;
-    left: 230px;
-}
 
 aside.main-sidebar {
     position:fixed;
