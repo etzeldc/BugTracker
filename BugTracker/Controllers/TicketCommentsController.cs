@@ -63,6 +63,11 @@ namespace BugTracker.Controllers
             return View(ticketComment);
         }
 
+        public ActionResult CommentsPartial()
+        {
+            return PartialView();
+        }
+
         // GET: TicketComments/Edit/5
         public ActionResult Edit(int? id)
         {

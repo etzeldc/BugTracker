@@ -1,0 +1,76 @@
+﻿@using BugTracker.Helpers;
+@using Microsoft.AspNet.Identity;
+
+@model BugTracker.Models.Ticket
+
+    <div class="box box-solid" id="attachment">
+        <div class="box-header bg-aqua-active">
+            <i class="fa fa-files-o"></i>
+            <h3 class="box-title"><strong>Attachments</strong></h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn bg-aqua btn-sm" data-widget="collapse">
+                    <i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn bg-aqua btn-sm" id="attEx">
+                    <i class="fa fa-expand"></i>
+                </button>
+                <button type="button" class="btn bg-aqua btn-sm" data-widget="remove">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="box-body  bg-aqua">
+            <div class="content bg-gray chat-box" id="attachBody">
+                @foreach (var attachment in Model.TicketAttachments)
+                {
+                    <div class="row item">
+                        <div class="col-md-1">
+                            <img src="@FileHelper.GetIconPath(attachment.AttachmentUrl)" style="height:50px" />
+                        </div>
+                        <div class="col-md-offset-1 col-md-7">
+                            <div class="row">
+                                <strong>@attachment.Title : </strong>
+                                @attachment.Description
+                            </div>
+                            <div class="row">
+                                <a target="_blank" href="@attachment.AttachmentUrl">@Path.GetFileNameWithoutExtension(attachment.AttachmentUrl)</a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted pull-right">
+                                <i class="fa fa-user-o"></i> @attachment.User.FirstName @attachment.User.LastName<br />
+                                <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt M/dd/yyy")
+                            </small>
+                        </div>
+                    </div>
+                    <br />
+                }
+            </div>
+        </div>
+        <div class="box-footer bg-aqua-active">
+            @if (User.Identity.IsAuthenticated)
+            {
+                using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "Multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(model => model.Id);
+                    @Html.Hidden("TicketId", Model.Id);
+                    <div class="row">
+                        <div class="col-md-6" style="padding-right:5px">
+                            @Html.TextBox("AttachmentTitle", null, new { @class = "form-control col-fill-input", placeholder = "Attachement Title" })
+                        </div>
+                        <div class="col-md-6" style="padding-left:5px">
+                            @Html.TextBox("AttachmentDescription", null, new { @class = "form-control col-fill-textarea", placeholder = "Attachment Description" })
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input class="pull-left" type="file" name="attachment" /><button class="btn btn-primary btn-small pull-right" type="submit">ADD ATTACHMENT</button>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+

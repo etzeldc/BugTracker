@@ -78,6 +78,11 @@ namespace BugTracker.Controllers
             return View(ticketAttachment);
         }
 
+        public ActionResult AttachmentsPartial()
+        {
+            return PartialView();
+        }
+
         // GET: TicketAttachments/Edit/5
         public ActionResult Edit(int? id)
         {

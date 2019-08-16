@@ -23,113 +23,8 @@
                         <!-- Main row -->
                         <div class="row">
                             <div class="col-md-12 connectedSortable">
-                                <div class="box box-solid bg-green-gradient">
-                                    <div class="box-header bg-green-active">
-                                        <!-- tools box -->
-                                        <h3 class="box-title">
-                                            <strong>@Model.Title Info</strong>
-                                        </h3>
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn bg-green btn-sm" data-widget="collapse">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-green btn-sm" data-widget="remove">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="box-body bg-green">
-                                        <table class="table table-bordered table-striped">
-                                            <thead class="bg-green-active">
-                                                <tr>
-                                                    <th>Submitter</th>
-                                                    <th>Assigned User</th>
-                                                    <th>Status</th>
-                                                    <th>Priority</th>
-                                                    <th>Type</th>
-                                                    <th>Description</th>
-                                                    <th>Created</th>
-                                                    <th>Updated</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody style="color:black;">
-                                                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.ProjectId))
-                                                {
-                                                    using (Html.BeginForm("Edit", "Tickets"))
-                                                    {
-                                                        @Html.AntiForgeryToken();
-                                                        @Html.HiddenFor(model => model.Id);
-                                                        @Html.HiddenFor(model => model.ProjectId);
-                                                        @Html.HiddenFor(model => model.Created);
-                                                        <tr>
-                                                            <td>@Model.OwnerUser.FullName</td>
-                                                            <td>@Html.DropDownList("Developer", null, ticketHelper.TicketAssignee(Model.Id), new { @class = "form-control"})</td>
-                                                            <td>
-                                                                @Html.DropDownList("TicketStatusId", null, new { @class = "form-control"})
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control"})
-                                                            </td>
-                                                            <td>
-                                                                @Html.DropDownList("TicketTypeId", null, new { @class = "form-control"})
-                                                            </td>
-                                                            <td>
-                                                                @Html.EditorFor(model => model.Description, null, new { @class = "form-control, col-fill" })
-                                                            </td>
-                                                            <td>@Model.Created.ToString("MM/d/yyyy")</td>
-                                                            <td>@Model.Updated</td>
-                                                            <td>
-                                                                <input type="submit" value="Edit" class="btn btn-default" />
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    using (Html.BeginForm("Edit", "Tickets"))
-                                                    {
-                                                        @Html.AntiForgeryToken();
-                                                        @Html.HiddenFor(model => model.Id);
-                                                        @Html.HiddenFor(model => model.ProjectId);
-                                                        @Html.HiddenFor(model => model.Created);
-                                                        <tr>
-                                                            <td>@Model.OwnerUser.FullName</td>
-                                                            @if (Model.AssignedToUserId == null)
-                                                            {
-                                                                <td>Unassigned</td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>@Model.AssignedToUser.FullName</td>
-                                                            }
-                                                            <td>@Model.TicketStatus.Name</td>
-                                                            @if (User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.ProjectId))
-                                                            {
-                                                                <td>
-                                                                    @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
-                                                                </td>
-                                                                <td>
-                                                                    @Html.EditorFor(model => model.Description, null, new { @class = "form-control" })
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                <td>@Model.TicketPriority.Name</td>
-                                                                <td>@Model.TicketType.Name</td>
-                                                                <td>@Model.Description</td>
-                                                            }
-                                                            <td>@Model.Created.ToString("MM/d/yyyy")</td>
-                                                            <td>@Model.Updated</td>
-                                                        </tr>
-                                                    }
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
+                                
+                                @Html.Partial("TicketsPartial")
                             </div>
                         </div>
                         <div class="row">
@@ -212,56 +107,8 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="box box-solid" id="comments">
-                                    <div class="box-header bg-aqua-active">
-                                        <i class="fa fa-comments-o"></i>
-                                        <h3 class="box-title"><strong>Comments</strong></h3>
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn bg-aqua btn-sm" data-widget="collapse" id="comCol">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-aqua btn-sm">
-                                                <i class="fa fa-expand"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-aqua btn-sm" data-widget="remove">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="box-body chat-box bg-aqua">
-                                        <div class="content bg-gray skroll">
-                                            @foreach (var comment in Model.TicketComments)
-                                            {
-                                                <div class="item">
-                                                    <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> @comment.Author.FullName
-                                                    <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt M/dd/yyy")</small>
-                                                    <p>
-                                                        @comment.CommentBody
-                                                    </p>
-                                                </div>
-                                                <hr />
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="box-footer bg-aqua-active">
-                                        @if (User.Identity.IsAuthenticated)
-                                        {
-                                            using (Html.BeginForm("CreateComment", "Tickets", FormMethod.Post))
-                                            {
-                                                @Html.AntiForgeryToken()
-                                                @Html.HiddenFor(model => model.Id);
-                                                @Html.Hidden("TicketId", Model.Id);
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                    <input class="form-control" name="CommentBody" placeholder="Add comment..."/>
-                                                        <br />
-                                                    <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-comment-o"></i></button>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                </div>
+                                @Html.Partial("CommentsPartial")
+                                
                             </div>
                             <div class="col-md-6 connectedSortable">
                                 <div class="box box-solid bg-teal-gradient">
@@ -346,76 +193,8 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div class="box box-solid" id="attachment">
-                                    <div class="box-header bg-aqua-active">
-                                        <i class="fa fa-files-o"></i>
-                                        <h3 class="box-title"><strong>Attachments</strong></h3>
-                                        <div class="box-tools pull-right">
-                                            <button type="button" class="btn bg-aqua btn-sm" data-widget="collapse">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-aqua btn-sm" id="attEx">
-                                                <i class="fa fa-expand"></i>
-                                            </button>
-                                            <button type="button" class="btn bg-aqua btn-sm" data-widget="remove">
-                                                <i class="fa fa-times"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="box-body chat-box bg-aqua">
-                                        <div class="content  bg-gray skroll" id="attachBody">
-                                            @foreach (var attachment in Model.TicketAttachments)
-                                            {
-                                                <div class="row item">
-                                                    <div class="col-md-1">
-                                                        <img src="@FileHelper.GetIconPath(attachment.AttachmentUrl)" style="height:50px" />
-                                                    </div>
-                                                    <div class="col-md-offset-1 col-md-7">
-                                                        <div class="row">
-                                                            <strong>@attachment.Title : </strong>
-                                                            @attachment.Description
-                                                        </div>
-                                                        <div class="row">
-                                                            <a target="_blank" href="@attachment.AttachmentUrl">@Path.GetFileNameWithoutExtension(attachment.AttachmentUrl)</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <small class="text-muted pull-right">
-                                                            <i class="fa fa-user-o"></i> @attachment.User.FirstName @attachment.User.LastName<br />
-                                                            <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt M/dd/yyy")
-                                                        </small>
-                                                    </div>
-                                                </div>
-                                                <br />
-                                            }
-                                        </div>
-                                    </div>
-                                    <div class="box-footer bg-aqua-active">
-                                        @if (User.Identity.IsAuthenticated)
-                                        {
-                                            using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "Multipart/form-data" }))
-                                            {
-                                                @Html.AntiForgeryToken()
-                                                @Html.HiddenFor(model => model.Id);
-                                                @Html.Hidden("TicketId", Model.Id);
-                                                <div class="row">
-                                                    <div class="col-md-6" style="padding-right:5px">
-                                                        @Html.TextBox("AttachmentTitle", null, new { @class = "form-control col-fill-input", placeholder = "Attachement Title" })
-                                                    </div>
-                                                    <div class="col-md-6" style="padding-left:5px">
-                                                        @Html.TextBox("AttachmentDescription", null, new { @class = "form-control col-fill-textarea", placeholder = "Attachment Description" })
-                                                    </div>
-                                                </div>
-                                                <br />
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <input class="pull-left" type="file" name="attachment" /><button class="btn btn-primary btn-small pull-right" type="submit">ADD ATTACHMENT</button>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                </div>
+                                @Html.Partial("AttachmentsPartial")
+                                
                             </div>
                         </div>
                     </section>
@@ -435,9 +214,7 @@
         $("#comEx").click(function (e) {
             $("#comments").toggleClass("fullscreen");
         });
-        $("#comEx").click(function (e) {
-            $("#commentBody").toggleClass("fullscreen");
-        });
+
         $("#attEx").click(function (e) {
             $("#attachment").toggleClass("fullscreen");
         });

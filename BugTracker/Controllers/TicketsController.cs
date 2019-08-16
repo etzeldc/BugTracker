@@ -179,6 +179,11 @@ namespace BugTracker.Controllers
             return View(ticket);
         }
 
+        public ActionResult TicketsPartial()
+        {
+            return PartialView();
+        }
+
         // GET: Tickets/Delete/5
         public ActionResult Delete(int? id)
         {
