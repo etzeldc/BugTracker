@@ -122,11 +122,16 @@ $(function () {
 
   // SLIMSCROLL FOR CHAT WIDGET
     $('.chat-box').slimScroll({
-        height: '250px'
+        height: '35vh'
     });
 
-    $('.popBox').slimScroll({
-        height: '60vh'
+    $('.skroll').slimScroll({
+        height: '80vh'
+
+    });
+
+    $('.modal-skroll').slimScroll({
+        height: '59vh'
 
     });
 

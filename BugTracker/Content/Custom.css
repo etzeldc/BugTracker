@@ -16,13 +16,26 @@
     background-color: rgb(58,70,74);
 }
 
-.item > strong, .item > small, .item > p {
-    color: rgb(83,140,138);
-}
-
+.item > strong, .item > small, .item > p,
+.item > .col-md-3 > strong, .item > .col-md-3 > small, .item > .col-md-3 > p,
 .row > strong, .row > small, .row > p {
     color: rgb(83,140,138);
 }
+
 .row > a {
     color: rgb(86,204,200);
+}
+
+.back {
+    background-color: white;
+    padding: 2vh;
+}
+
+.edit-cell {
+    border: none;
+    background-color: rgb(86,204,200);
+}
+
+.skroll {
+    margin: 2vh;
 }

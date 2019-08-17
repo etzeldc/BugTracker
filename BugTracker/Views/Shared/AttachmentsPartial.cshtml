@@ -5,13 +5,13 @@
 
 
 
-<div class="box box-solid">
+<div class="box box-solid collapsed-box">
     <div class="box-header">
-        <i class="fa fa-files-o"></i>
+        <i class="fa fa-file"></i>
         <h3 class="box-title"><strong>Attachments</strong></h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-sm" data-widget="collapse">
-                <i class="fa fa-minus"></i>
+                <i class="fa fa-plus"></i>
             </button>
             <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#attModal">
                 <i class="fa fa-expand"></i>
@@ -22,7 +22,8 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="content chat-box">
+        <div class="content">
+            <div class="back chat-box">
             @foreach (var attachment in Model.TicketAttachments)
             {
                 <div class="row item">
@@ -41,12 +42,14 @@
                     <div class="col-md-3">
                         <small class="pull-right" style="color:rgb(83, 140, 138);">
                             <i class="fa fa-user"></i> @attachment.User.FirstName @attachment.User.LastName<br />
-                            <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt M/dd/yyy")
+                            <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt")<br />
+                            <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")
                         </small>
                     </div>
                 </div>
-                <br />
+                <hr />
             }
+            </div>
         </div>
     </div>
     <div class="box-footer">
@@ -87,6 +90,7 @@
             </button>      
         </div>
         <div class="modal-body">
+            <div class="back modal-skroll">
             @foreach (var attachment in Model.TicketAttachments)
             {
                 <div class="row item">
@@ -101,13 +105,15 @@
                     </div>
                     <div class="col-md-3">
                         <small class="pull-right">
-                            <i class="fa fa-user-o"></i> @attachment.User.FirstName @attachment.User.LastName<br />
-                            <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt M/dd/yyy")
+                            <i class="fa fa-user"></i> @attachment.User.FirstName @attachment.User.LastName<br />
+                            <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt")<br />
+                            <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")
                         </small>
                     </div>
                 </div>
-                <br />
+                <hr />
             }
+                </div>
         </div>
         <div class="box-footer">
             @if (User.Identity.IsAuthenticated)

@@ -79,7 +79,7 @@
                         <li class="dropdown messages-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-envelope-o"></i>
-                                <span class="label label-success">4</span>
+                                <span class="label">4</span>
                             </a>
                             <ul class="dropdown-menu">
                                 <li class="header">You have 4 messages</li>
@@ -161,7 +161,7 @@
                                 <i class="fa fa-flag-o"></i>
                                 @if (ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() != 0)
                                 {
-                                    <span class="label label-danger">
+                                    <span class="label">
                                         @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count()
                                     </span>
                                 }
@@ -208,15 +208,15 @@
                             <ul class="dropdown-menu">
                                 <!-- User image -->
                                 <li class="user-header">
-                                    <img src="@user.AvatarUrl" class="img-circle" alt="User Image">
-
-                                    <p>
-                                        @user.FullName - Web Developer
-                                        <small>Member since Nov. 2012</small>
-                                    </p>
+                                    <div class="back">
+                                        <img src="@user.AvatarUrl" class="img-circle" alt="User Image">
+                                        <p>
+                                            @user.FirstName @user.LastName - @roleHelper.ListUserRoles(user.Id).FirstOrDefault()
+                                        </p>
+                                    </div>
                                 </li>
                                 <!-- Menu Body -->
-                                <li class="user-body">
+                                @*<li class="user-body">
                                     <div class="row">
                                         <div class="col-xs-4 text-center">
                                             <a href="#">Followers</a>
@@ -228,18 +228,18 @@
                                             <a href="#">Friends</a>
                                         </div>
                                     </div>
-                                    <!-- /.row -->
-                                </li>
+                                     /.row 
+                                </li>*@
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        @Html.ActionLink("Profile","UserProfile", "Home", null, new { @class = "btn btn-default btn-flat" })
+                                        @Html.ActionLink("Profile","UserProfile", "Home", null, new { @class = "btn btn-flat" })
                                     </div>
                                     <div class="pull-right">
                                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { role = "form" }))
                                         {
                                             @Html.AntiForgeryToken();
-                                            <button class="btn btn-default btn-flat">Sign Out</button>
+                                            <button class="btn btn-flat">Sign Out</button>
                                         }
                                     </div>
                                 </li>
@@ -264,7 +264,7 @@
                     </div>
                     <div class="pull-left info">
                         <p>@user.FullName</p>
-                        <a href="#"><i class="fa fa-circle"></i> @roleHelper.ListUserRoles(user.Id).FirstOrDefault()</a>
+                        <a href="#"><i class="fa fa-user"></i> @roleHelper.ListUserRoles(user.Id).FirstOrDefault()</a>
                     </div>
                 </div>
                 <!-- SEARCH FORM (Make it work or take it out) -->

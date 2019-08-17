@@ -2,7 +2,7 @@
 
    <div class="box box-solid">
        <div class="box-header">
-           <i class="fa fa-comments-o"></i>
+           <i class="fa fa-comments"></i>
            <h3 class="box-title"><strong>Comments</strong></h3>
            <div class="box-tools pull-right">
                <button type="button" class="btn btn-sm" data-widget="collapse">
@@ -17,12 +17,12 @@
            </div>
        </div>
        <div class="box-body">
-           <div class="content chat-box">
+           <div class="content chat-box back">
                 @foreach (var comment in Model.TicketComments)
                 {
                     <div class="item">
                         <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> <strong>@comment.Author.FullName</strong>
-                        <small class="pull-right"><i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt M/dd/yyy")</small>
+                        <small class="pull-right"><i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />@comment.Created.ToString("M/dd/yyy")</small>
                         <p>
                             @comment.CommentBody
                         </p>

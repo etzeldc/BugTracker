@@ -10,7 +10,7 @@
 }
     <div class="box box-solid">
         <div class="box-header">
-            <!-- tools box -->
+            <i class="fa fa-info-circle"></i>
             <h3 class="box-title">
                 <strong>@Model.Title Info</strong>
             </h3>
@@ -24,8 +24,8 @@
             </div>
         </div>
         <div class="box-body">
-            <table class="table table-bordered table-striped">
-                <thead class="bg-green-active">
+            <table class="table table-bordered">
+                <thead>
                     <tr>
                         <th>Submitter</th>
                         <th>Assigned User</th>
@@ -63,8 +63,8 @@
                                 </td>
                                 <td>@Model.Created.ToString("MM/d/yyyy")</td>
                                 <td>@Model.Updated</td>
-                                <td>
-                                    <input type="submit" value="Edit" class="btn btn-default" />
+                                <td class="edit-cell">
+                                    <input type="submit" value="EDIT" class="btn" />
                                 </td>
                             </tr>
                         }
