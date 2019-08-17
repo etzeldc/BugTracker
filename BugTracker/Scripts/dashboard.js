@@ -125,8 +125,9 @@ $(function () {
         height: '250px'
     });
 
-    $('.render-box').slimScroll({
-        height: '720px'
+    $('.popBox').slimScroll({
+        height: '60vh'
+
     });
 
   /* Morris.js Charts */
@@ -149,7 +150,7 @@ $(function () {
     xkey      : 'y',
     ykeys     : ['item1', 'item2'],
     labels    : ['Item 1', 'Item 2'],
-    lineColors: ['#a0d0e0', '#3c8dbc'],
+    lineColors: ['#a0d0e0', 'rgb(36,52,56)'],
     hideHover : 'auto'
   });
   var line = new Morris.Line({
@@ -186,7 +187,7 @@ $(function () {
   var donut = new Morris.Donut({
     element  : 'sales-chart',
     resize   : true,
-    colors   : ['#3c8dbc', '#f56954', '#00a65a'],
+    colors   : ['rgb(36,52,56)', '#f56954', '#00a65a'],
     data     : [
       { label: 'Download Sales', value: 12 },
       { label: 'In-Store Sales', value: 30 },

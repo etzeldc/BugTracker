@@ -1,28 +1,28 @@
 ﻿@model BugTracker.Models.Ticket
 
-   <div class="box box-solid" id="comments">
-        <div class="box-header bg-aqua-active">
-            <i class="fa fa-comments-o"></i>
-            <h3 class="box-title"><strong>Comments</strong></h3>
-            <div class="box-tools pull-right">
-                <button type="button" class="btn bg-aqua btn-sm" data-widget="collapse">
-                    <i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn bg-aqua btn-sm" id="comEx">
-                    <i class="fa fa-expand"></i>
-                </button>
-                <button type="button" class="btn bg-aqua btn-sm" data-widget="remove">
-                    <i class="fa fa-times"></i>
-                </button>
-            </div>
-        </div>
-        <div class="box-body bg-aqua">
-            <div class="content bg-gray chat-box" @*id="scrollDown"*@>
+   <div class="box box-solid">
+       <div class="box-header">
+           <i class="fa fa-comments-o"></i>
+           <h3 class="box-title"><strong>Comments</strong></h3>
+           <div class="box-tools pull-right">
+               <button type="button" class="btn btn-sm" data-widget="collapse">
+                   <i class="fa fa-minus"></i>
+               </button>
+               <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#comModal">
+                   <i class="fa fa-expand"></i>
+               </button>
+               <button type="button" class="btn btn-sm" data-widget="remove">
+                   <i class="fa fa-times"></i>
+               </button>
+           </div>
+       </div>
+       <div class="box-body">
+           <div class="content chat-box">
                 @foreach (var comment in Model.TicketComments)
                 {
                     <div class="item">
-                        <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> @comment.Author.FullName
-                        <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt M/dd/yyy")</small>
+                        <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> <strong>@comment.Author.FullName</strong>
+                        <small class="pull-right"><i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt M/dd/yyy")</small>
                         <p>
                             @comment.CommentBody
                         </p>
@@ -30,8 +30,8 @@
                     <hr />
                 }
             </div>
-        </div>
-        <div class="box-footer bg-aqua-active">
+       </div>
+        <div class="box-footer">
             @if (User.Identity.IsAuthenticated)
             {
                 using (Html.BeginForm("CreateComment", "Tickets", FormMethod.Post))
@@ -43,7 +43,7 @@
                         <div class="col-md-12">
                             <input class="form-control" name="CommentBody" placeholder="Add comment..." />
                             <br />
-                            <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-comment-o"></i></button>
+                            <button type="submit" class="btn pull-right"><i class="fa fa-comment-o"></i></button>
                         </div>
                     </div>
                 }

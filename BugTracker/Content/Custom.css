@@ -4,38 +4,25 @@
     position: center;
 }
 
-td {
-    position: center;
+.modal {
+    top: 10vh;
+    right: 20vh;
+    bottom: 10vh;
+    left: 40vh;
+    height: 80vh;
 }
 
-#notify.fullscreen {
-    z-index: 9999;
-    width: inherit;
-    height: 100%;
-    position: fixed;
-    top: 50px;
-    left: 230px;
+.modal-body {
+    background-color: rgb(58,70,74);
 }
 
-#history.fullscreen {
-    z-index: 9999;
-    width: inherit;
-    height: 100%;
-    position: fixed;
-    top: 50px;
-    left: 230px;
+.item > strong, .item > small, .item > p {
+    color: rgb(83,140,138);
 }
 
-#comments.fullscreen {
-    z-index: 9999;
-    width: inherit;
-    height: auto;
-    position: fixed;
-    top: 50px;
-    left: 230px;
+.row > strong, .row > small, .row > p {
+    color: rgb(83,140,138);
 }
-
-
-aside.main-sidebar {
-    position:fixed;
+.row > a {
+    color: rgb(86,204,200);
 }

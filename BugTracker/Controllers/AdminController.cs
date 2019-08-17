@@ -87,11 +87,18 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         [OverrideAuthorization]
         [Authorize(Roles = "Admin, Project Manager")]
-        public ActionResult ManageProjectUsers(int projectId, List<string> ProjectManagers, List<string> Developers, List<string> Submitters)
+        public ActionResult ManageProjectUsers(int projectId, List<string>Admins, List<string> ProjectManagers, List<string> Developers, List<string> Submitters)
         {
             foreach (var user in projectHelper.UsersNotOnProject(projectId).ToList())
             {
                 projectHelper.RemoveUserFromProject(user.Id, projectId);
+            }
+            if (Admins != null)
+            {
+                foreach (var adminId in Admins)
+                {
+                    projectHelper.AddUserToProject(adminId, projectId);
+                }
             }
             if (ProjectManagers != null)
             {

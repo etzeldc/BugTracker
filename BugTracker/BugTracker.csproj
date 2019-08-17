@@ -213,6 +213,7 @@
     <Content Include="Content\AdminLTE.css" />
     <Content Include="Content\blue.css" />
     <Content Include="Content\bootstrap-datepicker.min.css" />
+    <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\bootstrap3-wysihtml5.min.css" />
     <Content Include="Content\Custom.css" />
@@ -223,7 +224,7 @@
     <Content Include="Content\jquery-jvectormap.css" />
     <Content Include="Content\jquery.dataTables.min.css" />
     <Content Include="Content\morris.css" />
-    <Content Include="Content\_all-skins.min.css" />
+    <Content Include="Content\_all-skins.css" />
     <Content Include="favicon-16x16.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

@@ -19,7 +19,7 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.7 -->
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <!-- Font Awesome -->
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <!-- Ionicons -->
@@ -28,7 +28,7 @@
     <link href="~/Content/AdminLTE.css" rel="stylesheet" />
     <!-- AdminLTE Skins. Choose a skin from the css/skins
      folder instead of downloading all of them to reduce the load. -->
-    <link href="~/Content/_all-skins.min.css" rel="stylesheet" />
+    <link href="~/Content/_all-skins.css" rel="stylesheet" />
     <!-- Morris chart -->
     <link href="~/Content/morris.css" rel="stylesheet" />
     <!-- jvectormap -->
@@ -156,49 +156,49 @@
                         <!-- Notifications: style can be found in dropdown.less -->
                         @Html.Partial("NotificationsPartial")
                         <!-- Tickets: style can be found in dropdown.less -->
-                    <li class="dropdown tasks-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <i class="fa fa-flag-o"></i>
-                            @if (ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() != 0)
-                            {
-                                <span class="label label-danger">
-                                    @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count()
-                                </span>
-                            }
-                        </a>
-                        <!--Generate a ticketlist here-->
-                        <ul class="dropdown-menu">
-                            <li class="header">
-                                You have @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() tickets
-                            </li>
-                            @foreach (var ticket in ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()))
-                            {
-                                <li>
-                                    <ul class="menu">
-                                        <li>
-                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id })">
-                                                <h3>
-                                                    @ticket.Title
-                                                    <i class="fa fa-circle pull-left @ticketHelper.TicketsByPriority(ticket.TicketPriority.Name)"></i>
-                                                    <small class="label label-default pull-right">@ticket.TicketStatus.Name</small>
-                                                </h3>
-                                                <div>
-                                                    @ticket.Project.Name -
-
-                                                    @ticket.TicketPriority.Name
-
-                                                </div>
-                                            </a>
-                                        </li>
-                                        <!-- end task item -->
-                                    </ul>
+                        <li class="dropdown tasks-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-flag-o"></i>
+                                @if (ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() != 0)
+                                {
+                                    <span class="label label-danger">
+                                        @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count()
+                                    </span>
+                                }
+                            </a>
+                            <!--Generate a ticketlist here-->
+                            <ul class="dropdown-menu">
+                                <li class="header">
+                                    You have @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() tickets
                                 </li>
-                            }
-                            <li class="footer">
-                                <a href="#">View all tasks</a>
-                            </li>
-                        </ul>
-                    </li>
+                                @foreach (var ticket in ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()))
+                                {
+                                    <li>
+                                        <ul class="menu">
+                                            <li>
+                                                <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id })">
+                                                    <h3>
+                                                        @ticket.Title
+                                                        <i class="fa fa-circle pull-left @ticketHelper.TicketsByPriority(ticket.TicketPriority.Name)"></i>
+                                                        <small class="label label-default pull-right">@ticket.TicketStatus.Name</small>
+                                                    </h3>
+                                                    <div>
+                                                        @ticket.Project.Name -
+
+                                                        @ticket.TicketPriority.Name
+
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            <!-- end task item -->
+                                        </ul>
+                                    </li>
+                                }
+                                <li class="footer">
+                                    <a href="#">View all tasks</a>
+                                </li>
+                            </ul>
+                        </li>
                         <!-- User Account: style can be found in dropdown.less -->
                         <li class="dropdown user user-menu">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -254,7 +254,7 @@
             </nav>
         </header>
         <!-- Left side column. contains the logo and sidebar -->
-        <aside class="main-sidebar" style="position:fixed">
+        <aside class="main-sidebar" style=" position:fixed">
             <!-- sidebar: style can be found in sidebar.less -->
             <section class="sidebar">
                 <!-- Sidebar user panel -->
