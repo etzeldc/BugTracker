@@ -41,8 +41,9 @@
     <link href="~/Content/bootstrap3-wysihtml5.min.css" rel="stylesheet" />
     <!-- Favicon -->
     <link href="~/favicon-16x16.png" rel="shortcut icon" />
-    <link href="~/Content/dataTables.bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/dataTables.bootstrap.css" rel="stylesheet" />
     <link href="~/Content/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/Custom.css" rel="stylesheet" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -354,10 +355,6 @@
                                         @if (User.IsInRole("Submitter"))
                                         {
                                             <li><a href="@Url.Action("Create", "Tickets")"><i class="fa fa-plus-circle"></i> Create Ticket</a></li>
-                                        }
-                                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-                                        {
-                                            <li><a href="#"><i class="fa fa-plus-circle"></i> Assign Tickets</a></li>
                                         }
                                     </ul>
                                 </li>

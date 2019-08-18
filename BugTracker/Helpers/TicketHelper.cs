@@ -162,10 +162,10 @@ namespace BugTracker.Helpers
 
         public static void CreateHistory(Ticket oldTicket, Ticket newTicket)
         {
-            foreach (var property in WebConfigurationManager.AppSettings["TrackedTicketProperties"].Split(','))
+            foreach (var property in WebConfigurationManager.AppSettings["TrackTicketHistory"].Split(','))
             {
-                var oldValue = oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null);
-                var newValue = newTicket.GetType().GetProperty(property).GetValue(newTicket, null);
+                var oldValue = oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null).ToString();
+                var newValue = newTicket.GetType().GetProperty(property).GetValue(newTicket, null).ToString();
                 if (oldValue != newValue)
                     GenerateHistory(property, oldValue, newValue, newTicket.AssignedToUserId, newTicket.Id);
             }

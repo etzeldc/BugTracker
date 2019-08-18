@@ -1,6 +1,6 @@
 ﻿select[multiple], select[size] {
     height: 100px;
-    width: 200px;
+    width: 235px;
     position: center;
 }
 
@@ -32,8 +32,12 @@
 }
 
 .edit-cell {
-    border: none;
-    background-color: rgb(86,204,200);
+    border: none !important;
+    background-color: rgb(58,70,74) !important;
+}
+
+.edit-box {
+    height: 17vh;
 }
 
 .skroll {

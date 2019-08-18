@@ -125,8 +125,7 @@ namespace BugTracker.Controllers
         }
 
         // POST REMOVE USERS FROM PROJECT
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+
         [OverrideAuthorization]
         [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult RemoveProjectUser(string userId, int projectId)

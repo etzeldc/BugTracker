@@ -15,6 +15,7 @@
 }
 
 <div class="box-header">
+    <i class="fa fa-inbox"></i>
     <h3 class="box-title">
         <strong>Projects</strong>
     </h3>
@@ -23,11 +24,23 @@
     <section class="content render-box skroll">
         <div class="row">
             <div class="col-md-12">
-                <div class="box">
+                <div class="box box-solid">
                     <div class="box-header">
-                        <h3 class="box-title">@Model.Name Details</h3>
+                        <i class="fa fa-info-circle"></i>
+                        <h3 class="box-title">
+                            <strong> @Model.Name Details</strong>
+                        </h3>
+                    <!--BOX TOOLS-->
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-sm" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-sm" data-widget="remove">
+                            <i class="fa fa-times"></i>
+                        </button>
                     </div>
-                    <div class="box">
+                    </div>
+                    <div class="box-body">
                         <table id="userTable" class="table table-bordered table-striped">
                             <thead>
                                 <tr>
@@ -76,77 +89,126 @@
                                             }
                                         </td>
                                     }
-                                    <td>
-                                        @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Id))
-                                        {
-                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">@ticks.Title</a><br />
-                                        }
-                                    </td>
+                                <td>
+                                    @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Id))
+                                    {
+                                        <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id})">
+                                            <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title
+                                        </a><br />}
+                                </td>
                                     <td>
                                         @Html.DisplayFor(model => model.Created)
                                     </td>
-                                    <td>
-                                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.Id))
-                                        {
-                                            @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
-                                        }
-                                    </td>
+
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
-                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-                {
-                    <div class="box">
+            </div>
+        </div>
+        <div class="row">
+            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+            {
+                <div class="col-md-7">
+                    <div class="box box-solid">
                         <div class="box-header">
-                            <h3 class="box-title">Assign Users To @Model.Name</h3>
+                            <i class="fa fa-user-plus"></i>
+                            <h3 class="box-title">
+                                <strong> Assign Users To @Model.Name</strong>
+                            </h3>
                         </div>
                         <div class="box-body">
-                            <table id="userTable" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Project Managers</th>
-                                        <th>Developers</th>
-                                        <th>Submitters</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @using (Html.BeginForm("ManageProjectUsers", "Admin"))
+                            @using (Html.BeginForm("ManageProjectUsers", "Admin"))
                                     {
-                                        @Html.AntiForgeryToken()
-                                        @Html.Hidden("ProjectId", Model.Id)
-                                        <tr>
-                                            <td>
-                                                @if (User.IsInRole("Admin"))
-                                                {
-                                                    @Html.ListBox("Admins")
-                                                } else
-                                                {
-                                                @Html.ListBox("ProjectManagers")
-                                                }
-                                            </td>
-                                            <td>
-                                                @Html.ListBox("Developers")
-                                            </td>
-                                            <td>
-                                                @Html.ListBox("Submitters")
-                                            </td>
-                                        </tr>
-                                        <tr class="form-group">
-                                            <td>
-
-                                                <input type="submit" value="Assign" class="btn btn-default" />
-                                            </td>
-                                        </tr>
+                                        <table id="userTable" class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Project Managers</th>
+                                                    <th>Developers</th>
+                                                    <th>Submitters</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    @Html.AntiForgeryToken()
+                                                    @Html.Hidden("ProjectId", Model.Id)
+                                                    <tr>
+                                                        <td>
+                                                            @if (User.IsInRole("Admin"))
+                                                            {
+                                                                @Html.ListBox("Admins")
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.ListBox("ProjectManagers")
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            @Html.ListBox("Developers")
+                                                        </td>
+                                                        <td>
+                                                            @Html.ListBox("Submitters")
+                                                        </td>
+                                                    </tr>
+                                            </tbody>
+                                        </table>
+                                        <input type="submit" value="Assign" class="btn center-block form-group" />
                                     }
-                                </tbody>
-                            </table>
                         </div>
                     </div>
-                }
+                </div>
+                <div class="col-md-5 connectedSortable">
+                <!--EDIT-->
+                <div class="box box-solid">
+                    <div class="box-header">
+                        <i class="fa fa-edit"></i>
+                        <h3 class="box-title">
+                            <strong> Edit @Model.Name</strong>
+                        </h3>
+                        <div class="box-tools pul-right">
+                            <button type="button" class="btn btn-sm" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm" data-widget="remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="content back edit-box">
+                            @using (Html.BeginForm())
+                            {
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                                    <div class="col-md-10">
+                                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-offset-2 col-md-10">
+                                        <input type="submit" value="Save" class="btn" />
+                                    </div>
+                                </div>
+                            }
+                        <!--DELETE BUTTON GOES HERE!!-->
+                        </div>
+                    </div>
+                </div>
+                <!--CREATE-->
+                <div class="box box-solid collapsed-box">
+                    @Html.Partial("CreateProjectPartial")
+                </div>
             </div>
+            }
         </div>
     </section>
 </div>

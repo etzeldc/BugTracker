@@ -8,7 +8,9 @@
 <div class="box box-solid collapsed-box">
     <div class="box-header">
         <i class="fa fa-file"></i>
-        <h3 class="box-title"><strong>Attachments</strong></h3>
+        <h3 class="box-title">
+            <strong>Attachments</strong>
+        </h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-sm" data-widget="collapse">
                 <i class="fa fa-plus"></i>
@@ -22,8 +24,7 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="content">
-            <div class="back chat-box">
+            <div class="content back chat-box">
             @foreach (var attachment in Model.TicketAttachments)
             {
                 <div class="row item">
@@ -50,7 +51,6 @@
                 <hr />
             }
             </div>
-        </div>
     </div>
     <div class="box-footer">
         @if (User.Identity.IsAuthenticated)
@@ -125,10 +125,10 @@
                     @Html.Hidden("TicketId", Model.Id);
                     <div class="row">
                         <div class="col-md-6" style="padding-right:5px">
-                            @Html.TextBox("AttachmentTitle", null, new { @class = "form-control col-fill-input pophead", placeholder = "Attachement Title" })
+                            @Html.TextBox("AttachmentTitle", null, new { @class = "form-control", placeholder = "Attachement Title" })
                         </div>
                         <div class="col-md-6" style="padding-left:5px">
-                            @Html.TextBox("AttachmentDescription", null, new { @class = "form-control col-fill-textarea pophead", placeholder = "Attachment Description" })
+                            @Html.TextBox("AttachmentDescription", null, new { @class = "form-control", placeholder = "Attachment Description" })
                         </div>
                     </div>
                     <br />

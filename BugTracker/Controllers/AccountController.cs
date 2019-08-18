@@ -200,7 +200,7 @@ namespace BugTracker.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return RedirectToAction("Register", "Home");
         }
 
         //

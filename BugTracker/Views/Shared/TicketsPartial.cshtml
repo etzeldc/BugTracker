@@ -35,6 +35,7 @@
                         <th>Description</th>
                         <th>Created</th>
                         <th>Updated</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody style="color:black;">
@@ -97,7 +98,7 @@
                                         @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
                                     </td>
                                     <td>
-                                        @Html.EditorFor(model => model.Description, null, new { @class = "form-control" })
+                                        @Html.TextBoxFor(model => model.Description, new { @class = "form-control" })
                                     </td>
                                 }
                                 else

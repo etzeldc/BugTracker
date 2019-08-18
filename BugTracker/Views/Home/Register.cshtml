@@ -12,7 +12,7 @@
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.7 -->
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <!-- Font Awesome -->
     <link href="~/Content/font-awesome.min.css" rel="stylesheet" />
     <!-- Ionicons -->
@@ -24,7 +24,7 @@
     <!-- Favicon -->
     <link href="~/favicon-16x16.png" rel="shortcut icon" />
 
-
+    <link href="~/Content/Custom.css" rel="stylesheet" />
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -47,11 +47,7 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.ValidationSummary("", new { @class = "text-danger" })
-                <div class="form-group has-feedback">
-                    @Html.Editor("Avatar", new { htmlAttributes = new { @class = "form-control", type = "file" } })
-                    <span class="glyphicon glyphicon-user form-control-feedback"></span>
-                </div>
-                <div class="form-group has-feedback">
+                                <div class="form-group has-feedback">
                     @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "First Name" })
                     <span class="glyphicon glyphicon-user form-control-feedback"></span>
                     @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })

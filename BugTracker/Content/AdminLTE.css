@@ -1282,7 +1282,8 @@ a:focus {
   box-shadow: none;
   border-color: #d2d6de;
   background-color: rgb(83,140,138);
-    color: rgb(36,52,56);
+  color: rgb(36,52,56);
+  font-weight: bold;
 }
 .form-control:focus {
   border-color: rgb(36,52,56);
@@ -2631,8 +2632,8 @@ a:focus {
 }
 /* PAGINATION */
 .pagination > li > a {
-  background: #fafafa;
-  color: #666;
+    background-color: rgb(86,204,200);
+    color: rgb(36,52,56);
 }
 .pagination.pagination-flat > li > a {
   border-radius: 0 !important;

@@ -86,6 +86,11 @@ namespace BugTracker.Controllers
             return View(project);
         }
 
+        public ActionResult CreateProjectPartial()
+        {
+            return PartialView();
+        }
+
         // GET: Projects/Edit/5
         public ActionResult Edit(int? id)
         {

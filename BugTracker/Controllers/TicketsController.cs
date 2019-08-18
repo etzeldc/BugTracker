@@ -170,6 +170,7 @@ namespace BugTracker.Controllers
                 projectHelper.AddUserToProject(newTicket.AssignedToUserId, newTicket.ProjectId);
                 TicketHelper.CreateAssignmentNotification(oldTicket, newTicket);
                 TicketHelper.CreateChangeNotification(oldTicket, newTicket);
+                //TicketHelper.CreateHistory(oldTicket, newTicket);
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
             ViewBag.Developers = new SelectList(allDevelopers, "Id", "FullName", ticket.AssignedToUserId);
