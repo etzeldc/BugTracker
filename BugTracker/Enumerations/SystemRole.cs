@@ -10,6 +10,7 @@ namespace BugTracker.Enumerations
         Admin,
         ProjectManager,
         Developer,
-        Submitter
+        Submitter,
+        None
     }
 }

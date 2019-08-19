@@ -371,6 +371,8 @@
     <Content Include="Views\Shared\TicketsPartial.cshtml" />
     <Content Include="Views\Shared\NotificationsPartial.cshtml" />
     <Content Include="Views\Shared\CreateProjectPartial.cshtml" />
+    <Content Include="Views\Home\DemoUser.cshtml" />
+    <Content Include="Views\Shared\CreateTicketPartial.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

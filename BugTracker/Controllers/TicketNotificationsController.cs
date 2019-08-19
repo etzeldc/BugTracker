@@ -156,13 +156,23 @@ namespace BugTracker.Controllers
             return RedirectToAction("Details", "Tickets", new { Id = notification.TicketId });
         }
 
-        public ActionResult MarkAllAsRead()
+        public ActionResult MarkAllAsRead(string returnUrl)
         {
-            foreach (var notification in db.TicketNotifications){
+            foreach (var notification in db.TicketNotifications)
+            {
                 notification.Read = true;
             }
             db.SaveChanges();
-            return RedirectToAction("Index", "Home");
+            return RedirectToLocal(returnUrl);
+        }
+
+        private ActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+            return RedirectToAction("Index", "TicketNotifications");
         }
 
         public ActionResult NotificationsPartial()

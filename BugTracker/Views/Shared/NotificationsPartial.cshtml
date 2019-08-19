@@ -21,13 +21,15 @@
             {
                 <li class="header">New
                     <span class="pull-right">
-                    @*MARK ALL AS READ
-                    @Html.ActionLink("Mark All As Read", "MarkAllAsRead", "TicketNotifications", new { userId})*@
+                       @using (Html.BeginForm("MarkAllAsRead", "TicketNotifications", new { }))
+                       {
+                            @Html.AntiForgeryToken()
+                            <a href="#" onclick="$(this).closest('form').submit();">Mark All As Read</a>
+                        }
                     </span>
                 </li>
             }
             <li>
-                <!-- inner menu: contains the actual data -->
                 <ul class="menu">
                     @foreach (var notification in TicketHelper.GetUnreadNotifications().OrderByDescending(t => t.Created).Take(5))
                     {

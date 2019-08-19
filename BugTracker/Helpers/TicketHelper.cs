@@ -148,11 +148,11 @@ namespace BugTracker.Helpers
             var notification = new TicketNotification
             {
                 Created = DateTime.Now,
-                Subject = $"You have been assigned to Ticket {newTicket.Id} on {DateTime.Now}",
+                Subject = $"assigned you to a new ticket",
                 Read = false,
                 RecipientId = newTicket.AssignedToUserId,
                 SenderId = HttpContext.Current.User.Identity.GetUserId(),
-                NotificationBody = $"Please acknowledge that you have read this notification by marking it as read",
+                NotificationBody = $"You have been assigned to ticket {newTicket.Title}.",
                 TicketId = newTicket.Id,
             };
 
@@ -196,14 +196,29 @@ namespace BugTracker.Helpers
 
         private static void GenerateChangeNotification(List<string> changes, Ticket newTicket)
         {
+            var output = "";
+            if (changes.Count() == 1)
+            {
+                output = string.Join("", changes).Replace("Id", "");
+            }
+            else if (changes.Count() == 2)
+            {
+                output = string.Join(" and ", changes).Replace("Id", "");
+            }
+            else if (changes.Count() > 2)
+            {
+                output = string.Join(", ", changes.Take(changes.Count() - 1));
+                output = output + string.Concat(", and ", changes.Last());
+                output = output.Replace("Id", "");
+            }
             var notification = new TicketNotification
             {
                 Created = DateTime.Now,
-                Subject = $"A change has occurred in the Ticket {newTicket.Title} on {newTicket.Updated}",
+                Subject = $"made a change to ticket {newTicket.Title}",
                 Read = false,
                 RecipientId = newTicket.AssignedToUserId,
                 SenderId = HttpContext.Current.User.Identity.GetUserId(),
-                NotificationBody = $"has made change(s) to property {string.Join(", ", changes)} was made at {newTicket.Updated}.",
+                NotificationBody = $"The {output} of {newTicket.Title} has changed.",
                 TicketId = newTicket.Id,
             };
 

@@ -78,12 +78,12 @@ namespace BugTracker.Controllers
 
         // GET: Tickets/Create
         [Authorize(Roles = "Submitter")]
-        public ActionResult Create()
+        public ActionResult Create(int projectId)
         {
             var userId = User.Identity.GetUserId();
             var myProjects = projectHelper.ListUserProjects(userId);
 
-            ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name");
+            ViewBag.ProjectId = projectId;
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name");
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name");
             return View();
@@ -113,6 +113,12 @@ namespace BugTracker.Controllers
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
             return View(ticket);
         }
+
+        //public ActionResult CreateTicketPartial(int projectId)
+        //{
+        //    var 
+        //    return PartialView("CreateTicketPartial", ticket.ProjectId = projectId);
+        //}
 
         // GET: Tickets/Edit/5
         [Authorize(Roles = "Admin, Project Manager, Submitter, Developer")]

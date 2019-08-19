@@ -5,7 +5,7 @@
         <h3 class="box-title">
             <strong> Create New Project</strong>
         </h3>
-        <div class="box-tools pul-right">
+        <div class="box-tools pull-right">
             <button type="button" class="btn btn-sm" data-widget="collapse">
                 <i class="fa fa-plus"></i>
             </button>
@@ -15,10 +15,10 @@
         </div>
     </div>
     <div class="box-body">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
         <div class="content back edit-box">
-            @using (Html.BeginForm())
-            {
-                @Html.AntiForgeryToken()
                 <div class="form-group">
                     @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
                     <div class="col-md-10">
@@ -34,11 +34,13 @@
                         @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Create" class="btn" />
-                    </div>
-                </div>
-            }
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="pull-right">
+                    <input type="submit" value="Create" class="btn" />
+                </div>
+            </div>
+        </div>
+            }
     </div>

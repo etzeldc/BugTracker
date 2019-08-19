@@ -354,7 +354,11 @@
                                         }
                                         @if (User.IsInRole("Submitter"))
                                         {
-                                            <li><a href="@Url.Action("Create", "Tickets")"><i class="fa fa-plus-circle"></i> Create Ticket</a></li>
+                                            <li>
+                                                <a href="@Url.Action("Create", "Tickets", new { projectId = myProjects.Id })">
+                                                    <i class="fa fa-plus-circle"></i> Create Ticket
+                                                </a>
+                                            </li>
                                         }
                                     </ul>
                                 </li>

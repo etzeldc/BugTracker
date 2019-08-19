@@ -69,6 +69,5 @@ namespace BugTracker.Models
         public DbSet<TicketPriority> TicketPriorities{ get; set; }
         public DbSet<TicketStatus> TicketStatuses { get; set; }
         public DbSet<TicketType> TicketTypes { get; set; }
-
     }
 }

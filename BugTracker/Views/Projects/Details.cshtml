@@ -30,7 +30,6 @@
                         <h3 class="box-title">
                             <strong> @Model.Name Details</strong>
                         </h3>
-                    <!--BOX TOOLS-->
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-sm" data-widget="collapse">
                             <i class="fa fa-minus"></i>
@@ -41,7 +40,7 @@
                     </div>
                     </div>
                     <div class="box-body">
-                        <table id="userTable" class="table table-bordered table-striped">
+                        <table id="userTable" class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -54,7 +53,6 @@
                                     <th>Tickets</th>
                                     <th>Created</th>
                                 </tr>
-
                             </thead>
                             <tbody>
                                 <tr>
@@ -85,16 +83,24 @@
                                         <td>
                                             @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
                                             {
-                                                @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, null)<br />
+                                                if (!User.IsInRole("Admin") && roleHelper.IsUserInRole(users.Id, "Admin"))
+                                                {
+                                                    <br />
+                                                }
+                                                else
+                                                {
+                                                    @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, null)<br />
+                                                }
                                             }
                                         </td>
                                     }
                                 <td>
-                                    @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Id))
+                                    @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Id).OrderBy(t => t.TicketPriorityId))
                                     {
                                         <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id})">
                                             <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title
-                                        </a><br />}
+                                        </a><br />
+                                    }
                                 </td>
                                     <td>
                                         @Html.DisplayFor(model => model.Created)
@@ -117,90 +123,150 @@
                             <h3 class="box-title">
                                 <strong> Assign Users To @Model.Name</strong>
                             </h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-sm" data-widget="collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm" data-widget="remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="box-body">
                             @using (Html.BeginForm("ManageProjectUsers", "Admin"))
-                                    {
-                                        <table id="userTable" class="table table-bordered table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <th>Project Managers</th>
-                                                    <th>Developers</th>
-                                                    <th>Submitters</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                    @Html.AntiForgeryToken()
-                                                    @Html.Hidden("ProjectId", Model.Id)
-                                                    <tr>
-                                                        <td>
-                                                            @if (User.IsInRole("Admin"))
-                                                            {
-                                                                @Html.ListBox("Admins")
-                                                            }
-                                                            else
-                                                            {
-                                                                @Html.ListBox("ProjectManagers")
-                                                            }
-                                                        </td>
-                                                        <td>
-                                                            @Html.ListBox("Developers")
-                                                        </td>
-                                                        <td>
-                                                            @Html.ListBox("Submitters")
-                                                        </td>
-                                                    </tr>
-                                            </tbody>
-                                        </table>
-                                        <input type="submit" value="Assign" class="btn center-block form-group" />
-                                    }
+                            {
+                                <table id="userTable" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Project Managers</th>
+                                            <th>Developers</th>
+                                            <th>Submitters</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                            @Html.AntiForgeryToken()
+                                            @Html.Hidden("ProjectId", Model.Id)
+                                            <tr>
+                                                <td>
+                                                    @if (User.IsInRole("Admin"))
+                                                    {
+                                                        @Html.ListBox("Admins")
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.ListBox("ProjectManagers")
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @Html.ListBox("Developers")
+                                                </td>
+                                                <td>
+                                                    @Html.ListBox("Submitters")
+                                                </td>
+                                            </tr>
+                                    </tbody>
+                                </table>
+                                <input type="submit" value="Assign" class="btn pull-right form-group" />
+                            }
                         </div>
                     </div>
                 </div>
                 <div class="col-md-5 connectedSortable">
                 <!--EDIT-->
-                <div class="box box-solid">
+                <div class="box box-solid collapsed-box">
                     <div class="box-header">
                         <i class="fa fa-edit"></i>
                         <h3 class="box-title">
                             <strong> Edit @Model.Name</strong>
                         </h3>
-                        <div class="box-tools pul-right">
+                        <div class="box-tools pull-right">
                             <button type="button" class="btn btn-sm" data-widget="collapse">
-                                <i class="fa fa-minus"></i>
+                                <i class="fa fa-plus"></i>
                             </button>
                             <button type="button" class="btn btn-sm" data-widget="remove">
                                 <i class="fa fa-times"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="box-body">
-                        <div class="content back edit-box">
-                            @using (Html.BeginForm())
-                            {
-                                @Html.AntiForgeryToken()
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                        <div class="box-body">
+                    @using (Html.BeginForm())
+                    {
+                                    @Html.AntiForgeryToken()
+                            <div class="content back edit-box">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-                                    <div class="col-md-10">
-                                        @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                                        <div class="col-md-10">
+                                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="col-md-offset-2 col-md-10">
+                            </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                    <div class="pull-right">
                                         <input type="submit" value="Save" class="btn" />
                                     </div>
-                                </div>
-                            }
-                        <!--DELETE BUTTON GOES HERE!!-->
+                            </div>
                         </div>
+                    }
+                    </div>
+                    </div>
+                <!--DELETE-->
+                <div class="box box-solid collapsed-box">
+                    <div class="box-header">
+                        <i class="fa fa-trash"></i>
+                        <h3 class="box-title">
+                            <strong>Delete</strong>
+                        </h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-sm" data-widget="collapse">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm" data-widget="remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                <div class="box-body">
+                    @using (Html.BeginForm("Delete", "Projects", FormMethod.Get))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.Id)
+                    <div class="content back edit-box">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Name)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.Name)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Description)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.Description)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Created)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.Created)
+                            </dd>
+                        </dl>
+                    </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="submit" value="Delete" class="btn pull-right" />
+                            </div>
+                        </div>
+                           }
                     </div>
                 </div>
                 <!--CREATE-->
@@ -209,7 +275,16 @@
                 </div>
             </div>
             }
+            @*@if (User.IsInRole("Submitter"))
+            {
+                <div class="col-md-6">
+                    @{
+                        Html.RenderAction("CreateTicketPartial", "Tickets", new Ticket { });
+                    }
+                </div>
+            }*@
         </div>
+            
     </section>
 </div>
 

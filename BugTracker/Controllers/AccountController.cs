@@ -64,6 +64,10 @@ namespace BugTracker.Controllers
             return RedirectToAction("Login", "Home");
         }
 
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+
+
         //
         // POST: /Account/Login
         [HttpPost]

@@ -58,11 +58,21 @@
                                 <tr>
                                     <td>@Model.Project.Description</td>
                                     <td>
-                                        @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id).OrderBy(t => t.TicketPriority.Id))
+                                        @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id).OrderBy(t => t.TicketPriorityId))
                                         {
-                                            <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">
-                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title
-                                            </a><br />
+                                            if (ticks.Id != Model.Id)
+                                            {
+                                                if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, ticks.Id) || userId == ticketHelper.TicketAssignee(ticks.Id) || userId == ticks.OwnerUserId)
+                                                {
+                                                    <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">
+                                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title
+                                                    </a><br />
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title<br />
+                                                }
+                                            }
                                         }
                                     </td>
                                     <td>
@@ -119,43 +129,6 @@
                         </table>
                     </div>
                 </div>
-                @*<div class="box box-solid collapsed-box">
-                    <div class="box-header">
-                        <i class="fa fa-bell"></i>
-                        <h3 class="box-title">
-                            <strong>Notifications</strong>
-                        </h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-sm" data-widget="collapse">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm" id="notBtn">
-                                <i class="fa fa-expand"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm" data-widget="remove">
-                                <i class="fa fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Name</th>
-                                    <th>Submitter</th>
-                                </tr>
-                            </thead>
-                            <tbody style="color:black;">
-                                <tr>
-                                    <td>icon</td>
-                                    <td>title</td>
-                                    <td>name</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>*@
                 <div class="box box-solid collapsed-box">
                     <div class="box-header">
                         <i class="fa fa-header"></i>
@@ -196,7 +169,7 @@
                 @Html.Partial("AttachmentsPartial")
 
             </div>
-    </div>
+        </div>
     </section>
 </div>
 
