@@ -54,9 +54,9 @@ namespace BugTracker.Controllers
 
 
         // GET: Tickets/Details/5
+        [Authorize]
         public ActionResult Details(int? id)
         {
-
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -164,7 +164,6 @@ namespace BugTracker.Controllers
             if (ModelState.IsValid)
             {
                 var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
-
                 var newTicket = db.Tickets.Find(ticket.Id);
                 newTicket.AssignedToUserId = developer;
                 newTicket.TicketTypeId = ticket.TicketTypeId;
@@ -176,7 +175,7 @@ namespace BugTracker.Controllers
                 projectHelper.AddUserToProject(newTicket.AssignedToUserId, newTicket.ProjectId);
                 TicketHelper.CreateAssignmentNotification(oldTicket, newTicket);
                 TicketHelper.CreateChangeNotification(oldTicket, newTicket);
-                //TicketHelper.CreateHistory(oldTicket, newTicket);
+                TicketHelper.CreateHistoryRecord(oldTicket, newTicket);
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
             ViewBag.Developers = new SelectList(allDevelopers, "Id", "FullName", ticket.AssignedToUserId);

@@ -1,0 +1,90 @@
+﻿@using BugTracker.Helpers;
+@using Microsoft.AspNet.Identity;
+
+
+@model BugTracker.Models.Ticket
+
+<div class="box box-solid">
+    <div class="box-header">
+        <i class="fa fa-header"></i>
+        <h3 class="box-title">
+            <strong>History</strong>
+        </h3>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-sm" data-widget="collapse">
+                <i class="fa fa-minus"></i>
+            </button>
+            <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#hisModal">
+                <i class="fa fa-expand"></i>
+            </button>
+            <button type="button" class="btn btn-sm" data-widget="remove">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="content back">
+            <ul class="timeline">
+                @foreach (var date in Model.TicketHistories.OrderByDescending(t => t.Updated).GroupBy(t => t.Updated.ToString("dd, MMM yyyy")))
+                {
+                    <li class="time-label">
+                        <span class="bg-aqua">@date.Key</span>
+                    </li>
+                    foreach (var history in Model.TicketHistories.OrderByDescending(t => t.Updated))
+                    {
+                        <li>
+                            <div class="timeline-item">
+                                <img src="@history.User.AvatarUrl" class="img-circle pull-left" style="height:30px;">
+                                <span class="time"><i class="fa fa-clock-o"></i> @history.Updated.ToString("h:mm tt")</span>
+                                <h3 class="timeline-header"> @history.User.FirstName @history.User.LastName</h3>
+                                <div class="timeline-body">
+                                    @history.User.FirstName changed the @history.PropertyName from "@history.OldValue" to "@history.NewValue".
+                                </div>
+                            </div>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+    <!--MODAL-->
+    <div id="hisModal" class="modal fade">
+        <div class="box-content">
+            <div class="box-header">
+                <i class="fa fa-header"></i>
+                <h3 class="box-title"><strong>History</strong></h3>
+                <button type="button" class="btn btn-xs pull-right" data-dismiss="modal">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="back modal-skroll">
+                    <ul class="timeline">
+                        @foreach (var date in Model.TicketHistories.OrderByDescending(t => t.Updated).Skip(TicketHelper.GetAllUserHistories().Where(t => t.Updated.ToString("dd, MMM yyyy") == t.Updated.ToString("dd, MMM yyyy")).Count() - 1))
+                        {
+                            <li class="time-label">
+                                <span class="bg-aqua">@date.Updated.ToString("dd, MMM yyyy")</span>
+                            </li>
+                            foreach (var history in Model.TicketHistories.OrderByDescending(t => t.Updated))
+                            {
+                                if (history.Updated.ToString("dd, MMM yyyy") == history.Updated.ToString("dd, MMM yyyy"))
+                                {
+                                    <li>
+                                        <div class="timeline-item">
+                                            <img src="@history.User.AvatarUrl" class="img-circle pull-left" style="height:30px;">
+                                            <span class="time"><i class="fa fa-clock-o"></i> @history.Updated.ToString("h:mm tt")</span>
+                                            <h3 class="timeline-header"> @history.User.FirstName @history.User.LastName</h3>
+                                            <div class="timeline-body">
+                                                @history.User.FirstName changed the @history.PropertyName from "@history.OldValue" to "@history.NewValue".
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

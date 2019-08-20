@@ -52,10 +52,11 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Create([Bind(Include = "TicketId")] TicketAttachment ticketAttachment, string attachmentTitle, string attachmentDescription, HttpPostedFileBase attachment, int ticketId)
+        public ActionResult Create([Bind(Include = "TicketId")] TicketAttachment ticketAttachment, Ticket ticket, string attachmentTitle, string attachmentDescription, HttpPostedFileBase attachment, int ticketId)
         {
             if (ModelState.IsValid)
             {
+                var newTicket = db.Tickets.Find(ticketId);
                 ticketAttachment.Title = attachmentTitle;
                 ticketAttachment.Description = attachmentDescription;
                 ticketAttachment.Created = DateTime.Now;
@@ -68,9 +69,12 @@ namespace BugTracker.Controllers
                     attachment.SaveAs(Path.Combine(Server.MapPath("~/Attachments/"), fileName));
                     ticketAttachment.AttachmentUrl = "/Attachments/" + fileName;
                 }
-
                 db.TicketAttachments.Add(ticketAttachment);
                 db.SaveChanges();
+                if (ticketAttachment.UserId != ticket.AssignedToUserId)
+                {
+                    TicketHelper.CreateAttachmentNotification(newTicket);
+                }
                 return RedirectToAction("Details", "Tickets", new { id = ticketId });
             }
 

@@ -27,7 +27,7 @@
         </div>
         <div class="row">
             <div class="col-md-6 connectedSortable">
-                @Html.Partial("CommentsPartial")                               
+                @Html.Partial("HistoryPartial")
             </div>
             <div class="col-md-6 connectedSortable">
                 <div class="box box-solid collapsed-box">
@@ -129,45 +129,8 @@
                         </table>
                     </div>
                 </div>
-                <div class="box box-solid collapsed-box">
-                    <div class="box-header">
-                        <i class="fa fa-header"></i>
-                        <h3 class="box-title">
-                            <strong>History</strong>
-                        </h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-sm" data-widget="collapse">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm" id="hisBtn">
-                                <i class="fa fa-expand"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm" data-widget="remove">
-                                <i class="fa fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Name</th>
-                                    <th>Submitter</th>
-                                </tr>
-                            </thead>
-                            <tbody style="color:black;">
-                                <tr>
-                                    <td>icon</td>
-                                    <td>title</td>
-                                    <td>name</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
                 @Html.Partial("AttachmentsPartial")
-
+                @Html.Partial("CommentsPartial")
             </div>
         </div>
     </section>
@@ -175,14 +138,6 @@
 
 @section scripts{
     <script>
-
-        $("#hisBtn").click(function (e) {
-            $("#history").toggleClass("fullscreen");
-        });
-
-        $("#comEx").click(function (e) {
-            $("#comments").toggleClass("fullscreen");
-        });
 
     </script>
 }

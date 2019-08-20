@@ -39,7 +39,7 @@
                             @Html.Hidden("NotificationId", notification.Id)
                             <li class="hover">
                                 <a href="#" onclick="$(this).closest('form').submit();">
-                                    <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.Sender.FirstName @notification.NotificationBody
+                                    <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.Sender.FirstName @notification.Subject
                                 </a>
                             </li>
                         }
@@ -53,7 +53,7 @@
                     {
                         <li>
                             <a href="@Url.Action("Details", "Tickets", new { Id = notification.Ticket.Id })">
-                                <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.NotificationBody
+                                <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.Sender.FirstName @notification.Subject
                             </a>
                         </li>
                     }

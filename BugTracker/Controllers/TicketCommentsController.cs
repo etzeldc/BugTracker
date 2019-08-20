@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
+using BugTracker.Helpers;
+using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -49,13 +51,22 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,TicketId,AuthorId,CommentBody,Created")] TicketComment ticketComment)
+        [Authorize]
+        public ActionResult Create([Bind(Include = "Id,TicketId,AuthorId,CommentBody,Created")] TicketComment ticketComment, Ticket ticket, string comment, int ticketId)
         {
             if (ModelState.IsValid)
             {
+                var newTicket = db.Tickets.Find(ticketId);
+                ticketComment.AuthorId = User.Identity.GetUserId();
+                ticketComment.CommentBody = comment;
+                ticketComment.Created = DateTime.Now;
                 db.TicketComments.Add(ticketComment);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ticketComment.AuthorId != ticket.AssignedToUserId)
+                {
+                    TicketHelper.CreateCommentNotification(newTicket);
+                }
+                return RedirectToAction("Details", "Tickets", new { id = ticketId });
             }
 
             ViewBag.AuthorId = new SelectList(db.Users, "Id", "FirstName", ticketComment.AuthorId);

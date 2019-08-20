@@ -1,6 +1,6 @@
 ﻿@model BugTracker.Models.Ticket
 
-<div class="box box-solid">
+<div class="box box-solid collapsed-box">
     <div class="box-header">
         <i class="fa fa-comments"></i>
         <h3 class="box-title">
@@ -8,7 +8,7 @@
         </h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-sm" data-widget="collapse">
-                <i class="fa fa-minus"></i>
+                <i class="fa fa-plus"></i>
             </button>
             <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#comModal">
                 <i class="fa fa-expand"></i>
@@ -36,10 +36,9 @@
     <div class="box-footer">
         @if (User.Identity.IsAuthenticated)
         {
-            using (Html.BeginForm("CreateComment", "Tickets", FormMethod.Post))
+            using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
-                @Html.HiddenFor(model => model.Id);
                 @Html.Hidden("TicketId", Model.Id);
                 <div class="row">
                     <div class="col-md-12">
@@ -82,7 +81,7 @@
         <div class="box-footer">
             @if (User.Identity.IsAuthenticated)
             {
-                using (Html.BeginForm("CreateComment", "Tickets", FormMethod.Post))
+                using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
                 {
                     @Html.AntiForgeryToken()
                     @Html.HiddenFor(model => model.Id);

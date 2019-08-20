@@ -132,5 +132,10 @@ namespace BugTracker.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult HistoryPartial()
+        {
+            return PartialView();
+        }
     }
 }

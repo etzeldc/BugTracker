@@ -26,35 +26,27 @@
                     <div class="box-body">
                         <div class="content back">
 
-                                <ul class="timeline">
-                                    @foreach (var date in Model.OrderByDescending(t => t.Created).Skip(TicketHelper.GetAllUserNotifications().Where(t => t.Created.ToString("dd, MMM yyyy") == t.Created.ToString("dd, MMM yyyy")).Count()-1))
+                            <ul class="timeline">
+                                @foreach (var date in Model.OrderByDescending(t => t.Created).GroupBy(t => t.Created.ToString("dd, MMM yyyy")))
+                                {
+                                    <li class="time-label">
+                                        <span class="bg-aqua">@date.Key</span>
+                                    </li>
+                                    foreach (var item in date)
                                     {
-                                      
-                                            <li class="time-label">
-                                                <span class="bg-aqua">@date.Created.ToString("dd, MMM yyyy")</span>
-                                            </li>
-                                        
-                                       
-                                            foreach (var item in Model.OrderByDescending(t => t.Created))
-                                            {
-                                                if (item.Created.ToString("dd, MMM yyyy") == date.Created.ToString("dd, MMM yyyy"))
-                                                {
-
-                                            <li>
-                                                <div class="timeline-item">
-                                                <img src="@item.Sender.AvatarUrl" class="img-circle pull-left" style="height:30px;">
-                                                    <span class="time"><i class="fa fa-clock-o"></i> @item.Created.ToString("H:mm tt")</span>
-                                                    <h3 class="timeline-header"> @item.Sender.FirstName @item.Sender.LastName @item.Subject</h3>
-                                                    <div class="timeline-body">
-                                                        @item.NotificationBody
-                                                    </div>
+                                        <li>
+                                            <div class="timeline-item">
+                                                <img src = "@item.Sender.AvatarUrl" class="img-circle pull-left" style="height:30px;">
+                                                <span class="time"><i class="fa fa-clock-o"></i> @item.Created.ToString("h:mm tt")</span>
+                                                <h3 class="timeline-header"> @item.Sender.FirstName @item.Sender.LastName @item.Subject</h3>
+                                                <div class="timeline-body">
+                                                    @item.NotificationBody
                                                 </div>
-                                            </li>
-                                                }
-                                            }
+                                            </div>
+                                        </li>
                                     }
-                                </ul>
-
+                                }
+                            </ul>
                         </div>
                     </div>
                 </div>

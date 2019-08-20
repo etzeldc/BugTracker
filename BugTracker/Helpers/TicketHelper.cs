@@ -8,6 +8,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Web.Configuration;
+using System.Text;
 
 namespace BugTracker.Helpers
 {
@@ -118,6 +119,25 @@ namespace BugTracker.Helpers
             return db.Tickets.Find(ticketId).AssignedToUserId;
         }
 
+        public static string MakeReadable(string property, string value)
+        {
+            switch (property)
+            {
+                case "TicketStatusId":
+                    return db.TicketStatuses.Find(Convert.ToInt32(value)).Name;
+                case "TicketPriorityId":
+                    return db.TicketPriorities.Find(Convert.ToInt32(value)).Name;
+                case "TicketTypeId":
+                    return db.TicketTypes.Find(Convert.ToInt32(value)).Name;
+                case "AssignedUserId":
+                case "OwnerUserId":
+                    return db.Users.Find(value).FullName;
+                default:
+                    return value;
+            }
+        }
+
+        #region Assignment Notifications
         public static void CreateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
         {
             var noChange = (oldTicket.AssignedToUserId == newTicket.AssignedToUserId);
@@ -137,12 +157,22 @@ namespace BugTracker.Helpers
                 GenerateUnAssignmentNotification(oldTicket, newTicket);
             }
         }
-
         private static void GenerateUnAssignmentNotification(Ticket oldTicket, Ticket newTicket)
         {
-            return;
-        }
+            var notification = new TicketNotification
+            {
+                Created = DateTime.Now,
+                Subject = $"removed you from ticket {oldTicket.Title}",
+                Read = false,
+                RecipientId = oldTicket.AssignedToUserId,
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"You are no longer assigned to {oldTicket.Title}.",
+                TicketId = oldTicket.Id,
+            };
 
+            db.TicketNotifications.Add(notification);
+            db.SaveChanges();
+        }
         private static void GenerateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
         {
             var notification = new TicketNotification
@@ -153,85 +183,126 @@ namespace BugTracker.Helpers
                 RecipientId = newTicket.AssignedToUserId,
                 SenderId = HttpContext.Current.User.Identity.GetUserId(),
                 NotificationBody = $"You have been assigned to ticket {newTicket.Title}.",
-                TicketId = newTicket.Id,
+                TicketId = newTicket.Id
             };
-
             db.TicketNotifications.Add(notification);
             db.SaveChanges();
         }
+        #endregion
 
-        public static void CreateHistory(Ticket oldTicket, Ticket newTicket)
+        #region Comment Notifications
+        public static void CreateCommentNotification(Ticket ticket)
         {
-            foreach (var property in WebConfigurationManager.AppSettings["TrackTicketHistory"].Split(','))
-            {
-                var oldValue = oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null).ToString();
-                var newValue = newTicket.GetType().GetProperty(property).GetValue(newTicket, null).ToString();
-                if (oldValue != newValue)
-                    GenerateHistory(property, oldValue, newValue, newTicket.AssignedToUserId, newTicket.Id);
-            }
-        }
-
-        private static void GenerateHistory(string property, object oldValue, object newValue, string assignedToUserId, int id)
-        {
-            throw new NotImplementedException();
-        }
-
-
-
-
-        public static void CreateChangeNotification(Ticket oldTicket, Ticket newTicket)
-        {
-            var changes = new List<string>();
-            foreach (var property in WebConfigurationManager.AppSettings["TrackedTicketProperties"].Split(','))
-            {
-                var oldValue = oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null).ToString();
-                var newValue = newTicket.GetType().GetProperty(property).GetValue(newTicket, null).ToString();
-                if (oldValue != newValue)
-                    changes.Add(property);
-            }
-            if (changes.Count() > 0)
-                GenerateChangeNotification(changes, newTicket);
-
-        }
-
-        private static void GenerateChangeNotification(List<string> changes, Ticket newTicket)
-        {
-            var output = "";
-            if (changes.Count() == 1)
-            {
-                output = string.Join("", changes).Replace("Id", "");
-            }
-            else if (changes.Count() == 2)
-            {
-                output = string.Join(" and ", changes).Replace("Id", "");
-            }
-            else if (changes.Count() > 2)
-            {
-                output = string.Join(", ", changes.Take(changes.Count() - 1));
-                output = output + string.Concat(", and ", changes.Last());
-                output = output.Replace("Id", "");
-            }
             var notification = new TicketNotification
             {
                 Created = DateTime.Now,
-                Subject = $"made a change to ticket {newTicket.Title}",
+                Subject = $"commented on your ticket.",
                 Read = false,
-                RecipientId = newTicket.AssignedToUserId,
+                RecipientId = ticket.AssignedToUserId,
                 SenderId = HttpContext.Current.User.Identity.GetUserId(),
-                NotificationBody = $"The {output} of {newTicket.Title} has changed.",
-                TicketId = newTicket.Id,
+                NotificationBody = $"There is a new comment on ticket {ticket.Title}.",
+                TicketId = ticket.Id
             };
-
             db.TicketNotifications.Add(notification);
             db.SaveChanges();
         }
+        #endregion
 
+        #region Attachment Notifications
+        public static void CreateAttachmentNotification(Ticket ticket)
+        {
+            var notification = new TicketNotification
+            {
+                Created = DateTime.Now,
+                Subject = $"added an attachment to your ticket.",
+                Read = false,
+                RecipientId = ticket.AssignedToUserId,
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"There is a new attachment on ticket {ticket.Title}.",
+                TicketId = ticket.Id
+            };
+            db.TicketNotifications.Add(notification);
+            db.SaveChanges();
+        }
+        #endregion
+
+        #region History
+        public static void CreateHistoryRecord(Ticket oldTicket, Ticket newTicket)
+        {
+            foreach (var property in newTicket.GetType().GetProperties())
+            {
+                //checking to see if current property is relevant
+                var trackedProperties = WebConfigurationManager.AppSettings["TrackHistoryProperties"].Split(',').ToList();
+                if (!trackedProperties.Contains(property.Name))
+                    continue;
+
+                //capturing old and new ticket properties
+                var oldTicketProperty = oldTicket.GetType().GetProperty(property.Name);
+                var newTicketProperty = newTicket.GetType().GetProperty(property.Name);
+
+                //capturing old and new property values
+                var oldPropertyValue = property.GetValue(oldTicket, null).ToString();
+                var newPropertyValue = property.GetValue(newTicket, null).ToString();
+
+                if (oldPropertyValue != newPropertyValue)
+                {
+                    var newHistory = new TicketHistory
+                    {
+                        UserId = HttpContext.Current.User.Identity.GetUserId(),
+                        Updated = newTicket.Updated.GetValueOrDefault(),
+                        PropertyName = property.Name,
+                        OldValue = MakeReadable(property.Name, oldPropertyValue.ToString()),
+                        NewValue = MakeReadable(property.Name, newPropertyValue.ToString()),
+                        TicketId = newTicket.Id
+                    };
+                    db.TicketHistories.Add(newHistory);
+                }
+            }
+            db.SaveChanges();
+        }
+        #endregion
+
+        #region Change Notification
+        public static void CreateChangeNotification(Ticket oldTicket, Ticket newTicket)
+        {
+            var messageBody = new StringBuilder();
+            foreach (var property in WebConfigurationManager.AppSettings["TrackedTicketProperties"].Split(','))
+            {
+                var oldValue = TicketHelper.MakeReadable(property, oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null).ToString());
+                var newValue = TicketHelper.MakeReadable(property, newTicket.GetType().GetProperty(property).GetValue(newTicket, null).ToString());
+                if (oldValue != newValue)
+                {
+                    messageBody.AppendLine($"");
+                    messageBody.AppendLine($"The {property} of {newTicket.Title} was changed from \"{oldValue.ToString()}\" to \"{newValue.ToString()}\".");
+                }
+            }
+
+            if (!string.IsNullOrEmpty(messageBody.ToString()))
+            {
+                var notification = new TicketNotification
+                {
+                    TicketId = newTicket.Id,
+                    Created = DateTime.Now,
+                    Subject = $"made a change to ticket {newTicket.Title}",
+                    Read = false,
+                    RecipientId = newTicket.AssignedToUserId,
+                    SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                    NotificationBody = messageBody.ToString()
+                };
+
+                db.TicketNotifications.Add(notification);
+                db.SaveChanges();
+            }
+        }
+
+        #endregion
+
+        #region Dashboard Notification
         public static int GetNewUserNotificationCount()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
             return db.TicketNotifications.Where(t => t.RecipientId == userId && !t.Read).Count();
         }
-
         public static int GetReadUserNotificationCount()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
@@ -242,7 +313,6 @@ namespace BugTracker.Helpers
             var userId = HttpContext.Current.User.Identity.GetUserId();
             return db.TicketNotifications.Where(t => t.RecipientId == userId).Count();
         }
-
         public static List<TicketNotification> GetUnreadNotifications()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
@@ -253,11 +323,16 @@ namespace BugTracker.Helpers
             var userId = HttpContext.Current.User.Identity.GetUserId();
             return db.TicketNotifications.Where(t => t.RecipientId == userId && t.Read).ToList();
         }
-
         public static List<TicketNotification> GetAllUserNotifications()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
             return db.TicketNotifications.Where(t => t.RecipientId == userId).ToList();
         }
+        public static List<TicketHistory> GetAllUserHistories()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.TicketHistories.Where(t => t.UserId == userId).ToList();
+        }
+        #endregion
     }
 }

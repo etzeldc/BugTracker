@@ -373,6 +373,7 @@
     <Content Include="Views\Shared\CreateProjectPartial.cshtml" />
     <Content Include="Views\Home\DemoUser.cshtml" />
     <Content Include="Views\Shared\CreateTicketPartial.cshtml" />
+    <Content Include="Views\Shared\HistoryPartial.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
