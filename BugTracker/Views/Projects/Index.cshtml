@@ -64,7 +64,7 @@
                                         <td>
                                             @foreach (var ticket in ticketHelper.TicketsOnProject(item.Id).OrderBy(t => t.TicketPriority.Id))
                                             {
-                                                <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id})">
+                                                <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id })">
                                                     <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticket.TicketPriority.Name)"></i> @ticket.Title
                                                 </a><br />
                                             }
@@ -96,13 +96,12 @@
 
 
 
-
-@section scripts
+    @section scripts
     {
     <script>
         $(".userTable").DataTable({
             'paging': true,
-            'lengthMenu': [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            'lengthMenu': [[5, 10, 25, -1], [5, 10, 25, "All"]],
             'searching': true,
             'ordering': true,
             'info': true,

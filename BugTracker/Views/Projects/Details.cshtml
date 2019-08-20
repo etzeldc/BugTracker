@@ -270,9 +270,12 @@
                     </div>
                 </div>
                 <!--CREATE-->
-                <div class="box box-solid collapsed-box">
-                    @Html.Partial("CreateProjectPartial")
-                </div>
+                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                {
+                    <div class="box box-solid collapsed-box">
+                        @Html.Partial("CreateProjectPartial")
+                    </div>
+                }
             </div>
             }
             @*@if (User.IsInRole("Submitter"))
