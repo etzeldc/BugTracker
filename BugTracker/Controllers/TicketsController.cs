@@ -139,7 +139,7 @@ namespace BugTracker.Controllers
             if (DecisionHelper.TicketEditable(ticket))    
             {
                 ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName", ticket.AssignedToUserId);
-                //project id should be limited to admin in case a ticket goes to the wrong project
+                //TODO project id should be limited to admin in case a ticket goes to the wrong project
                 ViewBag.ProjectId = new SelectList(db.Projects, "Id", "Name", ticket.ProjectId);
                 ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
                 ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
@@ -157,7 +157,7 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Description,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket, string developer)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Description,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket, string developer)
         {
             var allDevelopers = rolesHelper.UsersInRole("Developer");
 
@@ -173,9 +173,9 @@ namespace BugTracker.Controllers
                 newTicket.Updated = DateTime.Now;
                 db.SaveChanges();
                 projectHelper.AddUserToProject(newTicket.AssignedToUserId, newTicket.ProjectId);
-                TicketHelper.CreateAssignmentNotification(oldTicket, newTicket);
-                TicketHelper.CreateChangeNotification(oldTicket, newTicket);
-                TicketHelper.CreateHistoryRecord(oldTicket, newTicket);
+                await ticketHelper.CreateAssignmentNotification(oldTicket, newTicket);
+                ticketHelper.CreateChangeNotification(oldTicket, newTicket);
+                ticketHelper.CreateHistoryRecord(oldTicket, newTicket);
                 return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
             }
             ViewBag.Developers = new SelectList(allDevelopers, "Id", "FullName", ticket.AssignedToUserId);
@@ -223,46 +223,6 @@ namespace BugTracker.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        //GET
-        public ActionResult AssignTicket(int? id)
-        {
-            UserRolesHelper helper = new UserRolesHelper();
-            var ticket = db.Tickets.Find(id);
-            var users = helper.UsersInRole("Developer").ToList();
-            ViewBag.AssignedToUser = new SelectList(users, "Id", "FullName", ticket.AssignedToUserId);
-            return View(ticket);
-        }
-
-        //POST
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> AssignTicket(Ticket model)
-        {
-            var ticket = db.Tickets.Find(model.Id);
-            ticket.AssignedToUserId = model.AssignedToUserId;
-            db.SaveChanges();
-
-            var callbackUrl = Url.Action("Details", "Tickets", new { id = ticket.Id }, protocol: Request.Url.Scheme);
-            try
-            {
-                EmailService ems = new EmailService();
-                IdentityMessage msg = new IdentityMessage();
-                ApplicationUser user = db.Users.Find(model.AssignedToUserId);
-
-                msg.Body = "You have been assigned a new Ticket." + Environment.NewLine + "Please click the following link tio view the details  " + "<a href=\"" + callbackUrl + "\">NEW TICKET</A>";
-                msg.Destination = user.Email;
-                msg.Subject = "Assignment Update";
-
-                await ems.SendMailAsync(msg);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                await Task.FromResult(0);
-            }
-            return RedirectToAction("Details", "Tickets", new { id = ticket.Id });
         }
 
         // POST: TicketComments/Create

@@ -13,7 +13,7 @@
     </h3>
 </div>
 <div class="body">
-    <section class="content render-box skroll">
+    <section class="content render-box">
         <div class="row">
             <div class="col-md-12">
                 <div class="box box-solid">
@@ -23,18 +23,18 @@
                             <strong> Your Notifications</strong>
                         </h3>
                     </div>
-                    <div class="box-body">
-                        <div class="content back">
-
+                    <div class="box-body fully">
+                        <div class="content back table-skroll">
                             <ul class="timeline">
                                 @foreach (var date in Model.OrderByDescending(t => t.Created).GroupBy(t => t.Created.ToString("dd, MMM yyyy")))
                                 {
-                                    <li class="time-label">
+                                    var target = date.Key.Replace(" ", "").Replace(",", "");
+                                    <li class="time-label" data-toggle="collapse" data-target="@($".{target}")">
                                         <span class="bg-aqua">@date.Key</span>
                                     </li>
                                     foreach (var item in date)
                                     {
-                                        <li>
+                                        <li class="@target">
                                             <div class="timeline-item">
                                                 <img src = "@item.Sender.AvatarUrl" class="img-circle pull-left" style="height:30px;">
                                                 <span class="time"><i class="fa fa-clock-o"></i> @item.Created.ToString("h:mm tt")</span>

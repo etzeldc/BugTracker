@@ -9,6 +9,8 @@ using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Web.Configuration;
 using System.Text;
+using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace BugTracker.Helpers
 {
@@ -138,7 +140,7 @@ namespace BugTracker.Helpers
         }
 
         #region Assignment Notifications
-        public static void CreateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
+        public async Task CreateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
         {
             var noChange = (oldTicket.AssignedToUserId == newTicket.AssignedToUserId);
             var assignment = (string.IsNullOrEmpty(oldTicket.AssignedToUserId));
@@ -148,16 +150,21 @@ namespace BugTracker.Helpers
                 return;
 
             if (assignment)
-                GenerateAssignmentNotification(oldTicket, newTicket);
+            {
+                await GenerateAssignmentNotification(oldTicket, newTicket);
+            }
             else if (unassignment)
-                GenerateUnAssignmentNotification(oldTicket, newTicket);
+            {
+                await GenerateUnAssignmentNotification(oldTicket, newTicket);
+            }
             else
             {
-                GenerateAssignmentNotification(oldTicket, newTicket);
-                GenerateUnAssignmentNotification(oldTicket, newTicket);
+                await GenerateAssignmentNotification(oldTicket, newTicket);
+                await GenerateUnAssignmentNotification(oldTicket, newTicket);
             }
         }
-        private static void GenerateUnAssignmentNotification(Ticket oldTicket, Ticket newTicket)
+
+        private async Task GenerateUnAssignmentNotification(Ticket oldTicket, Ticket newTicket)
         {
             var notification = new TicketNotification
             {
@@ -172,8 +179,10 @@ namespace BugTracker.Helpers
 
             db.TicketNotifications.Add(notification);
             db.SaveChanges();
+            await GenerateNotificationEmail(notification);
         }
-        private static void GenerateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
+
+        private async Task GenerateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
         {
             var notification = new TicketNotification
             {
@@ -187,7 +196,22 @@ namespace BugTracker.Helpers
             };
             db.TicketNotifications.Add(notification);
             db.SaveChanges();
+            await GenerateNotificationEmail(notification);
         }
+
+        private async Task GenerateNotificationEmail(TicketNotification notification)
+        {
+            var emailFrom = $"{notification.Sender.Email}<{WebConfigurationManager.AppSettings["emailfrom"]}>";
+            var email = new MailMessage(emailFrom, notification.Recipient.Email)
+            {
+                Subject = notification.Subject,
+                Body = notification.NotificationBody,
+                IsBodyHtml = true
+            };
+            var svc = new PersonalEmail();
+            await svc.SendAsync(email);
+        }
+       
         #endregion
 
         #region Comment Notifications
@@ -227,7 +251,7 @@ namespace BugTracker.Helpers
         #endregion
 
         #region History
-        public static void CreateHistoryRecord(Ticket oldTicket, Ticket newTicket)
+        public void CreateHistoryRecord(Ticket oldTicket, Ticket newTicket)
         {
             foreach (var property in newTicket.GetType().GetProperties())
             {
@@ -263,7 +287,7 @@ namespace BugTracker.Helpers
         #endregion
 
         #region Change Notification
-        public static void CreateChangeNotification(Ticket oldTicket, Ticket newTicket)
+        public void CreateChangeNotification(Ticket oldTicket, Ticket newTicket)
         {
             var messageBody = new StringBuilder();
             foreach (var property in WebConfigurationManager.AppSettings["TrackedTicketProperties"].Split(','))

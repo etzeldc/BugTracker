@@ -94,7 +94,7 @@
                                 <li class="header">
                                     You have @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() tickets
                                 </li>
-                                @foreach (var ticket in ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()))
+                                @foreach (var ticket in ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
                                 {
                                     <li>
                                         <ul class="menu">
@@ -140,23 +140,23 @@
                                 </li>
                                 <!-- Menu Body -->
                                 @*<li class="user-body">
-                                    <div class="row">
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Followers</a>
+                                        <div class="row">
+                                            <div class="col-xs-4 text-center">
+                                                <a href="#">Followers</a>
+                                            </div>
+                                            <div class="col-xs-4 text-center">
+                                                <a href="#">Sales</a>
+                                            </div>
+                                            <div class="col-xs-4 text-center">
+                                                <a href="#">Friends</a>
+                                            </div>
                                         </div>
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Sales</a>
-                                        </div>
-                                        <div class="col-xs-4 text-center">
-                                            <a href="#">Friends</a>
-                                        </div>
-                                    </div>
-                                     /.row 
-                                </li>*@
+                                         /.row
+                                    </li>*@
                                 <!-- Menu Footer-->
                                 <li class="user-footer">
                                     <div class="pull-left">
-                                        @Html.ActionLink("Profile","UserProfile", "Home", null, new { @class = "btn btn-flat" })
+                                        @Html.ActionLink("Profile", "UserProfile", "Home", null, new { @class = "btn btn-flat" })
                                     </div>
                                     <div class="pull-right">
                                         @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { role = "form" }))
@@ -315,7 +315,7 @@
         <div class="content-wrapper" style="margin-top:50px; background-image: url('/Images/Emerald.JPG'); background-size:cover;">
             <div class="content">
                 <div class="row">
-                    <div class="col-xs-12"style="">
+                    <div class="col-xs-12" style="">
                         <div style="height: 90vh; margin-bottom: 0; background-image: url('/Images/semitransparentWhite-25.png');">
                             <section class="contain">
                                 @RenderBody()
@@ -557,36 +557,37 @@
     <script src="~/Scripts/jquery.dataTables.min.js"></script>
     <script src="~/Scripts/dataTables.bootstrap.js"></script>
     <script src="~/Scripts/dashboard.js"></script>
+    <script src="~/Scripts/Custom.js"></script>
     @*<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
         <script src="~/Scripts/dashboard.js"></script>
         <!-- AdminLTE for demo purposes -->
         <script src="~/Scripts/demo.js"></script>*@
     @*<script>
-        $("#my-box").refreshBox({
-          // The URL for the source.
-          source: '',
-          // GET query paramaters (example: {search_term: 'layout'}, which renders to URL/?search_term=layout).
-          params: {},
-          // The CSS selector to the refresh button.
-          trigger: '.refresh-btn',
-          // The CSS selector to the target where the content should be rendered. This selector should exist within the box.
-          content: '.box-body',
-          // Whether to automatically render the content.
-          loadInContent: true,
-          // Response type (example: 'json' or 'html')
-          responseType: '',
-          // The HTML template for the ajax spinner.
-          overlayTemplate: '<div class="overlay"><div class="fa fa-refresh fa-spin"></div></div>',
-          // Called before the ajax request is made.
-          onLoadStart: function() {
-            // Do something before sending the request.
-          },
-          // Called after the ajax request is made.
-          onLoadDone: function(response) {
-            // Do something after receiving a response.
-          }
-        })
-    </script>*@
+            $("#my-box").refreshBox({
+              // The URL for the source.
+              source: '',
+              // GET query paramaters (example: {search_term: 'layout'}, which renders to URL/?search_term=layout).
+              params: {},
+              // The CSS selector to the refresh button.
+              trigger: '.refresh-btn',
+              // The CSS selector to the target where the content should be rendered. This selector should exist within the box.
+              content: '.box-body',
+              // Whether to automatically render the content.
+              loadInContent: true,
+              // Response type (example: 'json' or 'html')
+              responseType: '',
+              // The HTML template for the ajax spinner.
+              overlayTemplate: '<div class="overlay"><div class="fa fa-refresh fa-spin"></div></div>',
+              // Called before the ajax request is made.
+              onLoadStart: function() {
+                // Do something before sending the request.
+              },
+              // Called after the ajax request is made.
+              onLoadDone: function(response) {
+                // Do something after receiving a response.
+              }
+            })
+        </script>*@
 </body>
 
 </html>

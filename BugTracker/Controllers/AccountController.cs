@@ -12,6 +12,7 @@ using BugTracker.Models;
 using BugTracker.Helpers;
 using System.Web.Configuration;
 using System.IO;
+using System.Net.Mail;
 
 namespace BugTracker.Controllers
 {
@@ -169,38 +170,29 @@ namespace BugTracker.Controllers
                     AvatarUrl = WebConfigurationManager.AppSettings["DefaultAvatar"]
                 };
 
-                //if (avatar.FileName != null)
-                //{
-                //    user.AvatarUrl = avatar.FileName;
-                //}
-
-                     //Validator
-                if (avatar != null && FileHelper.IsWebFriendlyImage(avatar))
-                {
-                    var fileName = Path.GetFileName(avatar.FileName);
-                    avatar.SaveAs(Path.Combine(Server.MapPath("~/Avatars/"), fileName));
-                    user.AvatarUrl = "/Avatars/" + fileName;
-                }
-
-
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    await UserManager.AddToRoleAsync(user.Id, "Developer");
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    //var service = new PersonalEmail();
-                    //service.SendAsync
+                    var emailFrom = WebConfigurationManager.AppSettings["emailfrom"];
+                    var email = new MailMessage(emailFrom, model.Email)
+                    {
+                        Subject = "Confirm your account",
+                        Body = "Please confirm your account by clicking <a href =\"" + callbackUrl + "\">here</a>",
+                        IsBodyHtml = true
+                    };
+                    var svc = new PersonalEmail();
+                    await svc.SendAsync(email);
 
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
-            
             }
 
             // If we got this far, something failed, redisplay form

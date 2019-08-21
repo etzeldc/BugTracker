@@ -134,7 +134,10 @@ $(function () {
 
     }); $('.table-skroll').slimScroll({
         height: '55vh',
-        //width: '75vh'
+    });
+
+    }); $('.full-skroll').slimScroll({
+        height: '70vh',
     });
 
   /* Morris.js Charts */

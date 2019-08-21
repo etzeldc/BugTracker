@@ -65,7 +65,7 @@
                                     <td>
                                         @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
                                         {
-                                            @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
+                                            @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
                                             {
                                                 if (roleHelper.IsUserInRole(users.Id, "Admin"))
                                                 {
