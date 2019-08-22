@@ -40,10 +40,11 @@
     height: 12vh;
 }
 
-.skroll {
-    margin: 2vh;
+#note-date {
+    background-color:rgb(86,204,200);
+    color:rgb(36,52,56);
 }
 
-.box-solid {
+.full-box {
     max-height: 77vh;
 }

@@ -5,5 +5,6 @@
     'ordering': true,
     'info': true,
     'autoWidth': false,
-    'scrollY': '56vh'
 });
+
+//$(".skrollDown").sccrollTop($(".skrollDown")[0].scrollHeight);

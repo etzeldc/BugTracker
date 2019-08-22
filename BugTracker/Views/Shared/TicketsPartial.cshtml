@@ -48,7 +48,7 @@
                             @Html.HiddenFor(model => model.Created);
                             <tr>
                                 <td>@Model.OwnerUser.FullName</td>
-                                <td>@Html.DropDownList("Developer", null, ticketHelper.TicketAssignee(Model.Id), new { @class = "form-control" })</td>
+                                <td style="width:auto;">@Html.DropDownList("Developer", null, ticketHelper.TicketAssignee(Model.Id), new { @class = "form-control" })</td>
                                 <td>
                                     @Html.DropDownList("TicketStatusId", null, new { @class = "form-control" })
                                 </td>
@@ -59,12 +59,12 @@
                                     @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
                                 </td>
                                 <td>
-                                    @Html.EditorFor(model => model.Description, null, new { @class = "form-control, col-fill" })
+                                    @Html.EditorFor(model => model.Description, null, new { @class = "form-control" })
                                 </td>
                                 <td>@Model.Created.ToString("MM/d/yyyy")</td>
                                 <td>@Model.Updated</td>
+                                <td class="edit-cell"><input type="submit" value="Edit" class="btn pull-right" /></td>
                             </tr>
-                                <input type="submit" value="Edit" class="btn pull-right" />
                         }
                     }
                     else

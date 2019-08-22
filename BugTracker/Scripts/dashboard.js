@@ -131,13 +131,10 @@ $(function () {
 
     $('.modal-skroll').slimScroll({
         height: '59vh'
-
-    }); $('.table-skroll').slimScroll({
-        height: '55vh',
     });
 
-    }); $('.full-skroll').slimScroll({
-        height: '70vh',
+    $('.full-skroll').slimScroll({
+        height: '75vh'
     });
 
   /* Morris.js Charts */

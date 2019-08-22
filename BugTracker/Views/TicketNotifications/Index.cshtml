@@ -23,14 +23,14 @@
                             <strong> Your Notifications</strong>
                         </h3>
                     </div>
-                    <div class="box-body fully">
-                        <div class="content back table-skroll">
+                    <div class="box-body full-box">
+                        <div class="content back full-skroll">
                             <ul class="timeline">
                                 @foreach (var date in Model.OrderByDescending(t => t.Created).GroupBy(t => t.Created.ToString("dd, MMM yyyy")))
                                 {
                                     var target = date.Key.Replace(" ", "").Replace(",", "");
                                     <li class="time-label" data-toggle="collapse" data-target="@($".{target}")">
-                                        <span class="bg-aqua">@date.Key</span>
+                                        <span id="note-date">@date.Key</span>
                                     </li>
                                     foreach (var item in date)
                                     {
@@ -38,10 +38,12 @@
                                             <div class="timeline-item">
                                                 <img src = "@item.Sender.AvatarUrl" class="img-circle pull-left" style="height:30px;">
                                                 <span class="time"><i class="fa fa-clock-o"></i> @item.Created.ToString("h:mm tt")</span>
-                                                <h3 class="timeline-header"> @item.Sender.FirstName @item.Sender.LastName @item.Subject</h3>
-                                                <div class="timeline-body">
-                                                    @item.NotificationBody
-                                                </div>
+                                                <h3 class="timeline-header"><strong> @item.Sender.FirstName @item.Sender.LastName </strong>@item.Subject</h3>
+                                                <a href="@Url.Action("Details", "Tickets", new { Id = item.Ticket.Id})">
+                                                    <div class="timeline-body">
+                                                        @item.NotificationBody
+                                                    </div>
+                                                </a>
                                             </div>
                                         </li>
                                     }

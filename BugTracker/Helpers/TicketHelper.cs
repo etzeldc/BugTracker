@@ -215,16 +215,17 @@ namespace BugTracker.Helpers
         #endregion
 
         #region Comment Notifications
-        public static void CreateCommentNotification(Ticket ticket)
+        public static void CreateCommentNotification(Ticket ticket, TicketComment ticketComment)
         {
+            var authorName = db.Users.Find(ticketComment.AuthorId).FirstName;
             var notification = new TicketNotification
             {
                 Created = DateTime.Now,
-                Subject = $"commented on your ticket.",
+                Subject = $"commented on {ticket.Title}.",
                 Read = false,
                 RecipientId = ticket.AssignedToUserId,
                 SenderId = HttpContext.Current.User.Identity.GetUserId(),
-                NotificationBody = $"There is a new comment on ticket {ticket.Title}.",
+                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}",
                 TicketId = ticket.Id
             };
             db.TicketNotifications.Add(notification);

@@ -52,19 +52,18 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Create([Bind(Include = "Id,TicketId,AuthorId,CommentBody,Created")] TicketComment ticketComment, Ticket ticket, string comment, int ticketId)
+        public ActionResult Create([Bind(Include = "TicketId,CommentBody")] TicketComment ticketComment, Ticket ticket, int ticketId)
         {
             if (ModelState.IsValid)
             {
                 var newTicket = db.Tickets.Find(ticketId);
                 ticketComment.AuthorId = User.Identity.GetUserId();
-                ticketComment.CommentBody = comment;
                 ticketComment.Created = DateTime.Now;
                 db.TicketComments.Add(ticketComment);
                 db.SaveChanges();
                 if (ticketComment.AuthorId != ticket.AssignedToUserId)
                 {
-                    TicketHelper.CreateCommentNotification(newTicket);
+                    TicketHelper.CreateCommentNotification(newTicket, ticketComment);
                 }
                 return RedirectToAction("Details", "Tickets", new { id = ticketId });
             }

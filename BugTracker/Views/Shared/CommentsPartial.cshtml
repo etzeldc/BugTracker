@@ -1,6 +1,9 @@
-﻿@model BugTracker.Models.Ticket
+﻿@using Microsoft.AspNet.Identity;
 
-<div class="box box-solid collapsed-box">
+
+@model BugTracker.Models.Ticket
+
+<div class="box box-solid collapsed-box chat-body">
     <div class="box-header">
         <i class="fa fa-comments"></i>
         <h3 class="box-title">
@@ -23,14 +26,27 @@
             @foreach (var comment in Model.TicketComments)
             {
                 <div class="item">
-                    <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> <strong>@comment.Author.FullName</strong>
-                    <small class="pull-right"><i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />@comment.Created.ToString("M/dd/yyy")</small>
+                    <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> 
+                    <strong>@comment.Author.FullName</strong>
+                    <small class="pull-right">
+                        <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")
+                        <br />@comment.Created.ToString("M/dd/yyy")
+                        @*@if (User.Identity.GetUserId() == comment.Author.Id)
+                        {
+                            <br />@Html.ActionLink("Edit", "Edit", "TicketComments", new { Id = comment.Id })
+                            @: | @Html.ActionLink("Delete", "Delete", "TicketComments", new { Id = comment.Id })
+                        }
+                        else if (User.IsInRole("Admin"))
+                        {
+                            <br />@Html.ActionLink("Delete", "Delete", "TicketComments", new { Id = comment.Id })
+                        }*@
+                    </small>
                     <p>
                         @comment.CommentBody
                     </p>
-                </div>
-                <hr />
-            }
+                    </div>
+                    <hr />
+                }
         </div>
     </div>
     <div class="box-footer">
@@ -53,7 +69,7 @@
 </div>
 
 <!--MODAL-->
-<div id="comModal" class="modal fade">
+<div id="comModal" class="modal fade in">
     <div class="box-content">
         <div class="box-header">
             <i class="fa fa-comments"></i>
@@ -66,13 +82,25 @@
             <div class="back modal-skroll">
                 @foreach (var comment in Model.TicketComments)
                 {
-                    <div class="item">
-                        <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> <strong>@comment.Author.FullName</strong>
-                        <small class="pull-right"><i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />@comment.Created.ToString("M/dd/yyy")</small>
-                        <p>
-                            @comment.CommentBody
-                        </p>
-                    </div>
+                <div class="item">
+                    <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> 
+                    <strong>@comment.Author.FullName</strong>
+                    <small class="pull-right">
+                        <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />@comment.Created.ToString("M/dd/yyy")
+                        @*@if (User.Identity.GetUserId() == comment.Author.Id)
+                        {
+                            <br />@Html.ActionLink("Edit", "Edit", "TicketComments", new { Id = comment.Id })
+                            @: | @Html.ActionLink("Delete", "Delete", "TicketComments", new { Id = comment.Id })
+                        }
+                        else if (User.IsInRole("Admin"))
+                        {
+                            <br />@Html.ActionLink("Delete", "Delete", "TicketComments", new { Id = comment.Id })
+                        }*@
+                    </small>
+                    <p>
+                        @comment.CommentBody
+                    </p>
+                </div>
                     <hr />
                 }
 
@@ -99,9 +127,4 @@
     </div>
 </div>
 
-@section scripts{
-    <script>
 
-        //$("#scrollDown").scrollTop($("#scrollDown")[0].scrollHeight);
-    </script>
-}

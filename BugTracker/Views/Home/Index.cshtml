@@ -52,12 +52,12 @@
                             }
                         </div>
                     </div>
-                    <div class="box-body">
+                    <div class="box-body full-box">
                         <div class="tab-content">
                             @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                             {
                                 <div class="tab-pane" id="allProjects">
-                                    <div class="box-body">
+                                    <div class="body">
                                         <table class="userTable table table-bordered">
                                             <thead>
                                                 <tr>
@@ -68,7 +68,7 @@
                                                     <th>Tickets</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody class="">
                                                 @foreach (var allProjects in db.Projects.ToList())
                                                 {
                                                     <tr>
@@ -81,7 +81,7 @@
                                                         <td>
                                                             @foreach (var users in userProjectsHelper.ListUsersOnProject(allProjects.Id).ToList())
                                                             {
-                                                                @users.FullName @: ( @foreach(var role in roleHelper.ListUserRoles(users.Id))
+                                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach(var role in roleHelper.ListUserRoles(users.Id))
                                                                 {
                                                                     if (roleHelper.IsUserInRole(users.Id, "Admin"))
                                                                     {
@@ -113,7 +113,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="myProjects">
-                                    <div class="box-body">
+                                    <div class="body">
                                         <table class="userTable table table-bordered">
                                             <thead>
                                                 <tr>
@@ -124,7 +124,7 @@
                                                     <th>Tickets</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody class="">
                                                 @foreach (var myProjects in user.Projects.ToList())
                                                 {
                                                     <tr>
@@ -140,7 +140,7 @@
                                                         <td>
                                                             @foreach (var users in userProjectsHelper.ListUsersOnProject(myProjects.Id).ToList())
                                                             {
-                                                                @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
+                                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
                                                                 {
                                                                     if (roleHelper.IsUserInRole(users.Id, "Admin"))
                                                                     {
@@ -177,7 +177,7 @@
                                 if (User.IsInRole("Admin"))
                                 {
                                     <div class="tab-pane active" id="allTickets">
-                                        <div class="box-body">
+                                        <div class="body">
                                             <table class="userTable table table-bordered">
                                                 <thead>
                                                     <tr>
@@ -191,7 +191,7 @@
                                                         <th>Updated</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody class="chat-box">
+                                                <tbody class="">
                                                     @foreach (var allTickets in db.Tickets.ToList().OrderBy(t => t.TicketPriority.Id))
                                                     {
                                                         <tr>
@@ -248,7 +248,7 @@
                                         </div>
                                     </div>
                                     <div class="tab-pane myTickets">
-                                        <div class="box-body">
+                                        <div class="body">
                                             <table class="userTable table table-bordered">
                                                 <thead>
                                                     <tr>
@@ -262,7 +262,7 @@
                                                         <th>Updated</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody class=" ">
                                                     @foreach (var myTickets in ticketHelper.MyTickets(user.Id, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
                                                     {
                                                         if (User.IsInRole("Admin") && projectHelper.IsUserOnProject(user.Id, myTickets.Project.Id) || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
@@ -335,7 +335,7 @@
                                                         <th>Updated</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody class="">
                                                     @foreach (var myTickets in ticketHelper.MyTickets(user.Id, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
                                                     {
                                                         if (User.IsInRole("Admin") && projectHelper.IsUserOnProject(user.Id, myTickets.Project.Id) || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
@@ -409,7 +409,7 @@
                                                     <th>Updated</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody class="">
                                                 @foreach (var myTickets in ticketHelper.MyTickets(user.Id, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
                                                 {
                                                     if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
@@ -476,7 +476,7 @@
                                                     <th>Tickets</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody class="">
                                                 @foreach (var myProjects in user.Projects.ToList())
                                                 {
                                                     <tr>
@@ -492,7 +492,7 @@
                                                         <td>
                                                             @foreach (var users in userProjectsHelper.ListUsersOnProject(myProjects.Id).ToList())
                                                             {
-                                                                @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
+                                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
                                                                 {
                                                                     if (roleHelper.IsUserInRole(users.Id, "Admin"))
                                                                     {

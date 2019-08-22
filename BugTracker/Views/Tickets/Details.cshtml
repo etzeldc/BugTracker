@@ -76,7 +76,7 @@
                                         }
                                     </td>
                                     <td>
-                                        <button><a href="@Url.Action("Details", "Projects", new { Id = Model.Project.Id })">Project Details</a></button>
+                                        <a href="@Url.Action("Details", "Projects", new { Id = Model.Project.Id })" class="btn">Project Details</a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -135,9 +135,3 @@
         </div>
     </section>
 </div>
-
-@section scripts{
-    <script>
-
-    </script>
-}
