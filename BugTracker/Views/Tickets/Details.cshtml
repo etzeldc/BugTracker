@@ -8,6 +8,7 @@
     var fileHelper = new FileHelper();
     var ticketHelper = new TicketHelper();
     var userProjectsHelper = new UserProjectsHelper();
+        var projectHelper = new ProjectHelper();
     var roleHelper = new UserRolesHelper();
 }
 
@@ -62,7 +63,7 @@
                                         {
                                             if (ticks.Id != Model.Id)
                                             {
-                                                if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, ticks.Id) || userId == ticketHelper.TicketAssignee(ticks.Id) || userId == ticks.OwnerUserId)
+                                                if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && projectHelper.IsUserOnProject(userId, ticks.ProjectId) || userId == ticketHelper.TicketAssignee(ticks.Id) || userId == ticks.OwnerUserId)
                                                 {
                                                     <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">
                                                         <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title

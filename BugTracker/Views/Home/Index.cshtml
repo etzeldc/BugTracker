@@ -37,7 +37,7 @@
                         <div class="box-tools pull-right">
                             @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                             {
-                                <button href="#allProjects" type="button" class="btn btn-sm" data-toggle="tab">All Projects</button>
+                                <button href="#allProjects" type="button" class="nbtn btn-sm" data-toggle="tab">All Projects</button>
                                 <button id="click" href="#myProjects" type="button" class="btn btn-sm" data-toggle="tab">My Projects</button>
                                 if (User.IsInRole("Admin"))
                                 {
@@ -338,7 +338,7 @@
                                                 <tbody class="">
                                                     @foreach (var myTickets in ticketHelper.MyTickets(user.Id, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
                                                     {
-                                                        if (User.IsInRole("Admin") && projectHelper.IsUserOnProject(user.Id, myTickets.Project.Id) || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
+                                                        if (User.IsInRole("Admin") || projectHelper.UsersInRoleOnProject(myTickets.Project.Id, "Project Manager").Contains(userId) || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
                                                         {
                                                             <tr>
                                                                 <td>

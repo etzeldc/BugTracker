@@ -3,7 +3,9 @@
 
 @model BugTracker.Models.Ticket
 
-
+@{ 
+    var ticketHelper = new TicketHelper();
+}
 
 <div class="box box-solid collapsed-box">
     <div class="box-header">
@@ -44,7 +46,11 @@
                         <small class="pull-right" style="color:rgb(83, 140, 138);">
                             <i class="fa fa-user"></i> @attachment.User.FirstName @attachment.User.LastName<br />
                             <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt")<br />
-                            <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")
+                            <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")<br />
+                            @if (User.IsInRole("Admin") || ticketHelper.IsUserOnTicket(User.Identity.GetUserId(), attachment.TicketId))
+                            {
+                                @Html.ActionLink("Delete", "Delete", "TicketComments", new { Id = attachment.Id })
+                            }
                         </small>
                     </div>
                 </div>
@@ -70,7 +76,7 @@
                 <br />
                 <div class="row">
                     <div class="col-md-12">
-                        <input class="pull-left" type="file" name="attachment" /><button class="btn btn-small pull-right popBtn" type="submit">ADD ATTACHMENT</button>
+                        <input class="pull-left" type="file" name="attachment" /><button class="btn btn-small pull-right" type="submit">ADD ATTACHMENT</button>
                     </div>
                 </div>
             }
