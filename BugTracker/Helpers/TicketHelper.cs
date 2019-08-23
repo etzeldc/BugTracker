@@ -230,6 +230,7 @@ namespace BugTracker.Helpers
             };
             db.TicketNotifications.Add(notification);
             db.SaveChanges();
+            //return rerender comment partial
         }
         #endregion
 
@@ -248,6 +249,7 @@ namespace BugTracker.Helpers
             };
             db.TicketNotifications.Add(notification);
             db.SaveChanges();
+            // return rerender attachment partial
         }
         #endregion
 
@@ -284,6 +286,7 @@ namespace BugTracker.Helpers
                 }
             }
             db.SaveChanges();
+            // return rerender history partial
         }
         #endregion
 

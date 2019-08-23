@@ -65,7 +65,7 @@
                                     <td class="members">
                                         @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
                                         {
-                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
+                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id).FirstOrDefault())
                                             {
                                                 if (roleHelper.IsUserInRole(users.Id, "Admin"))
                                                 {

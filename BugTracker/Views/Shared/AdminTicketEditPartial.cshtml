@@ -1,0 +1,27 @@
+﻿@model BugTracker.Models.TicketViewModel
+
+@using (Html.BeginForm("Edit", "Tickets", FormMethod.Post))
+{
+@Html.AntiForgeryToken();
+@Html.HiddenFor(model => model.Id);
+@Html.HiddenFor(model => model.ProjectId);
+@Html.HiddenFor(model => model.Created);
+<tr>
+    <td>@Model.Submitter</td>
+    <td style="width:auto;">@Model.CurrentAssignee</td>
+    <td>
+        @Html.DropDownList("CurrentStatus", Model.CurrentStatus, new { @class = "form-control" })
+    <td>
+        @Html.DropDownList("CurrentPriority", Model.CurrentPriority, new { @class = "form-control" })
+    </td>
+    <td>
+        @Html.DropDownList("CurrentType", Model.CurrentType, new { @class = "form-control" })
+    </td>
+    <td>
+        @Html.TextBoxFor(model => model.Description, null, new { @class = "form-control" })
+    </td>
+    <td>@Model.Created</td>
+    <td>@Model.Updated</td>
+    <td class="edit-cell"><input type="submit" value="Edit" class="btn pull-right" /></td>
+</tr>
+}

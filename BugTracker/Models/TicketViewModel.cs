@@ -10,12 +10,18 @@ namespace BugTracker.Models
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public int TicketPriorityId { get; set; }
-        public int TicketStatusId { get; set; }
-        public int TicketTypeId { get; set; }
+        public string Submitter { get; set; }
+        public string Description { get; set; }
+        public string CurrentAssignee { get; set; }
+        public int ProjectId { get; set; }
+        public int CurrentPriorityId { get; set; }
+        public int CurrentStatusId { get; set; }
+        public int CurrentTypeId { get; set; }
         public DateTime Created { get; set; }
-        public IEnumerable<SelectListItem> CurrentPriority { get; set; }
-        public IEnumerable<SelectListItem> CurrentStatus { get; set; }
-        public IEnumerable<SelectListItem> CurrentType { get; set; }
+        public DateTime? Updated { get; set; }
+        public IEnumerable<SelectListItem> Priorities { get; set; }
+        public IEnumerable<SelectListItem> Statuses { get; set; }
+        public IEnumerable<SelectListItem> Types { get; set; }
+        public IEnumerable<SelectListItem> Assignees { get; set; }
     }
 }
