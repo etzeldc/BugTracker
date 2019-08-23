@@ -10,12 +10,12 @@
     <td>@Model.Submitter</td>
     <td style="width:auto;">@Model.CurrentAssignee</td>
     <td>
-        @Html.DropDownList("CurrentStatus", Model.CurrentStatus, new { @class = "form-control" })
+        @Html.DropDownList("Statuses", Model.Statuses, new { @class = "form-control" })
     <td>
-        @Html.DropDownList("CurrentPriority", Model.CurrentPriority, new { @class = "form-control" })
+        @Html.DropDownList("CurrentPriority", Model.Priorities, new { @class = "form-control" })
     </td>
     <td>
-        @Html.DropDownList("CurrentType", Model.CurrentType, new { @class = "form-control" })
+        @Html.DropDownList("CurrentType", Model.Types, new { @class = "form-control" })
     </td>
     <td>
         @Html.TextBoxFor(model => model.Description, null, new { @class = "form-control" })
