@@ -50,7 +50,7 @@
                                         @Html.AntiForgeryToken()
                                         @Html.Hidden("userId", user.Id)
                                         <tr>
-                                            <td><img src="@user.AvatarUrl" class="img-circle" style="height:25px" />  @user.FirstName @user.LastName</td>
+                                            <td class="members"><img src="@user.AvatarUrl" class="img-circle" style="height:25px" />  @user.FirstName @user.LastName</td>
                                             <td>@user.Email</td>
                                             <td>
                                                 @if (ticketHelper.MyTickets(user.Id, "Developer").Count() != 0)

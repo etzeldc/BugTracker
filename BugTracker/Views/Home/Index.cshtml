@@ -37,13 +37,16 @@
                         <div class="box-tools pull-right">
                             @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                             {
-                                <button href="#allProjects" type="button" class="nbtn btn-sm" data-toggle="tab">All Projects</button>
+                                <button href="#allProjects" type="button" class="btn btn-sm" data-toggle="tab">All Projects</button>
                                 <button id="click" href="#myProjects" type="button" class="btn btn-sm" data-toggle="tab">My Projects</button>
                                 if (User.IsInRole("Admin"))
                                 {
                                     <button href="#allTickets" type="button" class="btn btn-sm" data-toggle="tab">All Tickets</button>
                                 }
-                                <button href=".myTickets" type="button" class="btn btn-sm" data-toggle="tab">My Tickets</button>
+                                else
+                                {
+                                    <button href=".myTickets" type="button" class="btn btn-sm" data-toggle="tab">My Tickets</button>
+                                }
                             }
                             else
                             {
@@ -73,12 +76,12 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            <a href="@Url.Action("Details", "Projects", new { Id = allProjects.Id })">@Html.DisplayFor(modelItem => allProjects.Name)</a>
+                                                            <a href="@Url.Action("Details", "Projects", new { Id = allProjects.Id })" class="btn btn-default btn-xs">@Html.DisplayFor(modelItem => allProjects.Name)</a>
                                                         </td>
                                                         <td>
                                                             @Html.DisplayFor(modelItem => allProjects.Description)
                                                         </td>
-                                                        <td>
+                                                        <td class="members">
                                                             @foreach (var users in userProjectsHelper.ListUsersOnProject(allProjects.Id).ToList())
                                                             {
                                                             <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach(var role in roleHelper.ListUserRoles(users.Id))
@@ -97,14 +100,13 @@
                                                         <td>
                                                             @allProjects.Created
                                                         </td>
-                                                        <td>
+                                                        <td class="tickets">
                                                             @foreach (var tick in ticketHelper.TicketsOnProject(allProjects.Id).OrderBy(t => t.TicketPriority.Id))
                                                             {
-
-                                                                <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })">
-                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i> @tick.Title
+                                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i>
+                                                                <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })" class="btn btn-default btn-xs">
+                                                                    @tick.Title
                                                                 </a><br />}
-
                                                         </td>
                                                     </tr>
                                                 }
@@ -119,25 +121,22 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Description</th>
-                                                    <th>Created</th>
                                                     <th>Assigned Users</th>
+                                                    <th>Created</th>
                                                     <th>Tickets</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="">
+                                            <tbody>
                                                 @foreach (var myProjects in user.Projects.ToList())
                                                 {
                                                     <tr>
                                                         <td>
-                                                            <a href="@Url.Action("Details", "Projects", new { Id = myProjects.Id })">@Html.DisplayFor(modelItem => myProjects.Name)</a>
+                                                            <a href="@Url.Action("Details", "Projects", new { Id = myProjects.Id })" class="btn btn-default btn-xs">@Html.DisplayFor(modelItem => myProjects.Name)</a>
                                                         </td>
                                                         <td>
                                                             @Html.DisplayFor(modelItem => myProjects.Description)
                                                         </td>
-                                                        <td>
-                                                            @Html.DisplayFor(modelItem => myProjects.Created)
-                                                        </td>
-                                                        <td>
+                                                        <td class="members">
                                                             @foreach (var users in userProjectsHelper.ListUsersOnProject(myProjects.Id).ToList())
                                                             {
                                                             <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
@@ -154,12 +153,16 @@
                                                             }
                                                         </td>
                                                         <td>
+                                                            @Html.DisplayFor(modelItem => myProjects.Created)
+                                                        </td>
+                                                        <td class="tickets">
                                                             @foreach (var tick in ticketHelper.TicketsOnProject(myProjects.Id).OrderBy(t => t.TicketPriority.Id))
                                                             {
                                                                 if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == tick.AssignedToUserId || User.IsInRole("Submitter") && user.Id == tick.OwnerUserId)
                                                                 {
-                                                                    <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })">
-                                                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i> @Html.DisplayFor(modelItem => tick.Title)
+                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i>
+                                                                    <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })" class="btn btn-default btn-xs">
+                                                                         @Html.DisplayFor(modelItem => tick.Title)
                                                                     </a><br />
                                                                 }
                                                                 else
@@ -191,13 +194,14 @@
                                                         <th>Updated</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody class="">
+                                                <tbody>
                                                     @foreach (var allTickets in db.Tickets.ToList().OrderBy(t => t.TicketPriority.Id))
                                                     {
                                                         <tr>
-                                                            <td>
-                                                                <a href="@Url.Action("Details", "Tickets", new { Id = allTickets.Id })">
-                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(allTickets.TicketPriority.Name)"></i> @allTickets.Title
+                                                            <td class="tickets">
+                                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(allTickets.TicketPriority.Name)"></i>
+                                                                <a href="@Url.Action("Details", "Tickets", new { Id = allTickets.Id })" class="btn btn-default btn-xs">
+                                                                     @allTickets.Title
                                                                 </a>
                                                             </td>
                                                             <td>
@@ -210,11 +214,11 @@
                                                                 @allTickets.TicketType.Name
                                                             </td>
                                                             <td>
-                                                                <a href="@Url.Action("Details", "Projects", new { Id = allTickets.Project.Id })">
+                                                                <a href="@Url.Action("Details", "Projects", new { Id = allTickets.Project.Id })" class="btn btn-default btn-xs">
                                                                     @allTickets.Project.Name
                                                                 </a>
                                                             </td>
-                                                            <td>
+                                                            <td class="mems">
                                                                 @foreach (var users in ticketHelper.UsersOnTicket(allTickets.Id))
                                                                 {
                                                                     <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
@@ -247,76 +251,6 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="tab-pane myTickets">
-                                        <div class="body">
-                                            <table class="userTable table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Title</th>
-                                                        <th>Description</th>
-                                                        <th>Status</th>
-                                                        <th>Type</th>
-                                                        <th>Project</th>
-                                                        <th>Project Members</th>
-                                                        <th>Created</th>
-                                                        <th>Updated</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class=" ">
-                                                    @foreach (var myTickets in ticketHelper.MyTickets(user.Id, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
-                                                    {
-                                                        if (User.IsInRole("Admin") && projectHelper.IsUserOnProject(user.Id, myTickets.Project.Id) || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
-                                                        {
-                                                            <tr>
-                                                                <td>
-                                                                    <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })">
-                                                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i> @myTickets.Title
-                                                                    </a>
-                                                                </td>
-                                                                <td>
-                                                                    @myTickets.Description
-                                                                </td>
-                                                                <td>
-                                                                    @myTickets.TicketStatus.Name
-                                                                </td>
-                                                                <td>
-                                                                    @myTickets.TicketType.Name
-                                                                </td>
-                                                                <td>
-                                                                    <a href="@Url.Action("Details", "Projects", new { Id = myTickets.Project.Id })">
-                                                                        @myTickets.Project.Name
-                                                                    </a>
-                                                                </td>
-                                                                <td>
-                                                                    @foreach (var users in ticketHelper.UsersOnTicket(myTickets.Id))
-                                                                    {
-                                                                        <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
-                                                                        {
-                                                                            if (roleHelper.IsUserInRole(users.Id, "Admin"))
-                                                                            {
-                                                                                @:Admin / Project Manager
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                @role
-                                                                            }
-                                                                        } )
-                                                                        if (users.Id == myTickets.AssignedToUserId)
-                                                                        {
-                                                                            @: - Assigned User
-                                                                        }
-                                                                        <br />
-                                                                    }
-                                                                </td>
-                                                                <td>@myTickets.Created</td>
-                                                                <td>@myTickets.Updated</td>
-                                                            </tr>
-                                                        }
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
                                 }
                                 else
                                 {
@@ -341,9 +275,10 @@
                                                         if (User.IsInRole("Admin") || projectHelper.UsersInRoleOnProject(myTickets.Project.Id, "Project Manager").Contains(userId) || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
                                                         {
                                                             <tr>
-                                                                <td>
-                                                                    <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })">
-                                                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i> @myTickets.Title
+                                                                <td class="tickets">
+                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i>
+                                                                    <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })" class="btn btn-default btn-xs">
+                                                                        @myTickets.Title
                                                                     </a>
                                                                 </td>
                                                                 <td>
@@ -356,11 +291,11 @@
                                                                     @myTickets.TicketType.Name
                                                                 </td>
                                                                 <td>
-                                                                    <a href="@Url.Action("Details", "Projects", new { Id = myTickets.Project.Id })">
+                                                                    <a href="@Url.Action("Details", "Projects", new { Id = myTickets.Project.Id })" class="btn btn-default btn-xs">
                                                                         @myTickets.Project.Name
                                                                     </a>
                                                                 </td>
-                                                                <td>
+                                                                <td class="mems">
                                                                     @foreach (var users in ticketHelper.UsersOnTicket(myTickets.Id))
                                                                     {
                                                                         <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
@@ -415,9 +350,10 @@
                                                     if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
                                                     {
                                                         <tr>
-                                                            <td>
-                                                                <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })">
-                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i> @myTickets.Title
+                                                            <td class="tick">
+                                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i>
+                                                                <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })" class="btn btn-default btn-xs">
+                                                                    @myTickets.Title
                                                                 </a>
                                                             </td>
                                                             <td>
@@ -430,11 +366,11 @@
                                                                 @myTickets.TicketType.Name
                                                             </td>
                                                             <td>
-                                                                <a href="@Url.Action("Details", "Projects", new { Id = myTickets.Project.Id })">
+                                                                <a href="@Url.Action("Details", "Projects", new { Id = myTickets.Project.Id })" class="btn btn-default btn-xs">
                                                                     @myTickets.Project.Name
                                                                 </a>
                                                             </td>
-                                                            <td>
+                                                            <td class="mems">
                                                                 @foreach (var users in ticketHelper.UsersOnTicket(myTickets.Id))
                                                                 {
                                                                     <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
@@ -471,8 +407,8 @@
                                                 <tr>
                                                     <th>Name</th>
                                                     <th>Description</th>
-                                                    <th>Created</th>
                                                     <th>Project Members</th>
+                                                    <th>Created</th>
                                                     <th>Tickets</th>
                                                 </tr>
                                             </thead>
@@ -481,15 +417,12 @@
                                                 {
                                                     <tr>
                                                         <td>
-                                                            <a href="@Url.Action("Details", "Projects", new { Id = myProjects.Id })">@Html.DisplayFor(modelItem => myProjects.Name)</a>
+                                                            <a href="@Url.Action("Details", "Projects", new { Id = myProjects.Id })" class="btn btn-default btn-xs">@Html.DisplayFor(modelItem => myProjects.Name)</a>
                                                         </td>
                                                         <td>
                                                             @Html.DisplayFor(modelItem => myProjects.Description)
                                                         </td>
-                                                        <td>
-                                                            @Html.DisplayFor(modelItem => myProjects.Created)
-                                                        </td>
-                                                        <td>
+                                                        <td class="members">
                                                             @foreach (var users in userProjectsHelper.ListUsersOnProject(myProjects.Id).ToList())
                                                             {
                                                             <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
@@ -506,12 +439,16 @@
                                                             }
                                                         </td>
                                                         <td>
+                                                            @Html.DisplayFor(modelItem => myProjects.Created)
+                                                        </td>
+                                                        <td class="tickets">
                                                             @foreach (var tick in ticketHelper.TicketsOnProject(myProjects.Id).OrderBy(t => t.TicketPriority.Id))
                                                             {
                                                                 if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == tick.AssignedToUserId || User.IsInRole("Submitter") && user.Id == tick.OwnerUserId)
                                                                 {
+                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i>
                                                                     <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })">
-                                                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i> @Html.DisplayFor(modelItem => tick.Title)
+                                                                        @Html.DisplayFor(modelItem => tick.Title)
                                                                     </a><br />
                                                                 }
                                                                 else
