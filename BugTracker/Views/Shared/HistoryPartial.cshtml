@@ -23,7 +23,7 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="content back">
+        <div class="content back his-box">
             <ul class="timeline">
                 @foreach (var date in Model.TicketHistories.OrderByDescending(t => t.Updated).GroupBy(t => t.Updated.ToString("dd, MMM yyyy")))
                 {

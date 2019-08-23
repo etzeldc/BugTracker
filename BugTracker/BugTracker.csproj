@@ -375,9 +375,15 @@
     <Content Include="Views\Home\DemoUser.cshtml" />
     <Content Include="Views\Shared\CreateTicketPartial.cshtml" />
     <Content Include="Views\Shared\HistoryPartial.cshtml" />
+<<<<<<< HEAD
+<<<<<<< HEAD
     <Content Include="Views\Shared\ChangePasswordPartial.cshtml" />
     <Content Include="Views\Shared\AdminTicketEditPartial.cshtml" />
     <Content Include="Views\Shared\UserTicketEditPartial.cshtml" />
+=======
+>>>>>>> parent of d53d5d0... Styled Tables Mostly
+=======
+>>>>>>> parent of d53d5d0... Styled Tables Mostly
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

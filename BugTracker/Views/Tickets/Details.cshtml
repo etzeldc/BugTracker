@@ -55,10 +55,10 @@
                                     <th>Additional Information</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody style="color:black;">
                                 <tr>
                                     <td>@Model.Project.Description</td>
-                                    <td class="tickets">
+                                    <td>
                                         @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id).OrderBy(t => t.TicketPriorityId))
                                         {
                                             if (ticks.Id != Model.Id)
@@ -101,7 +101,7 @@
                     </div>
                     <div class="box-body">
                         <table class="table table-bordered">
-                            <thead>
+                            <thead class="bg-teal-active">
                                 <tr>
                                     <th>Project Members</th>
                                     <th>Ticket Count</th>
@@ -109,11 +109,11 @@
                                     <th>Roles</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody style="color:black;">
                                 @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Project.Id))
                                 {
                                     <tr>
-                                        <td class="mems">
+                                        <td>
                                             <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName
                                             @if (users.Id == Model.AssignedToUserId)
                                             {

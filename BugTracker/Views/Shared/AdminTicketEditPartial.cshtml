@@ -1,27 +1,33 @@
-﻿@model BugTracker.Models.TicketViewModel
+﻿@using BugTracker.Models;
+
+@model BugTracker.Models.TicketViewModel
+
+@{ 
+    var db = new ApplicationDbContext();
+}
 
 @using (Html.BeginForm("Edit", "Tickets", FormMethod.Post))
 {
-@Html.AntiForgeryToken();
-@Html.HiddenFor(model => model.Id);
-@Html.HiddenFor(model => model.ProjectId);
-@Html.HiddenFor(model => model.Created);
-<tr>
-    <td>@Model.Submitter</td>
-    <td style="width:auto;">@Model.CurrentAssignee</td>
-    <td>
-        @Html.DropDownList("Statuses", Model.Statuses, new { @class = "form-control" })
-    <td>
-        @Html.DropDownList("CurrentPriority", Model.Priorities, new { @class = "form-control" })
-    </td>
-    <td>
-        @Html.DropDownList("CurrentType", Model.Types, new { @class = "form-control" })
-    </td>
-    <td>
-        @Html.TextBoxFor(model => model.Description, null, new { @class = "form-control" })
-    </td>
-    <td>@Model.Created</td>
-    <td>@Model.Updated</td>
-    <td class="edit-cell"><input type="submit" value="Edit" class="btn pull-right" /></td>
-</tr>
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.ProjectId);
+    @Html.HiddenFor(model => model.Created);
+    <tr>
+        <td>@db.Users.Find(Model.Submitter).FullName</td>
+        <td style="width:auto;">@db.Users.Find(Model.CurrentAssignee).FullName</td>
+        <td>
+            @Html.DropDownList("Statuses", Model.Statuses, new { @class = "form-control" })
+        <td>
+            @Html.DropDownList("CurrentPriority", Model.Priorities, new { @class = "form-control" })
+        </td>
+        <td>
+            @Html.DropDownList("CurrentType", Model.Types, new { @class = "form-control" })
+        </td>
+        <td>
+            @Html.TextBoxFor(model => model.Description, null, new { @class = "form-control" })
+        </td>
+        <td>@Model.Created</td>
+        <td>@Model.Updated</td>
+        <td class="edit-cell"><input type="submit" value="Edit" class="btn pull-right" /></td>
+    </tr>
 }

@@ -1,9 +1,11 @@
 ﻿@using BugTracker.Helpers;
+@using BugTracker.Models;
 @using Microsoft.AspNet.Identity;
 
 @model BugTracker.Models.TicketViewModel
 
 @{
+    var db = new ApplicationDbContext();
     var userId = User.Identity.GetUserId();
     var projectHelper = new ProjectHelper();
 }
@@ -18,16 +20,16 @@
     @Html.HiddenFor(model => model.CurrentAssignee);
     @Html.HiddenFor(model => model.CurrentStatusId);
     <tr>
-        <td>@Model.Submitter</td>
+        <td>@db.Users.Find(Model.Submitter).FullName</td>
         @if (Model.CurrentAssignee == null)
         {
             <td>Unassigned</td>
         }
         else
         {
-            <td>@Model.CurrentAssignee</td>
+            <td>@db.Users.Find(Model.CurrentAssignee).FullName</td>
         }
-        <td>@Model.CurrentStatusId</td>
+        <td>@db.TicketStatuses.Find(Model.CurrentStatusId).Name</td>
         @if (projectHelper.IsUserOnProject(userId, Model.ProjectId))
         {
             <td>
@@ -46,8 +48,11 @@
             <td>@Model.CurrentTypeId</td>
             <td>@Model.Description</td>
         }
-        <td>@Model.Created.ToString("MM/d/yyyy")</td>
+        <td>@Model.Created</td>
         <td>@Model.Updated</td>
+        <td class="edit-cell">
+
+    <input type="submit" value="Edit" class="btn pull-right form-control" />
+        </td>
     </tr>
-    <input type="submit" value="Edit" class="btn pull-right" />
 }

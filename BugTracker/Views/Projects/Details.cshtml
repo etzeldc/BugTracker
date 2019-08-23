@@ -62,10 +62,18 @@
                                     <td>
                                         @Html.DisplayFor(model => model.Description)
                                     </td>
-                                    <td class="members">
+                                    <td>
                                         @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
                                         {
+<<<<<<< HEAD
+<<<<<<< HEAD
                                             <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id).FirstOrDefault())
+=======
+                                            @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
+>>>>>>> parent of d53d5d0... Styled Tables Mostly
+=======
+                                            @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
+>>>>>>> parent of d53d5d0... Styled Tables Mostly
                                             {
                                                 if (roleHelper.IsUserInRole(users.Id, "Admin"))
                                                 {
@@ -89,17 +97,16 @@
                                                 }
                                                 else
                                                 {
-                                                    @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, new { @class = "btn btn-default btn-xs" })<br />
+                                                    @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, null)<br />
                                                 }
                                             }
                                         </td>
                                     }
-                                <td class="ticks">
+                                <td>
                                     @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Id).OrderBy(t => t.TicketPriorityId))
-                                    { 
-                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i>
-                                        <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id})" class="btn btn-default btn-xs">
-                                            @ticks.Title
+                                    {
+                                        <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id})">
+                                            <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title
                                         </a><br />
                                     }
                                 </td>

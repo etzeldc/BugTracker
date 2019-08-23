@@ -125,6 +125,10 @@ $(function () {
         height: '35vh'
     });
 
+    $('.his-box').slimScroll({
+        height: '48vh'
+    });
+
     $('.skroll').slimScroll({
         height: '80vh'
     });

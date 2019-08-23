@@ -35,13 +35,91 @@
                         <th>Description</th>
                         <th>Created</th>
                         <th>Updated</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @*@{Html.RenderAction("RenderTicketsPartial", "Tickets", new { ticketId = Model.Id });}*@
+<<<<<<< HEAD
                     @Html.Action("RenderTicketsPartial", "Tickets", new { ticketId = Model.Id })
-
                 </tbody>
+=======
+                    @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && projectHelper.IsUserOnProject(userId, Model.Project.Id))
+                    {
+                        using (Html.BeginForm("Edit", "Tickets"))
+                        {
+                            @Html.AntiForgeryToken();
+                            @Html.HiddenFor(model => model.Id);
+                            @Html.HiddenFor(model => model.ProjectId);
+                            @Html.HiddenFor(model => model.Created);
+                            <tr>
+                                <td>@Model.OwnerUser.FullName</td>
+                                <td style="width:auto;">@Html.DropDownList("Developer", null, ticketHelper.TicketAssignee(Model.Id), new { @class = "form-control" })</td>
+                                <td>
+                                    @Html.DropDownList("TicketStatusId", null, new { @class = "form-control" })
+                                </td>
+                                <td>
+                                    @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control" })
+                                </td>
+                                <td>
+                                    @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
+                                </td>
+                                <td>
+                                    @Html.TextBoxFor(model => model.Description, null, new { @class = "form-control" })
+                                </td>
+                                <td>@Model.Created</td>
+                                <td>@Model.Updated</td>
+                                <td class="edit-cell"><input type="submit" value="Edit" class="btn pull-right" /></td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        using (Html.BeginForm("Edit", "Tickets"))
+                        {
+                            @Html.AntiForgeryToken();
+                            @Html.HiddenFor(model => model.Id);
+                            @Html.HiddenFor(model => model.ProjectId);
+                            @Html.HiddenFor(model => model.Created);
+                            <tr>
+                                <td>@Model.OwnerUser.FullName</td>
+                                @if (Model.AssignedToUserId == null)
+                                {
+                                    <td>Unassigned</td>
+                                }
+                                else
+                                {
+                                    <td>@Model.AssignedToUser.FullName</td>
+                                }
+                                <td>@Model.TicketStatus.Name</td>
+                                @if (User.IsInRole("Project Manager") && projectHelper.IsUserOnProject(userId, Model.Project.Id) || projectHelper.IsUserOnProject(userId, Model.Project.Id))
+                                {
+                                    <td>
+                                        @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control" })
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
+                                    </td>
+                                    <td>
+                                        @Html.TextBoxFor(model => model.Description, new { @class = "form-control" })
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>@Model.TicketPriority.Name</td>
+                                    <td>@Model.TicketType.Name</td>
+                                    <td>@Model.Description</td>
+                                }
+                                <td>@Model.Created.ToString("MM/d/yyyy")</td>
+                                <td>@Model.Updated</td>
+                            </tr>
+                            <input type="submit" value="Edit" class="btn pull-right" />
+                        }
+                    }
+                    </tbody>
+<<<<<<< HEAD
+>>>>>>> parent of d53d5d0... Styled Tables Mostly
+=======
+>>>>>>> parent of d53d5d0... Styled Tables Mostly
                 </table>
         </div>
     </div>

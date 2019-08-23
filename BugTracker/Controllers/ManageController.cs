@@ -248,11 +248,6 @@ namespace BugTracker.Controllers
             return View(model);
         }
 
-        public ActionResult ChangePasswordPartial()
-        {
-            return PartialView();
-        }
-
         //
         // GET: /Manage/SetPassword
         public ActionResult SetPassword()

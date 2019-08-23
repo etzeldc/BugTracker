@@ -48,34 +48,3 @@
 .full-box {
     max-height: 77vh;
 }
-
-.copy {
-    width: 230px;
-    color: rgb(83,140,138);
-}
-
-td {
-    vertical-align: middle !important;
-    text-align: center;
-}
-
-.tickets {
-    text-align: unset;
-    padding-left: 5vh !important;
-}
-.ticks {
-    text-align: unset;
-    padding-left: 7vh !important;
-}
-.tick {
-    text-align: unset;
-    padding-left: 3vh !important;
-}
-.members {
-    text-align: unset;
-    padding-left: 15vh !important;
-}
-.mems {
-    text-align: unset;
-    padding-left: 6vh !important;
-}
