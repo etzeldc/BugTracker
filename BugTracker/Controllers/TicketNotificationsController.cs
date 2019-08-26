@@ -147,13 +147,19 @@ namespace BugTracker.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult MarkAsRead(int notificationId)
+        public ActionResult MarkAsRead(int? notificationId)
         {
             var notification = db.TicketNotifications.Find(notificationId);
             notification.Read = true;
             db.SaveChanges();
-
-            return RedirectToAction("Details", "Tickets", new { Id = notification.TicketId });
+            if (User.Identity.GetUserId() == notification.Ticket.AssignedToUserId)
+            {
+                return RedirectToAction("Details", "Tickets", new { notification.Ticket.Id });
+            }
+            else
+            {
+                return RedirectToAction("Index", "TicketNotifications");
+            }
         }
 
         public ActionResult MarkAllAsRead(string returnUrl)

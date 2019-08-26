@@ -36,6 +36,7 @@
                         <th>Description</th>
                         <th>Created</th>
                         <th>Updated</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,7 +46,7 @@
                         using (Html.BeginForm("Edit", "Tickets"))
                         {
                             @Html.AntiForgeryToken();
-                            @Html.HiddenFor(model => model.Id);
+                            @Html.HiddenFor(model => model.Id);//this is all you need for the best form
                             @Html.HiddenFor(model => model.ProjectId);
                             @Html.HiddenFor(model => model.Created);
                             <tr>
@@ -65,7 +66,9 @@
                                 </td>
                                 <td>@Model.Created</td>
                                 <td>@Model.Updated</td>
-                                <td class="edit-cell"><input type="submit" value="Edit" class="btn pull-right ticketBtn" /></td>
+                                <td class="edit-cell">
+                                    <button type="submit" class="btn ticketBtn">Edit</button>
+                                </td>
                             </tr>
                         }
                     }
@@ -112,7 +115,7 @@
                                 <td>@Model.Created</td>
                                 <td>@Model.Updated</td>
                                 <td>
-                                    <input type="submit" value="Edit" class="btn pull-right ticketBtn" />
+                                    <button type="submit" class="btn ticketBtn">Edit</button>
                                 </td>
                             </tr>
                         }

@@ -38,7 +38,7 @@
                                             <div class="timeline-item">
                                                 <img src = "@item.Sender.AvatarUrl" class="img-circle pull-left" style="height:30px;">
                                                 <span class="time"><i class="fa fa-clock-o"></i> @item.Created.ToString("h:mm tt")</span>
-                                                <h3 class="timeline-header"><strong> @item.Sender.FirstName @item.Sender.LastName </strong>@item.Subject</h3>
+                                                <h3 class="timeline-header"><strong> @item.Sender.DisplayName </strong>@item.Subject</h3>
                                                 <a href="@Url.Action("Details", "Tickets", new { Id = item.Ticket.Id})">
                                                     <div class="timeline-body">
                                                         @item.NotificationBody

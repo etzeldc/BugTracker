@@ -27,7 +27,8 @@
                                     <div class="col-md-2 control-label">Project Name</div>
                                     <div class="col-md-8">
                                         <!-- null changes to projects only the submitter is on -->
-                                        @Html.DisplayFor(model => model.Project.Name)
+                                        @Html.DropDownList("ProjectId", null, htmlAttributes: new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
                                     </div>
                                 </div>
 

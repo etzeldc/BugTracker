@@ -279,7 +279,7 @@
                         </a>
                         <ul class="treeview-menu">
                             @foreach (var unTicket in ticketHelper.UserUnassignedTickets(user.Id))
-                                    {
+                            {
                                 <li class="treeview">
                                     <a href="@Url.Action("Details", "Tickets", new { Id = unTicket.Id })">
                                         <i class="fa fa-exclamation-triangle text-yellow"></i> @unTicket.Title
@@ -299,7 +299,7 @@
                     </a>
                     <ul class="treeview-menu">
                         @foreach (var myProjects in user.Projects.ToList())
-                                    {
+                        {
                             <li class="treeview">
                                 <a href="#">
                                     <i class="fa fa-dot-circle-o"></i> @myProjects.Name
@@ -325,14 +325,6 @@
                                         }
 
                                     }
-                                    @if (User.IsInRole("Submitter"))
-                                    {
-                                        <li>
-                                            <a href="@Url.Action("Create", "Tickets", new { projectId = myProjects.Id })">
-                                                <i class="fa fa-plus-circle"></i> Create Ticket
-                                            </a>
-                                        </li>
-                                    }
                                 </ul>
                             </li>
                         }
@@ -343,6 +335,14 @@
                     <li>
                         <a href="@Url.Action("Create", "Projects")">
                             <i class="fa fa-plus-circle"></i> Create Project
+                        </a>
+                    </li>
+                }
+                @if (User.IsInRole("Submitter"))
+                {
+                    <li>
+                        <a href="@Url.Action("Create", "Tickets")">
+                            <i class="fa fa-plus-circle"></i> Create Ticket
                         </a>
                     </li>
                 }
@@ -390,7 +390,7 @@
             <!-- Home tab content -->
             <div class="tab-pane active" id="control-sidebar-home-tab">
                 <h3 class="control-sidebar-heading"><strong>Update Your Avatar</strong></h3>
-                @*@Html.Partial("UpdateAvatarPartial", new { model = user.UserProfileViewModel})*@
+                @*@Html.Partial("UpdateAvatarPartial")*@
             </div>
             <!-- /.tab-pane --> 
             <!-- Settings tab content -->

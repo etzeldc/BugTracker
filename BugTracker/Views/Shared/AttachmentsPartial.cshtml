@@ -44,7 +44,7 @@
                     </div>
                     <div class="col-md-3">
                         <small class="pull-right" style="color:rgb(83, 140, 138);">
-                            <i class="fa fa-user"></i> @attachment.User.FirstName @attachment.User.LastName<br />
+                            <i class="fa fa-user"></i> @attachment.User.DisplayName<br />
                             <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt")<br />
                             <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")<br />
                             @if (User.IsInRole("Admin") || ticketHelper.IsUserOnTicket(User.Identity.GetUserId(), attachment.TicketId))
@@ -110,7 +110,7 @@
                     </div>
                     <div class="col-md-3">
                         <small class="pull-right">
-                            <i class="fa fa-user"></i> @attachment.User.FirstName @attachment.User.LastName<br />
+                            <i class="fa fa-user"></i> @attachment.User.DisplayName<br />
                             <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt")<br />
                             <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")
                         </small>

@@ -36,9 +36,8 @@ namespace BugTracker.Helpers
 
         public bool IsUserOnTicket(string userId, int ticketId)
         {
-            var ticket = db.Projects.Find(ticketId);
-            var flag = ticket.Users.Any(u => u.Id == userId);
-            return (flag);
+            var ticket = db.Tickets.Find(ticketId);
+            return ticket.AssignedToUserId == userId;
         }
 
         public List<Ticket> MyTickets(string userId, string roleName)
@@ -47,10 +46,10 @@ namespace BugTracker.Helpers
             switch (roleName)
             {
                 case "Developer":
-                    myTickets = db.Tickets.Where(t => t.AssignedToUserId == userId).ToList();
+                    myTickets = db.Tickets.AsNoTracking().Where(t => t.AssignedToUserId == userId).ToList();
                     break;
                 case "Submitter":
-                    myTickets = db.Tickets.Where(t => t.OwnerUserId == userId).ToList();
+                    myTickets = db.Tickets.AsNoTracking().Where(t => t.OwnerUserId == userId).ToList();
                     break;
                 case "Project Manager":
                     myTickets = db.Users.Find(userId).Projects.SelectMany(t => t.Tickets).ToList();
@@ -94,7 +93,7 @@ namespace BugTracker.Helpers
 
         public ICollection<Ticket> TicketsOnProject(int projectId)
         {
-            return db.Projects.Find(projectId).Tickets;
+            return db.Projects.AsNoTracking().FirstOrDefault(p => p.Id == projectId).Tickets;
         }
 
         public ICollection<Ticket> UnassignedTicketsOnProject(int projectId)
@@ -126,7 +125,7 @@ namespace BugTracker.Helpers
         public ICollection<Ticket> AllUnassignedTickets()
         {
             var allUnTickets = new List<Ticket>();
-            foreach (var ticket in db.Tickets)
+            foreach (var ticket in db.Tickets.AsNoTracking().ToList())
             {
                 if (ticket.AssignedToUserId == null)
                 {
@@ -172,7 +171,9 @@ namespace BugTracker.Helpers
                     return db.TicketTypes.Find(Convert.ToInt32(value)).Name;
                 case "AssignedToUserId":
                 case "OwnerUserId":
-                    return db.Users.Find(value).DisplayName;
+                    if (!string.IsNullOrEmpty(value))
+                        return db.Users.Find(value).DisplayName;
+                    return "Unassigned";
                 default:
                     return value;
             }
@@ -190,20 +191,20 @@ namespace BugTracker.Helpers
 
             if (assignment)
             {
-                await GenerateAssignmentNotification(oldTicket, newTicket);
+                await GenerateAssignmentNotification(newTicket);
             }
             else if (unassignment)
             {
-                await GenerateUnAssignmentNotification(oldTicket, newTicket);
+                await GenerateUnAssignmentNotification(oldTicket);
             }
             else
             {
-                await GenerateAssignmentNotification(oldTicket, newTicket);
-                await GenerateUnAssignmentNotification(oldTicket, newTicket);
+                await GenerateAssignmentNotification(newTicket);
+                await GenerateUnAssignmentNotification(oldTicket);
             }
         }
 
-        private async Task GenerateUnAssignmentNotification(Ticket oldTicket, Ticket newTicket)
+        private async Task GenerateUnAssignmentNotification(Ticket oldTicket)
         {
             var notification = new TicketNotification
             {
@@ -222,7 +223,7 @@ namespace BugTracker.Helpers
             await GenerateNotificationEmail(newNotification);
         }
 
-        private async Task GenerateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
+        private async Task GenerateAssignmentNotification(Ticket newTicket)
         {
             var notification = new TicketNotification
             {
@@ -258,7 +259,7 @@ namespace BugTracker.Helpers
         #region Comment Notifications
         public static void CreateCommentNotification(Ticket ticket, TicketComment ticketComment)
         {
-            var authorName = db.Users.Find(ticketComment.AuthorId).FirstName;
+            var authorName = db.Users.Find(ticketComment.AuthorId).DisplayName;
             var notification = new TicketNotification
             {
                 Created = DateTime.Now,
@@ -302,23 +303,19 @@ namespace BugTracker.Helpers
                 if (!trackedProperties.Contains(property.Name))
                     continue;
 
-                //capturing old and new ticket properties
-                var oldTicketProperty = oldTicket.GetType().GetProperty(property.Name);
-                var newTicketProperty = newTicket.GetType().GetProperty(property.Name);
-
                 //capturing old and new property values
-                var oldPropertyValue = property.GetValue(oldTicket, null).ToString();
-                var newPropertyValue = property.GetValue(newTicket, null).ToString();
+                var oldValue = (property.GetValue(oldTicket, null) ?? "").ToString();
+                var newValue = (property.GetValue(newTicket, null) ?? "").ToString();
 
-                if (oldPropertyValue != newPropertyValue)
+                if (oldValue != newValue)
                 {
                     var newHistory = new TicketHistory
                     {
                         UserId = HttpContext.Current.User.Identity.GetUserId(),
                         Updated = newTicket.Updated.GetValueOrDefault(),
                         PropertyName = property.Name,
-                        OldValue = MakeReadable(property.Name, oldPropertyValue.ToString()),
-                        NewValue = MakeReadable(property.Name, newPropertyValue.ToString()),
+                        OldValue = MakeReadable(property.Name, oldValue.ToString()),
+                        NewValue = MakeReadable(property.Name, newValue.ToString()),
                         TicketId = newTicket.Id
                     };
                     db.TicketHistories.Add(newHistory);
@@ -334,8 +331,8 @@ namespace BugTracker.Helpers
             var messageBody = new StringBuilder();
             foreach (var property in WebConfigurationManager.AppSettings["TrackedTicketProperties"].Split(','))
             {
-                var oldValue = TicketHelper.MakeReadable(property, oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null).ToString());
-                var newValue = TicketHelper.MakeReadable(property, newTicket.GetType().GetProperty(property).GetValue(newTicket, null).ToString());
+                var oldValue = MakeReadable(property, oldTicket.GetType().GetProperty(property).GetValue(oldTicket, null).ToString());
+                var newValue = MakeReadable(property, newTicket.GetType().GetProperty(property).GetValue(newTicket, null).ToString());
                 if (oldValue != newValue)
                 {
                     messageBody.AppendLine($"");
@@ -367,17 +364,17 @@ namespace BugTracker.Helpers
         public static int GetNewUserNotificationCount()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            return db.TicketNotifications.Where(t => t.RecipientId == userId && !t.Read).Count();
+            return db.TicketNotifications.AsNoTracking().Where(t => t.RecipientId == userId && !t.Read).Count();
         }
         public static int GetReadUserNotificationCount()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            return db.TicketNotifications.Where(t => t.RecipientId == userId && t.Read).Count();
+            return db.TicketNotifications.AsNoTracking().Where(t => t.RecipientId == userId && t.Read).Count();
         }
         public static int GetAllUserNotificationCount()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            return db.TicketNotifications.Where(t => t.RecipientId == userId).Count();
+            return db.TicketNotifications.AsNoTracking().Where(t => t.RecipientId == userId).Count();
         }
         public static List<TicketNotification> GetUnreadNotifications()
         {
@@ -387,17 +384,17 @@ namespace BugTracker.Helpers
         public static List<TicketNotification> GetReadNotifications()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            return db.TicketNotifications.Where(t => t.RecipientId == userId && t.Read).ToList();
+            return db.TicketNotifications.AsNoTracking().Where(t => t.RecipientId == userId && t.Read).ToList();
         }
         public static List<TicketNotification> GetAllUserNotifications()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            return db.TicketNotifications.Where(t => t.RecipientId == userId).ToList();
+            return db.TicketNotifications.AsNoTracking().Where(t => t.RecipientId == userId).ToList();
         }
         public static List<TicketHistory> GetAllUserHistories()
         {
             var userId = HttpContext.Current.User.Identity.GetUserId();
-            return db.TicketHistories.Where(t => t.UserId == userId).ToList();
+            return db.TicketHistories.AsNoTracking().Where(t => t.UserId == userId).ToList();
         }
         #endregion
     }

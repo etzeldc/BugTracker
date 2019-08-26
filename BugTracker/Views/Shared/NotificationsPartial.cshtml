@@ -3,6 +3,7 @@
 
 @{
     var ticketHelper = new TicketHelper();
+    var userId = User.Identity.GetUserId();
 }
 
     <li class="dropdown notifications-menu">
@@ -33,14 +34,23 @@
                 <ul class="menu">
                     @foreach (var notification in TicketHelper.GetUnreadNotifications().OrderByDescending(t => t.Created).Take(5))
                     {
-                        using (Html.BeginForm("MarkAsRead", "TicketNotifications", FormMethod.Post, new { name = "ReadForm" }))
+                        using (Html.BeginForm("MarkAsRead", "TicketNotifications"))
                         {
                             @Html.AntiForgeryToken()
                             @Html.Hidden("NotificationId", notification.Id)
                             <li class="hover">
-                                <a href="#" onclick="$(this).closest('form').submit();">
-                                    <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.Sender.FirstName @notification.Subject
-                                </a>
+                                @if (ticketHelper.IsUserOnTicket(userId, notification.Ticket.Id))
+                                {
+                                    <a href="#" onclick="$(this).closest('form').submit();">
+                                        <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.Sender.DisplayName @notification.Subject
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="#" onclick="$(this).closest('form').submit();">
+                                        <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.Sender.DisplayName @notification.Subject
+                                    </a>
+                                }
                             </li>
                         }
                     }
@@ -51,10 +61,19 @@
                 <ul class="menu">
                     @foreach (var notification in TicketHelper.GetReadNotifications().OrderByDescending(t => t.Created).Take(5 - TicketHelper.GetNewUserNotificationCount()))
                     {
-                        <li>
-                            <a href="@Url.Action("Details", "Tickets", new { Id = notification.Ticket.Id })">
-                                <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.Sender.FirstName @notification.Subject
-                            </a>
+                        <li class="hover">
+                            @if (ticketHelper.IsUserOnTicket(userId, notification.Ticket.Id))
+                            {
+                                <a href="@Url.Action("Details", "Tickets", new { Id = notification.Ticket.Id })">
+                                    <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.Sender.DisplayName @notification.Subject
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="#">
+                                    <img src="@notification.Sender.AvatarUrl" class="img-circle" style="height:20px;" /> @notification.Sender.DisplayName @notification.Subject
+                                </a>
+                            }
                         </li>
                     }
                 </ul>

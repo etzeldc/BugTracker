@@ -27,18 +27,18 @@
             {
                 <div class="item">
                     <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> 
-                    <strong>@comment.Author.FullName</strong>
+                    <strong>@comment.Author.DisplayName</strong>
                     <small class="pull-right">
                         <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")
                         <br />@comment.Created.ToString("M/dd/yyy")
                         @if (User.Identity.GetUserId() == comment.AuthorId)
                         {
-                            <br />@Html.ActionLink("Edit", "Edit", "TicketComments", FormMethod.Post, new { Id = comment.Id })
-                            @: | @Html.ActionLink("Delete", "Delete", "TicketComments", new { Id = comment.Id })
+                            <br />@Html.ActionLink("Edit", "Edit", "TicketComments",null, new { Id = comment.Id })
+                            @: | @Html.ActionLink("Delete", "Delete", "TicketComments",null,  new { Id = comment.Id })
                         }
                         else if (User.IsInRole("Admin"))
                         {
-                            <br />@Html.ActionLink("Delete", "Delete", "TicketComments", FormMethod.Post, new { Id = comment.Id })
+                            <br />@Html.ActionLink("Delete", "Delete", "TicketComments",null, new { Id = comment.Id })
                         }
                     </small>
                     <p>
@@ -84,7 +84,7 @@
                 {
                 <div class="item">
                     <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> 
-                    <strong>@comment.Author.FullName</strong>
+                    <strong>@comment.Author.DisplayName</strong>
                     <small class="pull-right">
                         <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />@comment.Created.ToString("M/dd/yyy")
                         @*@if (User.Identity.GetUserId() == comment.Author.Id)

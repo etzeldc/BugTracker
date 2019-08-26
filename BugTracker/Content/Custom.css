@@ -40,6 +40,10 @@
     height: 12vh;
 }
 
+.another-box {
+    height: 28vh;
+}
+
 #note-date {
     background-color:rgb(86,204,200);
     color:rgb(36,52,56);

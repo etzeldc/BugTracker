@@ -78,12 +78,12 @@ namespace BugTracker.Controllers
 
         // GET: Tickets/Create
         [Authorize(Roles = "Submitter")]
-        public ActionResult Create(int projectId)
+        public ActionResult Create()
         {
             var userId = User.Identity.GetUserId();
             var myProjects = projectHelper.ListUserProjects(userId);
 
-            ViewBag.ProjectId = projectId;
+            ViewBag.ProjectId = new SelectList(myProjects, "Id", "Name");
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name");
             ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name");
             return View();
@@ -163,6 +163,15 @@ namespace BugTracker.Controllers
 
             if (ModelState.IsValid)
             {
+                //these are all thats needed for "Best Edit" (no need for developer string)
+                //db.Tickets.Attach(ticket);
+                //db.Entry(ticket).Property(x => x."whatever property").IsModified = true;
+                //if (ticket.AssignedToUserId != null)
+                    //db.entry(ticket)"""";
+                //newTicket.Updated = DateTime.Now;
+                //db.SaveChanges();
+                //return redirect;
+
                 var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
                 var newTicket = db.Tickets.Find(ticket.Id);
                 newTicket.AssignedToUserId = developer;
@@ -213,7 +222,7 @@ namespace BugTracker.Controllers
             Ticket ticket = db.Tickets.Find(id);
             db.Tickets.Remove(ticket);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
 
         protected override void Dispose(bool disposing)
