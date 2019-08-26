@@ -126,11 +126,11 @@ $(function () {
     });
 
     $('.his-box').slimScroll({
-        height: '48vh'
+        height: '47.5vh'
     });
 
     $('.skroll').slimScroll({
-        height: '80vh'
+        height: '85vh'
     });
 
     $('.modal-skroll').slimScroll({

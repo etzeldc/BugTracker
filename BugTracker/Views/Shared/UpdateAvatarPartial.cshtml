@@ -1,0 +1,21 @@
+﻿@model BugTracker.Models.UserProfileViewModel
+
+@using (Html.BeginForm("UpdateAvatarUrl", "Home", FormMethod.Post, new { enctype = "Multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+            @Html.EditorFor(m => m.AvatarUrl, new { htmlAttributes = new { @class = "form-control", type = "file", name = "avatar" } })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+            <input class="btn" type="submit" value="Update Avatar" />
+        </div>
+    </div>
+}
+
+<div class="center-block">
+    <img src="@Model.AvatarUrl" class="img-circle" style="height:200px" />
+</div>

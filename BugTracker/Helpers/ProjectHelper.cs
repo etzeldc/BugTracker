@@ -83,5 +83,22 @@ namespace BugTracker.Helpers
         {
             return db.Projects.Find(projectId).Tickets.ToList();
         }
+
+        public ICollection<Project> UnassignedProjects()
+        {
+            var newProjects = new List<Project>();
+            var allProjects = db.Projects.ToList();
+            foreach (var project in allProjects)
+            {
+                if (UsersInRoleOnProject(project.Id, "Admin").Count() == 0 &&
+                    UsersInRoleOnProject(project.Id, "Project Manager").Count() == 0 ||
+                    UsersInRoleOnProject(project.Id, "Developer").Count() == 0 ||
+                    UsersInRoleOnProject(project.Id, "Submitter").Count() == 0)
+                {
+                    newProjects.Add(project);
+                }
+            }
+            return newProjects;
+        }
     }
 }

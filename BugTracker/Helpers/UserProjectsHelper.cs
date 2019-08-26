@@ -14,6 +14,7 @@ namespace BugTracker.Helpers
     {
         private UserManager<ApplicationUser> manager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(new ApplicationDbContext()));
         private ApplicationDbContext db = new ApplicationDbContext();
+        private TicketHelper ticketHelper = new TicketHelper();
 
         public bool IsOnProject(string userId, int projectId)
         {
@@ -48,6 +49,15 @@ namespace BugTracker.Helpers
         public ICollection<ApplicationUser> ListUsersNotOnProject(int projectId)
         {
             return db.Users.Where(u => u.Projects.All(p => p.Id != projectId)).ToList();
+        }
+
+        public bool ProjectHasUnassignedTickets(int projectId)
+        {
+            if (ticketHelper.UnassignedTicketsOnProject(projectId).Count() != 0)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

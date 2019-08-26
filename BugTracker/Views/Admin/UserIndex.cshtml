@@ -14,7 +14,7 @@
     </h3>
 </div>
 <div class="body">
-    <section class="content render-box skroll">
+    <section class="content render-box">
         <div class="row">
             <div class="col-md-12">
                 <div class="box box-solid">
@@ -50,17 +50,17 @@
                                         @Html.AntiForgeryToken()
                                         @Html.Hidden("userId", user.Id)
                                         <tr>
-                                            <td><img src="@user.AvatarUrl" class="img-circle" style="height:25px" />  @user.FirstName @user.LastName</td>
+                                            <td class="members"><img src="@user.AvatarUrl" class="img-circle" style="height:25px" />  @user.FirstName @user.LastName</td>
                                             <td>@user.Email</td>
                                             <td>
-                                                @if (ticketHelper.MyTickets(user.Id, "Developer").Count() != 0)
+                                                @*@if (ticketHelper.MyTickets(user.Id, "Developer").Count() != 0)
                                                 {
                                                 <h5>Developer is actively assigned</h5>
                                                 }
                                                 else
-                                                {
-                                                @Html.DropDownList("RoleName", null, roleHelper.ListUserRoles(user.Id).FirstOrDefault(), htmlAttributes: new { @class = "form-control", @style = "width:100%" })
-                                                }
+                                                {*@
+                                                @Html.DropDownList("roleName", null, roleHelper.ListUserRoles(user.Id).FirstOrDefault(), htmlAttributes: new { @class = "form-control", @style = "width:100%" })
+                                                @*}*@
                                             </td>
                                             <td class="edit-cell">
                                                 <div class="col-md-offset-1">

@@ -101,6 +101,27 @@ namespace BugTracker.Controllers
         }
 
         //
+        // POST : /Account/DemoLogin
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DemoLoginAsync(string demoEmal)
+        {
+            var email = WebConfigurationManager.AppSettings[demoEmal];
+            var password = WebConfigurationManager.AppSettings["DemoUserPassword"];
+            var result = await SignInManager.PasswordSignInAsync(email, password, false, shouldLockout: false);
+
+            switch (result)
+            {
+                case SignInStatus.Success:
+                    return RedirectToAction("Dashboard", "Home");
+                case SignInStatus.Failure:
+                default:
+                    return RedirectToAction("Login", "Home");
+            }
+        }
+
+        //
         // GET: /Account/VerifyCode
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)

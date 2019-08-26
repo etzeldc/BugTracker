@@ -22,7 +22,7 @@
 <div class="body">
     <section class="content render-box skroll">
         <div class="row">
-            <div class="col-md-12">
+            <div id="tix" class="col-md-12">
                 @Html.Partial("TicketsPartial")
             </div>
         </div>
@@ -55,18 +55,19 @@
                                     <th>Additional Information</th>
                                 </tr>
                             </thead>
-                            <tbody style="color:black;">
+                            <tbody>
                                 <tr>
                                     <td>@Model.Project.Description</td>
-                                    <td>
+                                    <td class="tickets">
                                         @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id).OrderBy(t => t.TicketPriorityId))
                                         {
                                             if (ticks.Id != Model.Id)
                                             {
                                                 if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && projectHelper.IsUserOnProject(userId, ticks.ProjectId) || userId == ticketHelper.TicketAssignee(ticks.Id) || userId == ticks.OwnerUserId)
                                                 {
-                                                    <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })">
-                                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title
+                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i>
+                                                    <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id })" class="btn btn-xs btn-default">
+                                                         @ticks.Title
                                                     </a><br />
                                                 }
                                                 else
@@ -101,7 +102,7 @@
                     </div>
                     <div class="box-body">
                         <table class="table table-bordered">
-                            <thead class="bg-teal-active">
+                            <thead>
                                 <tr>
                                     <th>Project Members</th>
                                     <th>Ticket Count</th>
@@ -109,11 +110,11 @@
                                     <th>Roles</th>
                                 </tr>
                             </thead>
-                            <tbody style="color:black;">
+                            <tbody>
                                 @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Project.Id))
                                 {
                                     <tr>
-                                        <td>
+                                        <td class="mems">
                                             <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName
                                             @if (users.Id == Model.AssignedToUserId)
                                             {

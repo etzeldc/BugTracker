@@ -49,7 +49,7 @@
                             <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")<br />
                             @if (User.IsInRole("Admin") || ticketHelper.IsUserOnTicket(User.Identity.GetUserId(), attachment.TicketId))
                             {
-                                @Html.ActionLink("Delete", "Delete", "TicketComments", new { Id = attachment.Id })
+                                @Html.ActionLink("Delete", "Delete", "TicketAttachments", new { Id = attachment.Id })
                             }
                         </small>
                     </div>

@@ -157,7 +157,7 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,ProjectId,Description,CurrentTypeId,Types,CurrentPriorityId,Priorities,CurrentStatusId,Statuses,CurrentAssignee,Assignees,Created")] TicketViewModel ticket)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Description,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket, string developer)
         {
             var allDevelopers = rolesHelper.UsersInRole("Developer");
 
@@ -165,64 +165,29 @@ namespace BugTracker.Controllers
             {
                 var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
                 var newTicket = db.Tickets.Find(ticket.Id);
-                newTicket.ProjectId = ticket.ProjectId;
-                newTicket.AssignedToUserId = ticket.CurrentAssignee;
-                newTicket.TicketTypeId = ticket.CurrentTypeId;
-                newTicket.TicketPriorityId = ticket.CurrentPriorityId;
-                newTicket.TicketStatusId = ticket.CurrentStatusId;
+                newTicket.AssignedToUserId = developer;
+                newTicket.TicketTypeId = ticket.TicketTypeId;
+                newTicket.TicketPriorityId = ticket.TicketPriorityId;
+                newTicket.TicketStatusId = ticket.TicketStatusId;
                 newTicket.Description = ticket.Description;
                 newTicket.Updated = DateTime.Now;
                 db.SaveChanges();
                 projectHelper.AddUserToProject(newTicket.AssignedToUserId, newTicket.ProjectId);
-                await ticketHelper.CreateAssignmentNotification(oldTicket, newTicket);
                 ticketHelper.CreateChangeNotification(oldTicket, newTicket);
                 ticketHelper.CreateHistoryRecord(oldTicket, newTicket);
-                return RedirectToAction("RenderTicketsPartial", new { id = newTicket.Id });
+                await ticketHelper.CreateAssignmentNotification(oldTicket, newTicket);
+                return RedirectToAction("Details", "Tickets", new { Id = ticket.Id });
             }
-            ViewBag.Developers = new SelectList(allDevelopers, "Id", "FullName", ticket.CurrentAssignee);
-            ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.CurrentPriorityId);
-            ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.CurrentStatusId);
-            ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.CurrentTypeId);
-            return PartialView(ticket);
+            ViewBag.Developers = new SelectList(allDevelopers, "Id", "FullName", ticket.AssignedToUserId);
+            ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
+            ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
+            ViewBag.TicketTypeId = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+            return View(ticket);
         }
 
         public ActionResult TicketsPartial()
         {
             return PartialView();
-        }
-
-        [ChildActionOnly]
-        public PartialViewResult RenderTicketsPartial(int ticketId)
-        {
-            var userId = User.Identity.GetUserId();
-            var ticket = db.Tickets.Find(ticketId);
-            var allDevelopers = rolesHelper.UsersInRole("Developer");
-            var thisTicket = new TicketViewModel
-            {
-                Id = ticket.Id,
-                Title = ticket.Title,
-                Submitter = ticket.OwnerUserId,
-                Description = ticket.Description,
-                CurrentAssignee = ticket.AssignedToUserId,
-                ProjectId = ticket.ProjectId,
-                CurrentPriorityId = ticket.TicketPriorityId,
-                CurrentStatusId = ticket.TicketStatusId,
-                CurrentTypeId = ticket.TicketTypeId,
-                Created = ticket.Created,
-                Updated = ticket.Updated,
-                Priorities = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId),
-                Statuses = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId),
-                Types = new SelectList(db.TicketTypes, "Id", "Name", ticket.TicketTypeId),
-                Assignees = new SelectList(allDevelopers, "Id", "FullName", ticket.AssignedToUserId)
-            };
-            if(User.IsInRole("Admin") || User.IsInRole("Project Manager") && projectHelper.IsUserOnProject(userId, ticket.ProjectId))
-            {
-                return PartialView("AdminTicketEditPartial", thisTicket);
-            }
-            else
-            {
-                return PartialView("UserTicketEditPartial", thisTicket);
-            }
         }
 
         // GET: Tickets/Delete/5
@@ -258,6 +223,29 @@ namespace BugTracker.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        // POST: TicketComments/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public ActionResult CreateComment([Bind(Include = "Id,TicketId,AuthorId,CommentBody,Created")] TicketComment ticketComment, string commentBody, int ticketId)
+        {
+            if (ModelState.IsValid)
+            {
+                ticketComment.AuthorId = User.Identity.GetUserId();
+                ticketComment.CommentBody = commentBody;
+                ticketComment.Created = DateTime.Now;
+                db.TicketComments.Add(ticketComment);
+                db.SaveChanges();
+                return RedirectToAction("Details", "Tickets", new { id = ticketId });
+            }
+
+            ViewBag.AuthorId = new SelectList(db.Users, "Id", "FirstName", ticketComment.AuthorId);
+            ViewBag.TicketId = new SelectList(db.Tickets, "Id", "OwnerUserId", ticketComment.TicketId);
+            return View(ticketComment);
         }
     }
 }

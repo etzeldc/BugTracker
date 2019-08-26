@@ -49,7 +49,7 @@ namespace BugTracker.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public ActionResult AddAvatarUrl(UserProfileViewModel model, HttpPostedFileBase avatar)
+        public ActionResult UpdateAvatarUrl(UserProfileViewModel model, HttpPostedFileBase avatar)
         {
             if (ModelState.IsValid)
             {
@@ -63,7 +63,7 @@ namespace BugTracker.Controllers
                     db.SaveChanges();
                 }
 
-                return RedirectToAction("UserProfile");
+                return RedirectToAction("Index");
             }
             return View(model);
         }

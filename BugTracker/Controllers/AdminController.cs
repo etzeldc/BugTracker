@@ -50,7 +50,7 @@ namespace BugTracker.Controllers
             return RedirectToAction("UserIndex");
         }
 
-        // GET ASSIGN ROLES
+        // GET ASSIGN PROJECTS
         public ActionResult AssignProjects()
         {
             var users = db.Users.Select(u => new UserProfileViewModel
@@ -66,7 +66,7 @@ namespace BugTracker.Controllers
             return View(users);
         }
 
-        // POST ASSIGN ROLES
+        // POST ASSIGN PROJECTS
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AssignProjects(string userId, List<int> projectIds)

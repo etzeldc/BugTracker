@@ -43,9 +43,9 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
+                                    <th>Project</th>
                                     <th>Description</th>
-                                    <th>Assigned Users</th>
+                                    <th>Project Members</th>
                                     @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && userProjectsHelper.IsOnProject(userId, Model.Id))
                                     {
                                         <th>Remove Users</th>
@@ -62,18 +62,10 @@
                                     <td>
                                         @Html.DisplayFor(model => model.Description)
                                     </td>
-                                    <td>
+                                    <td class="members">
                                         @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
                                         {
-<<<<<<< HEAD
-<<<<<<< HEAD
-                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id).FirstOrDefault())
-=======
-                                            @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
->>>>>>> parent of d53d5d0... Styled Tables Mostly
-=======
-                                            @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
->>>>>>> parent of d53d5d0... Styled Tables Mostly
+                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
                                             {
                                                 if (roleHelper.IsUserInRole(users.Id, "Admin"))
                                                 {
@@ -97,16 +89,17 @@
                                                 }
                                                 else
                                                 {
-                                                    @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, null)<br />
+                                                    @Html.ActionLink("Remove " + users.FirstName, "RemoveProjectUser", "Admin", new { userId = users.Id, projectId = Model.Id }, new { @class = "btn btn-default btn-xs" })<br />
                                                 }
                                             }
                                         </td>
                                     }
-                                <td>
+                                <td class="ticks">
                                     @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Id).OrderBy(t => t.TicketPriorityId))
-                                    {
-                                        <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id})">
-                                            <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i> @ticks.Title
+                                    { 
+                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i>
+                                        <a href="@Url.Action("Details", "Tickets", new { Id = ticks.Id})" class="btn btn-default btn-xs">
+                                            @ticks.Title
                                         </a><br />
                                     }
                                 </td>
@@ -277,21 +270,13 @@
                            }
                     </div>
                 </div>
-                <!--CREATE-->
-                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-                {
-                    <div class="box box-solid collapsed-box">
-                        @Html.Partial("CreateProjectPartial")
-                    </div>
-                }
             </div>
             }
             @*@if (User.IsInRole("Submitter"))
             {
                 <div class="col-md-6">
-                    @{
-                        Html.RenderAction("CreateTicketPartial", "Tickets", new Ticket { });
-                    }
+                    @Html.Partial("CreateTicketPartial", "Tickets");
+                    
                 </div>
             }*@
         </div>

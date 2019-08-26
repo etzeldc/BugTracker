@@ -97,6 +97,45 @@ namespace BugTracker.Helpers
             return db.Projects.Find(projectId).Tickets;
         }
 
+        public ICollection<Ticket> UnassignedTicketsOnProject(int projectId)
+        {
+            var newTickets = new List<Ticket>();
+            foreach (var ticket in TicketsOnProject(projectId))
+            {
+                if (ticket.AssignedToUserId == null)
+                {
+                    newTickets.Add(ticket);
+                }
+            }
+            return newTickets;
+        }
+
+        public ICollection<Ticket> UserUnassignedTickets(string userId)
+        {
+            var unTickets = new List<Ticket>();
+            foreach (var project in db.Users.Find(userId).Projects)
+            {
+                foreach (var ticket in UnassignedTicketsOnProject(project.Id))
+                {
+                    unTickets.Add(ticket);
+                }
+            }
+            return unTickets;
+        }
+
+        public ICollection<Ticket> AllUnassignedTickets()
+        {
+            var allUnTickets = new List<Ticket>();
+            foreach (var ticket in db.Tickets)
+            {
+                if (ticket.AssignedToUserId == null)
+                {
+                    allUnTickets.Add(ticket);
+                }
+            }
+            return allUnTickets;
+        }
+
         public string TicketsByPriority(string priorityName)
         {
             switch (priorityName)
@@ -230,7 +269,6 @@ namespace BugTracker.Helpers
             };
             db.TicketNotifications.Add(notification);
             db.SaveChanges();
-            //return rerender comment partial
         }
         #endregion
 
@@ -249,7 +287,6 @@ namespace BugTracker.Helpers
             };
             db.TicketNotifications.Add(notification);
             db.SaveChanges();
-            // return rerender attachment partial
         }
         #endregion
 
@@ -286,7 +323,6 @@ namespace BugTracker.Helpers
                 }
             }
             db.SaveChanges();
-            // return rerender history partial
         }
         #endregion
 

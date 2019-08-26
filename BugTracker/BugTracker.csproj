@@ -209,6 +209,18 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Avatars\bugtrackerfemale1.jpg" />
+    <Content Include="Avatars\bugtrackerfemale2.jpg" />
+    <Content Include="Avatars\bugtrackerfemale3.jpg" />
+    <Content Include="Avatars\bugtrackerfemale4.jpg" />
+    <Content Include="Avatars\bugtrackerfemale5.jpg" />
+    <Content Include="Avatars\bugtrackerfemale6.jpg" />
+    <Content Include="Avatars\bugtrackermale1.jpg" />
+    <Content Include="Avatars\bugtrackermale2.jpg" />
+    <Content Include="Avatars\bugtrackermale3.jpg" />
+    <Content Include="Avatars\bugtrackermale4.jpg" />
+    <Content Include="Avatars\bugtrackermale5.jpg" />
+    <Content Include="Avatars\bugtrackermale6.jpg" />
     <Content Include="Avatars\default_avatar.jpeg" />
     <Content Include="Content\AdminLTE.css" />
     <Content Include="Content\blue.css" />
@@ -375,15 +387,8 @@
     <Content Include="Views\Home\DemoUser.cshtml" />
     <Content Include="Views\Shared\CreateTicketPartial.cshtml" />
     <Content Include="Views\Shared\HistoryPartial.cshtml" />
-<<<<<<< HEAD
-<<<<<<< HEAD
     <Content Include="Views\Shared\ChangePasswordPartial.cshtml" />
-    <Content Include="Views\Shared\AdminTicketEditPartial.cshtml" />
-    <Content Include="Views\Shared\UserTicketEditPartial.cshtml" />
-=======
->>>>>>> parent of d53d5d0... Styled Tables Mostly
-=======
->>>>>>> parent of d53d5d0... Styled Tables Mostly
+    <Content Include="Views\Shared\UpdateAvatarPartial.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

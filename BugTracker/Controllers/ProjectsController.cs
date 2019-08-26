@@ -80,7 +80,7 @@ namespace BugTracker.Controllers
                 project.Created = DateTime.Now;
                 db.Projects.Add(project);
                 db.SaveChanges();
-                return RedirectToAction("Details", "Projects", new { id = project.Id });
+                return RedirectToAction("Details", "Projects");
             }
 
             return View(project);
