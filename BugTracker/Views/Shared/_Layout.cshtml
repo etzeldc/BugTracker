@@ -93,10 +93,19 @@
                             </a>
                             <!--Generate a ticketlist here-->
                             <ul class="dropdown-menu">
+                                @if (User.IsInRole("Admin"))
+                                {
                                 <li class="header">
-                                    You have @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() tickets
+                                    There are @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() open tickets.
                                 </li>
-                                @foreach (var ticket in ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
+                                }
+                                else
+                                {
+                                    <li class="header">
+                                        You have @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() open tickets.
+                                    </li>
+                                }
+                                @foreach (var ticket in ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id).Take(10))
                                 {
                                     <li>
                                         <ul class="menu">
@@ -119,7 +128,7 @@
                                     </li>
                                 }
                                 <li class="footer">
-                                    <a href="#">View all tasks</a>
+                                    <a href="@Url.Action("Index", "Home")">View all tickets </a>
                                 </li>
                             </ul>
                         </li>
@@ -203,6 +212,7 @@
                     </div>
                 </form>*@
                 <!-- SIDEBAR MENU: : style can be found in sidebar.less -->
+            <br />
             <ul class="sidebar-menu" data-widget="tree">
                 <li class="header">MAIN NAVIGATION</li>
                 <!-- USER ROLE MANAGEMENT LINK -->
@@ -219,7 +229,7 @@
                 {
                     <li class="treeview">
                         <a href="#">
-                            <i class="fa fa-list-alt"></i> <span>Unassigned Projects</span>
+                            <i class="fa fa-exclamation-triangle"></i> <span>Unassigned Projects</span>
                             <span class="pull-right-container">
                                 <i class="fa fa-angle-left pull-right"></i>
                             </span>
@@ -380,7 +390,7 @@
             <!-- Home tab content -->
             <div class="tab-pane active" id="control-sidebar-home-tab">
                 <h3 class="control-sidebar-heading"><strong>Update Your Avatar</strong></h3>
-                @*@Html.Partial("UpdateAvatarPartial")*@
+                @*@Html.Partial("UpdateAvatarPartial", new { model = user.UserProfileViewModel})*@
             </div>
             <!-- /.tab-pane --> 
             <!-- Settings tab content -->

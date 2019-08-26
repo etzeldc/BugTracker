@@ -209,19 +209,19 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Avatars\bugtrackerfemale1.jpg" />
-    <Content Include="Avatars\bugtrackerfemale2.jpg" />
-    <Content Include="Avatars\bugtrackerfemale3.jpg" />
-    <Content Include="Avatars\bugtrackerfemale4.jpg" />
-    <Content Include="Avatars\bugtrackerfemale5.jpg" />
-    <Content Include="Avatars\bugtrackerfemale6.jpg" />
-    <Content Include="Avatars\bugtrackermale1.jpg" />
-    <Content Include="Avatars\bugtrackermale2.jpg" />
-    <Content Include="Avatars\bugtrackermale3.jpg" />
-    <Content Include="Avatars\bugtrackermale4.jpg" />
-    <Content Include="Avatars\bugtrackermale5.jpg" />
-    <Content Include="Avatars\bugtrackermale6.jpg" />
-    <Content Include="Avatars\default_avatar.jpeg" />
+    <Content Include="Avatar\bugtrackerfemale1.jpg" />
+    <Content Include="Avatar\bugtrackerfemale2.jpg" />
+    <Content Include="Avatar\bugtrackerfemale3.jpg" />
+    <Content Include="Avatar\bugtrackerfemale4.jpg" />
+    <Content Include="Avatar\bugtrackerfemale5.jpg" />
+    <Content Include="Avatar\bugtrackerfemale6.jpg" />
+    <Content Include="Avatar\bugtrackermale1.jpg" />
+    <Content Include="Avatar\bugtrackermale2.jpg" />
+    <Content Include="Avatar\bugtrackermale3.jpg" />
+    <Content Include="Avatar\bugtrackermale4.jpg" />
+    <Content Include="Avatar\bugtrackermale5.jpg" />
+    <Content Include="Avatar\bugtrackermale6.jpg" />
+    <Content Include="Avatar\default_avatar.jpeg" />
     <Content Include="Content\AdminLTE.css" />
     <Content Include="Content\blue.css" />
     <Content Include="Content\bootstrap-datepicker.min.css" />

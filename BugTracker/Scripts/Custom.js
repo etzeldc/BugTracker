@@ -9,13 +9,13 @@
 
 //$(".skrollDown").sccrollTop($(".skrollDown")[0].scrollHeight);
 
-//$(document).ready(function () {
-//    $(".ticketBtn").on("click", function () {
-//        $.ajax({
-//            url: '@Url.Action("Edit", "Tickets")',
-//            type: "POST",
-//        }).done(function(result) {
-//            $("#tix").html(result);
-//        })
-//    });
-//});
+$(document).ready(function () {
+    $(".ticketBtn").on("click", function () {
+        $.ajax({
+            url: '@Url.Action("Edit", "Tickets")',
+            type: "POST",
+        }).done(function(result) {
+            $("#tix").html(result);
+        })
+    });
+});

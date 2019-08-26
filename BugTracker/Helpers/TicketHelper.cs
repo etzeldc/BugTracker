@@ -170,9 +170,9 @@ namespace BugTracker.Helpers
                     return db.TicketPriorities.Find(Convert.ToInt32(value)).Name;
                 case "TicketTypeId":
                     return db.TicketTypes.Find(Convert.ToInt32(value)).Name;
-                case "AssignedUserId":
+                case "AssignedToUserId":
                 case "OwnerUserId":
-                    return db.Users.Find(value).FullName;
+                    return db.Users.Find(value).DisplayName;
                 default:
                     return value;
             }
@@ -218,7 +218,8 @@ namespace BugTracker.Helpers
 
             db.TicketNotifications.Add(notification);
             db.SaveChanges();
-            await GenerateNotificationEmail(notification);
+            var newNotification = db.TicketNotifications.Include("Sender").Include("Recipient").FirstOrDefault(t => t.Id == notification.Id);
+            await GenerateNotificationEmail(newNotification);
         }
 
         private async Task GenerateAssignmentNotification(Ticket oldTicket, Ticket newTicket)
@@ -235,7 +236,8 @@ namespace BugTracker.Helpers
             };
             db.TicketNotifications.Add(notification);
             db.SaveChanges();
-            await GenerateNotificationEmail(notification);
+            var newNotification = db.TicketNotifications.Include("Sender").Include("Recipient").FirstOrDefault(t => t.Id == notification.Id);
+            await GenerateNotificationEmail(newNotification);
         }
 
         private async Task GenerateNotificationEmail(TicketNotification notification)

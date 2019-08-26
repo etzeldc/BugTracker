@@ -45,7 +45,7 @@
                             <tbody>
                                 @foreach (var user in Model)
                                 {
-                                    using (Html.BeginForm("UserIndex", "Admin"))
+                                    using (Html.BeginForm("UserIndex", "Admin", FormMethod.Post))
                                     {
                                         @Html.AntiForgeryToken()
                                         @Html.Hidden("userId", user.Id)
@@ -53,23 +53,22 @@
                                             <td class="members"><img src="@user.AvatarUrl" class="img-circle" style="height:25px" />  @user.FirstName @user.LastName</td>
                                             <td>@user.Email</td>
                                             <td>
-                                                @*@if (ticketHelper.MyTickets(user.Id, "Developer").Count() != 0)
+                                                @if (ticketHelper.MyTickets(user.Id, "Developer").Count() != 0)
                                                 {
                                                 <h5>Developer is actively assigned</h5>
                                                 }
                                                 else
-                                                {*@
+                                                {
                                                 @Html.DropDownList("roleName", null, roleHelper.ListUserRoles(user.Id).FirstOrDefault(), htmlAttributes: new { @class = "form-control", @style = "width:100%" })
-                                                @*}*@
+                                                }
                                             </td>
                                             <td class="edit-cell">
                                                 <div class="col-md-offset-1">
-                                                    <input type="submit" value="Assign" class="btn" style="width:90%;" />
+                                                    <button type="submit" class="btn roleChange">Assign</button>
                                                 </div>
                                             </td>
                                         </tr>
                                     }
-
                                 }
                             </tbody>
                         </table>
@@ -79,3 +78,11 @@
         </div>
     </section>
 </div>
+@section scripts{
+    <script>
+        $(".roleChange").click(function (event) {
+            event.preventDefault();
+            $(this).closest("form").submit();
+        })
+    </script>    
+}
