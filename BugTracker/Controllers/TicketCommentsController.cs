@@ -15,6 +15,7 @@ namespace BugTracker.Controllers
     public class TicketCommentsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private TicketHelper ticketHelper = new TicketHelper();
 
         // GET: TicketComments
         public ActionResult Index()
@@ -61,10 +62,7 @@ namespace BugTracker.Controllers
                 ticketComment.Created = DateTime.Now;
                 db.TicketComments.Add(ticketComment);
                 db.SaveChanges();
-                if (ticketComment.AuthorId != ticket.AssignedToUserId)
-                {
-                    TicketHelper.CreateCommentNotification(newTicket, ticketComment);
-                }
+                ticketHelper.GenerateCommentNotification(newTicket, ticketComment);
                 return RedirectToAction("Details", "Tickets", new { id = ticketId });
             }
 

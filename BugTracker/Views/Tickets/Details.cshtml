@@ -133,56 +133,59 @@
                 </div>
                 @Html.Partial("AttachmentsPartial")
                 @Html.Partial("CommentsPartial")
-                <div class="box box-solid collapsed-box">
-                    <div class="box-header">
-                        <i class="fa fa-trash"></i>
-                        <h3 class="box-title">
-                            <strong>Delete</strong>
-                        </h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-sm" data-widget="collapse">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm" data-widget="remove">
-                                <i class="fa fa-times"></i>
-                            </button>
+                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && projectHelper.IsUserOnProject(userId, Model.ProjectId))
+                {
+                    <div class="box box-solid collapsed-box">
+                        <div class="box-header">
+                            <i class="fa fa-trash"></i>
+                            <h3 class="box-title">
+                                <strong>Delete</strong>
+                            </h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-sm" data-widget="collapse">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm" data-widget="remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            @using (Html.BeginForm("Delete", "Tickets", FormMethod.Get))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(model => model.Id)
+                                <div class="content back edit-box">
+                                    <dl class="dl-horizontal">
+                                        <dt>
+                                            @Html.DisplayNameFor(model => model.Title)
+                                        </dt>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Title)
+                                        </dd>
+                                        <dt>
+                                            @Html.DisplayNameFor(model => model.Description)
+                                        </dt>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Description)
+                                        </dd>
+                                        <dt>
+                                            @Html.DisplayNameFor(model => model.Created)
+                                        </dt>
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Created)
+                                        </dd>
+                                    </dl>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <input type="submit" value="Delete" class="btn pull-right" />
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
-                    <div class="box-body">
-                        @using (Html.BeginForm("Delete", "Tickets", FormMethod.Get))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.HiddenFor(model => model.Id)
-                            <div class="content back edit-box">
-                                <dl class="dl-horizontal">
-                                    <dt>
-                                        @Html.DisplayNameFor(model => model.Title)
-                                    </dt>
-                                    <dd>
-                                        @Html.DisplayFor(model => model.Title)
-                                    </dd>
-                                    <dt>
-                                        @Html.DisplayNameFor(model => model.Description)
-                                    </dt>
-                                    <dd>
-                                        @Html.DisplayFor(model => model.Description)
-                                    </dd>
-                                    <dt>
-                                        @Html.DisplayNameFor(model => model.Created)
-                                    </dt>
-                                    <dd>
-                                        @Html.DisplayFor(model => model.Created)
-                                    </dd>
-                                </dl>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <input type="submit" value="Delete" class="btn pull-right" />
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
+                }
             </div>
         </div>
     </section>

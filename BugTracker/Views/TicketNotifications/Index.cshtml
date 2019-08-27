@@ -26,26 +26,54 @@
                     <div class="box-body full-box">
                         <div class="content back full-skroll">
                             <ul class="timeline">
-                                @foreach (var date in Model.OrderByDescending(t => t.Created).GroupBy(t => t.Created.ToString("dd, MMM yyyy")))
+                                @if (User.IsInRole("Admin"))
                                 {
-                                    var target = date.Key.Replace(" ", "").Replace(",", "");
-                                    <li class="time-label" data-toggle="collapse" data-target="@($".{target}")">
-                                        <span id="note-date">@date.Key</span>
-                                    </li>
-                                    foreach (var item in date)
+                                    foreach (var date in Model.OrderByDescending(t => t.Created).GroupBy(t => t.Created.ToString("dd, MMM yyyy")))
                                     {
-                                        <li class="@target">
-                                            <div class="timeline-item">
-                                                <img src = "@item.Sender.AvatarUrl" class="img-circle pull-left" style="height:30px;">
-                                                <span class="time"><i class="fa fa-clock-o"></i> @item.Created.ToString("h:mm tt")</span>
-                                                <h3 class="timeline-header"><strong> @item.Sender.DisplayName </strong>@item.Subject</h3>
-                                                <a href="@Url.Action("Details", "Tickets", new { Id = item.Ticket.Id})">
-                                                    <div class="timeline-body">
-                                                        @item.NotificationBody
-                                                    </div>
-                                                </a>
-                                            </div>
+                                        var target = date.Key.Replace(" ", "").Replace(",", "");
+                                        <li class="time-label" data-toggle="collapse" data-target="@($".{target}")">
+                                            <span id="note-date">@date.Key</span>
                                         </li>
+                                        foreach (var item in date)
+                                        {
+                                            <li class="@target">
+                                                <div class="timeline-item">
+                                                    <img src="@item.Sender.AvatarUrl" class="img-circle pull-left" style="height:30px;">
+                                                    <span class="time"><i class="fa fa-clock-o"></i> @item.Created.ToString("h:mm tt")</span>
+                                                    <h3 class="timeline-header"><strong> @item.Sender.DisplayName </strong>@item.Subject</h3>
+                                                    <a href="@Url.Action("Details", "Tickets", new { Id = item.Ticket.Id})">
+                                                        <div class="timeline-body">
+                                                            @item.NotificationBody
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var date in TicketHelper.GetAllUserNotifications().OrderByDescending(t => t.Created).GroupBy(t => t.Created.ToString("dd, MMM yyyy")))
+                                    {
+                                        var target = date.Key.Replace(" ", "").Replace(",", "");
+                                        <li class="time-label" data-toggle="collapse" data-target="@($".{target}")">
+                                            <span id="note-date">@date.Key</span>
+                                        </li>
+                                        foreach (var item in date)
+                                        {
+                                            <li class="@target">
+                                                <div class="timeline-item">
+                                                    <img src="@item.Sender.AvatarUrl" class="img-circle pull-left" style="height:30px;">
+                                                    <span class="time"><i class="fa fa-clock-o"></i> @item.Created.ToString("h:mm tt")</span>
+                                                    <h3 class="timeline-header"><strong> @item.Sender.DisplayName </strong>@item.Subject</h3>
+                                                    <a href="@Url.Action("Details", "Tickets", new { Id = item.Ticket.Id})">
+                                                        <div class="timeline-body">
+                                                            @item.NotificationBody
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </li>
+                                        }
                                     }
                                 }
                             </ul>

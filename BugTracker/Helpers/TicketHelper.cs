@@ -18,6 +18,7 @@ namespace BugTracker.Helpers
     {
         private static ApplicationDbContext db = new ApplicationDbContext();
         private UserRolesHelper roleHelper = new UserRolesHelper();
+        private ProjectHelper projectHelper = new ProjectHelper();
 
         public List<string> UsersInRoleOnTicket(int ticketId, string roleName)
         {
@@ -257,20 +258,147 @@ namespace BugTracker.Helpers
         #endregion
 
         #region Comment Notifications
-        public static void CreateCommentNotification(Ticket ticket, TicketComment ticketComment)
+        public void GenerateCommentNotification(Ticket ticket, TicketComment ticketComment)
+        {
+            var subComment = (ticketComment.AuthorId == ticket.OwnerUserId);
+            var devComment = (ticketComment.AuthorId == ticket.AssignedToUserId);
+            var pmComment = (ticketComment.AuthorId == projectHelper.UsersInRoleOnProject(ticket.ProjectId, "Project Manager").FirstOrDefault());
+            var adComment = (ticketComment.AuthorId == roleHelper.UsersInRole("Admin").FirstOrDefault().Id);
+
+            if (subComment)
+            {
+                GenerateSubCommentNotification(ticket, ticketComment);
+            }
+            else if (devComment)
+            {
+                GenerateDevCommentNotification(ticket, ticketComment);
+            }
+            else if (pmComment)
+            {
+                GeneratePMCommentNotification(ticket, ticketComment);
+            }
+            else if (adComment)
+            {
+                GenerateAdCommentNotification(ticket, ticketComment);
+            }
+        }
+        public void GenerateDevCommentNotification(Ticket ticket, TicketComment ticketComment)
         {
             var authorName = db.Users.Find(ticketComment.AuthorId).DisplayName;
-            var notification = new TicketNotification
+            var subNotification = new TicketNotification
             {
+                TicketId = ticket.Id,
+                Created = DateTime.Now,
+                Subject = $"commented on {ticket.Title}.",
+                Read = false,
+                RecipientId = ticket.OwnerUserId,
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}"
+            };
+            var pmNotification = new TicketNotification
+            {
+                TicketId = ticket.Id,
+                Created = DateTime.Now,
+                Subject = $"commented on {ticket.Title}.",
+                Read = false,
+                RecipientId = projectHelper.UsersInRoleOnProject(ticket.ProjectId, "Project Manager").FirstOrDefault(),
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}"
+            };
+            db.TicketNotifications.Add(subNotification);
+            db.TicketNotifications.Add(pmNotification);
+            db.SaveChanges();
+        }
+        public void GeneratePMCommentNotification(Ticket ticket, TicketComment ticketComment)
+        {
+            var authorName = db.Users.Find(ticketComment.AuthorId).DisplayName;
+            var subNotification = new TicketNotification
+            {
+                TicketId = ticket.Id,
+                Created = DateTime.Now,
+                Subject = $"commented on {ticket.Title}.",
+                Read = false,
+                RecipientId = ticket.OwnerUserId,
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}"
+            };
+            var devNotification = new TicketNotification
+            {
+                TicketId = ticket.Id,
                 Created = DateTime.Now,
                 Subject = $"commented on {ticket.Title}.",
                 Read = false,
                 RecipientId = ticket.AssignedToUserId,
                 SenderId = HttpContext.Current.User.Identity.GetUserId(),
-                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}",
-                TicketId = ticket.Id
+                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}"
             };
-            db.TicketNotifications.Add(notification);
+            db.TicketNotifications.Add(subNotification);
+            db.TicketNotifications.Add(devNotification);
+            db.SaveChanges();
+        }
+        public void GenerateSubCommentNotification(Ticket ticket, TicketComment ticketComment)
+        {
+            var authorName = db.Users.Find(ticketComment.AuthorId).DisplayName;
+            var devNotification = new TicketNotification
+            {
+                TicketId = ticket.Id,
+                Created = DateTime.Now,
+                Subject = $"commented on {ticket.Title}.",
+                Read = false,
+                RecipientId = ticket.AssignedToUserId,
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}"
+            };
+            var pmNotification = new TicketNotification
+            {
+                TicketId = ticket.Id,
+                Created = DateTime.Now,
+                Subject = $"commented on {ticket.Title}.",
+                Read = false,
+                RecipientId = projectHelper.UsersInRoleOnProject(ticket.ProjectId, "Project Manager").FirstOrDefault(),
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}"
+            };
+            db.TicketNotifications.Add(devNotification);
+            db.TicketNotifications.Add(pmNotification);
+            db.SaveChanges();
+        }
+        public void GenerateAdCommentNotification(Ticket ticket, TicketComment ticketComment)
+        {
+            var authorName = db.Users.Find(ticketComment.AuthorId).DisplayName;
+            var subNotification = new TicketNotification
+            {
+                TicketId = ticket.Id,
+                Created = DateTime.Now,
+                Subject = $"commented on {ticket.Title}.",
+                Read = false,
+                RecipientId = ticket.OwnerUserId,
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}"
+            };
+            var devNotification = new TicketNotification
+            {
+                TicketId = ticket.Id,
+                Created = DateTime.Now,
+                Subject = $"commented on {ticket.Title}.",
+                Read = false,
+                RecipientId = ticket.AssignedToUserId,
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}"
+            };
+            var pmNotification = new TicketNotification
+            {
+                TicketId = ticket.Id,
+                Created = DateTime.Now,
+                Subject = $"commented on {ticket.Title}.",
+                Read = false,
+                RecipientId = projectHelper.UsersInRoleOnProject(ticket.ProjectId, "Project Manager").FirstOrDefault(),
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"{authorName} commented: {ticketComment.CommentBody}"
+            };
+            db.TicketNotifications.Add(subNotification);
+            db.TicketNotifications.Add(devNotification);
+            db.TicketNotifications.Add(pmNotification);
             db.SaveChanges();
         }
         #endregion

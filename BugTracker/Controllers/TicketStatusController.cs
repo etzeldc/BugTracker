@@ -107,6 +107,7 @@ namespace BugTracker.Controllers
         // POST: TicketStatus/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult DeleteConfirmed(int id)
         {
             TicketStatus ticketStatus = db.TicketStatuses.Find(id);

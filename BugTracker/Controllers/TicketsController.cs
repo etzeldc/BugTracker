@@ -114,12 +114,6 @@ namespace BugTracker.Controllers
             return View(ticket);
         }
 
-        //public ActionResult CreateTicketPartial(int projectId)
-        //{
-        //    var 
-        //    return PartialView("CreateTicketPartial", ticket.ProjectId = projectId);
-        //}
-
         // GET: Tickets/Edit/5
         [Authorize(Roles = "Admin, Project Manager, Submitter, Developer")]
         public ActionResult Edit(int? id)

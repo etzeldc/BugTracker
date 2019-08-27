@@ -16,6 +16,7 @@ namespace BugTracker.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
         private TicketHelper ticketHelper = new TicketHelper();
+        private ProjectHelper projectHelper = new ProjectHelper();
         // GET: TicketNotifications
         public ActionResult Index()
         {
@@ -152,7 +153,7 @@ namespace BugTracker.Controllers
             var notification = db.TicketNotifications.Find(notificationId);
             notification.Read = true;
             db.SaveChanges();
-            if (User.Identity.GetUserId() == notification.Ticket.AssignedToUserId)
+            if (User.Identity.GetUserId() == notification.Ticket.AssignedToUserId || User.Identity.GetUserId() == notification.Ticket.OwnerUserId || User.Identity.GetUserId() == projectHelper.UsersInRoleOnProject(notification.Ticket.ProjectId, "Project Manager").FirstOrDefault() || User.IsInRole("Admin"))
             {
                 return RedirectToAction("Details", "Tickets", new { notification.Ticket.Id });
             }
