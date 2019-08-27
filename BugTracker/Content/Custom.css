@@ -89,5 +89,16 @@ td {
 }
 
 .tick-width {
-    max-width: 20vh !important;
+    max-width: 18vh !important;
+}
+
+.date-width {
+    max-width: 8vh !important;
+}
+
+#sign-out {
+    margin-top: 13px;
+    border: none;
+    background-color: rgb(36,52,56);
+    color: rgb(83,140,138);
 }

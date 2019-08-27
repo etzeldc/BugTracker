@@ -57,7 +57,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>@Model.Project.Description</td>
+                                    <td class="descript">@Model.Project.Description</td>
                                     <td class="tickets">
                                         @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Project.Id).OrderBy(t => t.TicketPriorityId))
                                         {

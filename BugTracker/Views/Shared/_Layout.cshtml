@@ -133,51 +133,14 @@
                             </ul>
                         </li>
                         <!-- User Account: style can be found in dropdown.less -->
-                        <li class="dropdown user user-menu">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <img src="@user.AvatarUrl" class="user-image" alt="User Image">
-                                <span class="hidden-xs">@user.FullName</span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <!-- User image -->
-                                <li class="user-header">
-                                    <div class="back">
-                                        <img src="@user.AvatarUrl" class="img-circle" alt="User Image">
-                                        <p>
-                                            @user.FirstName @user.LastName - @roleHelper.ListUserRoles(user.Id).FirstOrDefault()
-                                        </p>
-                                    </div>
-                                </li>
-                                <!-- Menu Body -->
-                                @*<li class="user-body">
-                                        <div class="row">
-                                            <div class="col-xs-4 text-center">
-                                                <a href="#">Followers</a>
-                                            </div>
-                                            <div class="col-xs-4 text-center">
-                                                <a href="#">Sales</a>
-                                            </div>
-                                            <div class="col-xs-4 text-center">
-                                                <a href="#">Friends</a>
-                                            </div>
-                                        </div>
-                                         /.row
-                                    </li>*@
-                                <!-- Menu Footer-->
-                                <li class="user-footer">
-                                    <div class="pull-left">
-                                        @Html.ActionLink("Profile", "UserProfile", "Home", null, new { @class = "btn btn-flat" })
-                                    </div>
-                                    <div class="pull-right">
-                                        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { role = "form" }))
-                                        {
-                                            @Html.AntiForgeryToken();
-                                            <button class="btn btn-flat">Sign Out</button>
-                                        }
-                                    </div>
-                                </li>
-                            </ul>
-                        </li>
+                            <!-- Still trying to make this a log off button with the same properties as the other dropdowns -->
+                            <li class="dropdown-toggle">
+                                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { role = "form" }))
+                                {
+                                    @Html.AntiForgeryToken();
+                                    <input id="sign-out" type="submit" value="Sign Out" />
+                                }
+                            </li>
                         <!-- Control Sidebar Toggle Button -->
                         <li>
                             <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
@@ -197,20 +160,9 @@
                     </div>
                     <div class="pull-left info">
                         <p>@user.FullName</p>
-                        <a href="#"><i class="fa fa-user"></i> @roleHelper.ListUserRoles(user.Id).FirstOrDefault()</a>
+                        <i class="fa fa-user"></i> @roleHelper.ListUserRoles(user.Id).FirstOrDefault()
                     </div>
                 </div>
-                <!-- SEARCH FORM (Make it work or take it out) -->
-                @*<form action="#" method="get" class="sidebar-form">
-                    <div class="input-group">
-                        <input type="text" name="q" class="form-control" placeholder="Search...">
-                        <span class="input-group-btn">
-                            <button type="submit" name="search" id="search-btn" class="btn btn-flat">
-                                <i class="fa fa-search"></i>
-                            </button>
-                        </span>
-                    </div>
-                </form>*@
                 <!-- SIDEBAR MENU: : style can be found in sidebar.less -->
             <br />
             <ul class="sidebar-menu" data-widget="tree">
@@ -332,9 +284,9 @@
                 </li>
                 @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                 {
-                    <li>
+                    <li class="treeview">
                         <a href="@Url.Action("Create", "Projects")">
-                            <i class="fa fa-plus-circle"></i> Create Project
+                            <i class="fa fa-plus-circle"></i> <span>Create Project</span>
                         </a>
                     </li>
                 }
@@ -346,9 +298,9 @@
                         </a>
                     </li>
                 }
-                <li>
+                <li class="treeview">
                     <a href="@Url.Action("Index", "Home")">
-                        <i class="fa fa-home"></i> Back To Dashboard
+                        <i class="fa fa-home"></i> <span>Back To Dashboard</span>
                     </a>
                 </li>
             </ul>
@@ -380,25 +332,17 @@
 
     <!-- Control Sidebar -->
     <aside class="control-sidebar control-sidebar-dark" style="display: none;">
-        <!-- Create the tabs -->
         <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-            <li><a href="#control-sidebar-home-tab active" data-toggle="tab"><i class="fa fa-photo"></i></a></li>
+            <li><a href="#control-sidebar-home-tab active" data-toggle="tab"><i class="fa fa-user"></i></a></li>
             <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-lock"></i></a></li>
         </ul>
-        <!-- Tab panes -->
         <div class="tab-content">
-            <!-- Home tab content -->
             <div class="tab-pane active" id="control-sidebar-home-tab">
-                <h3 class="control-sidebar-heading"><strong>Update Your Avatar</strong></h3>
-                @*@Html.Partial("UpdateAvatarPartial")*@
+                @Html.Partial("UpdateUserInfoPartial", new UserProfileViewModel { Id = user.Id, AvatarUrl = user.AvatarUrl, DisplayName = user.DisplayName, FirstName = user.FirstName, LastName = user.LastName, Email = user.Email })
             </div>
-            <!-- /.tab-pane --> 
-            <!-- Settings tab content -->
             <div class="tab-pane" id="control-sidebar-settings-tab">
-                <h3 class="control-sidebar-heading"><strong>Change Password</strong></h3>
-                @*@Html.Partial("ChangePasswordPartial")*@
+                @Html.Partial("ChangePasswordPartial", new ChangePasswordViewModel { ConfirmPassword = user.PasswordHash })
             </div>
-            <!-- /.tab-pane -->
         </div>
     </aside>
     <!-- /.control-sidebar -->

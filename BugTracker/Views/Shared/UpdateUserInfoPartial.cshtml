@@ -1,0 +1,46 @@
+﻿@model BugTracker.Models.UserProfileViewModel
+
+<h3 class="control-sidebar-heading"><i class="fa fa-photo"></i> <strong>Update Avatar</strong></h3>
+<div class="center-block">
+    <img src="@Model.AvatarUrl" class="img-circle center-block" style="height:150px" />
+</div><br />
+
+@using (Html.BeginForm("UpdateAvatarUrl", "Home", FormMethod.Post, new { enctype = "Multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    <div class="row center-block">
+        @Html.EditorFor(m => m.AvatarUrl, new { htmlAttributes = new { type = "file", name = "avatar", @style = "max-width:200px" } })
+    </div>
+    <br />
+    <div class="row">
+        <input class="btn center-block" type="submit" value="Update Avatar" />
+    </div>
+}
+<br />
+<h3 class="control-sidebar-heading"><i class="fa fa-user"></i> <strong>Update User Information</strong></h3>
+@using (Html.BeginForm("UpdateUserInfo", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    <div class="row center-block">
+        Display Name
+        @Html.TextBoxFor(m => m.DisplayName, new { @class = "form-control", @style = "max-width:200px" })
+    </div>
+    <div class="row center-block">
+        First Name
+        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", @style = "max-width:200px" })
+    </div>
+    <div class="row center-block">
+        Last Name
+        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", @style = "max-width:200px" })
+    </div>
+    <div class="row center-block">
+        Email
+        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @style = "max-width:200px" })
+    </div>
+    <br />
+    <div class="row">
+        <input class="btn center-block" type="submit" value="Update User Information" />
+    </div>
+}

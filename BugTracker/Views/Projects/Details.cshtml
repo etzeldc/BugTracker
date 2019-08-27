@@ -62,7 +62,7 @@
                                     <td>
                                         @Html.DisplayFor(model => model.Description)
                                     </td>
-                                    <td class="members">
+                                    <td class="mems">
                                         @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Id).ToList())
                                         {
                                             <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
@@ -94,7 +94,7 @@
                                             }
                                         </td>
                                     }
-                                <td class="ticks">
+                                <td class="tickets">
                                     @foreach (var ticks in ticketHelper.TicketsOnProject(Model.Id).OrderBy(t => t.TicketPriorityId))
                                     { 
                                         <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticks.TicketPriority.Name)"></i>

@@ -1,5 +1,5 @@
 ﻿@using Microsoft.AspNet.Identity;
-
+@using BugTracker.Models;
 
 @model BugTracker.Models.Ticket
 
@@ -33,16 +33,28 @@
                         <br />@comment.Created.ToString("M/dd/yyy")
                         @if (User.Identity.GetUserId() == comment.AuthorId)
                         {
-                            <br />@Html.ActionLink("Edit", "Edit", "TicketComments",null, new { Id = comment.Id })
-                            @: | @Html.ActionLink("Delete", "Delete", "TicketComments",null,  new { Id = comment.Id })
+                            <br />
+                            @* This needs to toggle comment and comment edit partial *@
+                            <button class="btn btn-xs" data-target="#tickEd">Edit</button>
+                            @*@Html.ActionLink("Edit", "Edit", "TicketComments", null, new { Id = comment.Id })*@
+
+                            @* We want this to straight up delete confirm when this is clicked or pop up a delete confirm alert type window *@
+                            @: | @Html.ActionLink("Delete", "Delete", "TicketComments", FormMethod.Post, new { Id = comment.Id, ticketId = comment.TicketId })
                         }
                         else if (User.IsInRole("Admin"))
                         {
-                            <br />@Html.ActionLink("Delete", "Delete", "TicketComments",null, new { Id = comment.Id })
+                            <br />
+                            @* We want this to straight up delete confirm when this is clicked or pop up a delete confirm alert type window *@
+                            @*<button class="btn btn-xs" onclick="@Html.Action("DeleteConfirmed", "TicketComments", new { Id = comment.Id, icketId = comment.TicketId})">Delete</button>*@
+
                         }
                     </small>
-                    <p>
+                    <p id="tickCom">
                         @comment.CommentBody
+                    </p>
+                    @* We want to toggle to this partial when edit is clicked *@
+                    <p id="tickEd">
+                        @*@Html.Partial("CommentEditPartial", new TicketComment { Id = comment.Id, CommentBody = comment.CommentBody})*@
                     </p>
                     </div>
                     <hr />

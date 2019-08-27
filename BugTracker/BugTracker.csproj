@@ -388,7 +388,8 @@
     <Content Include="Views\Shared\CreateTicketPartial.cshtml" />
     <Content Include="Views\Shared\HistoryPartial.cshtml" />
     <Content Include="Views\Shared\ChangePasswordPartial.cshtml" />
-    <Content Include="Views\Shared\UpdateAvatarPartial.cshtml" />
+    <Content Include="Views\Shared\UpdateUserInfoPartial.cshtml" />
+    <Content Include="Views\Shared\CommentEditPartial.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

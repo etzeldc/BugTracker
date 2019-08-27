@@ -45,7 +45,7 @@ namespace BugTracker.Controllers
         }
 
         //
-        // POST: /Home/AddAvatarUrl
+        // POST: /Home/UpdateAvatarUrl
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -65,6 +65,25 @@ namespace BugTracker.Controllers
 
                 return RedirectToAction("Index");
             }
+            return View(model);
+        }
+
+        // POST: /Home/UpdateUserInfo
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateUserInfo([Bind(Include = "Id,DisplayName,FirstName,LastName,Email")]UserProfileViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = db.Users.Find(model.Id);
+                user.DisplayName = model.DisplayName;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.Email = model.Email;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            };
             return View(model);
         }
 

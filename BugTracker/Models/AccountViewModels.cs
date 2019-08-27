@@ -51,6 +51,7 @@ namespace BugTracker.Models
         [Required]
         [Display(Name = "Email")]
         [EmailAddress]
+        [StringLength(50, ErrorMessage = "The Email must be between {2} and {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
         [Required]
@@ -67,6 +68,7 @@ namespace BugTracker.Models
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
+        [StringLength(50, ErrorMessage = "The Email must be between {2} and {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
         [Display(Name = "First Name")]
@@ -98,6 +100,7 @@ namespace BugTracker.Models
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
+        [StringLength(50, ErrorMessage = "The Email must be between {2} and {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
 
         [Required]
@@ -119,6 +122,7 @@ namespace BugTracker.Models
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
+        [StringLength(50, ErrorMessage = "The Email must be between {2} and {1} characters long.", MinimumLength = 5)]
         public string Email { get; set; }
     }
 }

@@ -264,7 +264,6 @@ namespace BugTracker.Helpers
             var devComment = (ticketComment.AuthorId == ticket.AssignedToUserId);
             var pmComment = (ticketComment.AuthorId == projectHelper.UsersInRoleOnProject(ticket.ProjectId, "Project Manager").FirstOrDefault());
             var adComment = (ticketComment.AuthorId == roleHelper.UsersInRole("Admin").FirstOrDefault().Id);
-
             if (subComment)
             {
                 GenerateSubCommentNotification(ticket, ticketComment);

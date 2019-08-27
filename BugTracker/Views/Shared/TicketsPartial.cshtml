@@ -28,14 +28,15 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
+
+                        <th>Title</th>
+                        <th>Description</th>
                         <th>Submitter</th>
                         <th>Assigned User</th>
                         <th>Status</th>
                         <th>Priority</th>
                         <th>Type</th>
-                        <th>Description</th>
                         <th>Created</th>
-                        <th>Updated</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -46,10 +47,16 @@
                         using (Html.BeginForm("Edit", "Tickets"))
                         {
                             @Html.AntiForgeryToken();
-                            @Html.HiddenFor(model => model.Id);//this is all you need for the best form
+                            @Html.HiddenFor(model => model.Id);
                             @Html.HiddenFor(model => model.ProjectId);
                             @Html.HiddenFor(model => model.Created);
                             <tr>
+                                <td class="tick-width">
+                                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control", })
+                                </td>
+                                <td>
+                                    @Html.TextAreaFor(model => model.Description, 4, 20, new { @class = "form-control", })
+                                </td>
                                 <td>@Model.OwnerUser.FullName</td>
                                 <td class="tick-width">@Html.DropDownList("Developer", null, ticketHelper.TicketAssignee(Model.Id), new { @class = "form-control" })</td>
                                 <td class="tick-width">
@@ -61,11 +68,7 @@
                                 <td class="tick-width">
                                     @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
                                 </td>
-                                <td>
-                                    @Html.TextBoxFor(model => model.Description, null, new { @class = "form-control" })
-                                </td>
-                                <td>@Model.Created</td>
-                                <td>@Model.Updated</td>
+                                <td class="date-width">@Model.Created</td>
                                 <td class="edit-cell">
                                     <button type="submit" class="btn ticketBtn">Edit</button>
                                 </td>
@@ -84,6 +87,10 @@
                             @Html.HiddenFor(model => model.AssignedToUserId);
                             @Html.HiddenFor(model => model.TicketStatusId);
                             <tr>
+                                <td class="tick-width">
+                                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control", })
+                                </td>
+                                <td>@Model.Description</td>
                                 <td>@Model.OwnerUser.FullName</td>
                                 @if (Model.AssignedToUserId == null)
                                 {
@@ -110,10 +117,8 @@
                                 {
                                     <td>@Model.TicketPriority.Name</td>
                                     <td>@Model.TicketType.Name</td>
-                                    <td>@Model.Description</td>
                                 }
                                 <td>@Model.Created</td>
-                                <td>@Model.Updated</td>
                                 <td>
                                     <button type="submit" class="btn ticketBtn">Edit</button>
                                 </td>

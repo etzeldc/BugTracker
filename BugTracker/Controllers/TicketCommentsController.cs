@@ -75,6 +75,10 @@ namespace BugTracker.Controllers
         {
             return PartialView();
         }
+        public ActionResult CommentEditPartial()
+        {
+            return PartialView();
+        }
 
         // GET: TicketComments/Edit/5
         public ActionResult Edit(int? id)
@@ -102,7 +106,8 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.Entry(ticketComment).State = EntityState.Modified;
+                db.TicketComments.Attach(ticketComment);
+                db.Entry(ticketComment).Property(x => x.CommentBody).IsModified = true;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -129,12 +134,12 @@ namespace BugTracker.Controllers
         // POST: TicketComments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int id, int ticketId)
         {
             TicketComment ticketComment = db.TicketComments.Find(id);
             db.TicketComments.Remove(ticketComment);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", "Tickets", new { ticketId });
         }
 
         protected override void Dispose(bool disposing)

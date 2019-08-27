@@ -20,7 +20,7 @@ namespace BugTracker.Models
         [Display(Name = "Developer")]
         public string AssignedToUserId { get; set; }
 
-        [StringLength(50, ErrorMessage = "The title must be between {2} and {1} characters long.", MinimumLength = 5)]
+        [StringLength(50, ErrorMessage = "The Title must be between {2} and {1} characters long.", MinimumLength = 5)]
         public string Title { get; set; }
 
         [StringLength(250, ErrorMessage = "The Description must be between {2} and {1} characters long.", MinimumLength = 1)]

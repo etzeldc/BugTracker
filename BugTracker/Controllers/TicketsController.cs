@@ -151,27 +151,27 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Description,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket, string developer)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Title,Description,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket, string developer)
         {
             var allDevelopers = rolesHelper.UsersInRole("Developer");
-
             if (ModelState.IsValid)
             {
                 //these are all thats needed for "Best Edit" (no need for developer string)
                 //db.Tickets.Attach(ticket);
-                //db.Entry(ticket).Property(x => x."whatever property").IsModified = true;
+                //db.Entry(ticket).Property(x => x.Title).IsModified = true;
+                //db.Entry(ticket).Property(x => x.Description).IsModified = true;
+                //db.Entry(ticket).Property(x => x.TicketTypeId).IsModified = true;
+                //db.Entry(ticket).Property(x => x.TicketPriorityId).IsModified = true;
+                //db.Entry(ticket).Property(x => x.TicketStatusId).IsModified = true;
                 //if (ticket.AssignedToUserId != null)
-                    //db.entry(ticket)"""";
-                //newTicket.Updated = DateTime.Now;
-                //db.SaveChanges();
-                //return redirect;
-
+                //    db.Entry(ticket).Property(x => x.AssignedToUserId).IsModified = true;
                 var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
                 var newTicket = db.Tickets.Find(ticket.Id);
                 newTicket.AssignedToUserId = developer;
                 newTicket.TicketTypeId = ticket.TicketTypeId;
                 newTicket.TicketPriorityId = ticket.TicketPriorityId;
                 newTicket.TicketStatusId = ticket.TicketStatusId;
+                newTicket.Title = ticket.Title;
                 newTicket.Description = ticket.Description;
                 newTicket.Updated = DateTime.Now;
                 db.SaveChanges();
@@ -179,7 +179,7 @@ namespace BugTracker.Controllers
                 ticketHelper.CreateChangeNotification(oldTicket, newTicket);
                 ticketHelper.CreateHistoryRecord(oldTicket, newTicket);
                 await ticketHelper.CreateAssignmentNotification(oldTicket, newTicket);
-                return RedirectToAction("Details", "Tickets", new { Id = ticket.Id });
+                return RedirectToAction("Details", "Tickets", new { ticket.Id });
             }
             ViewBag.Developers = new SelectList(allDevelopers, "Id", "FullName", ticket.AssignedToUserId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
