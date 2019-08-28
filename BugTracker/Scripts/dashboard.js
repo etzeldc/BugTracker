@@ -134,14 +134,14 @@ $(function () {
     });
 
     $('.modal-skroll').slimScroll({
-        height: '61.5vh'
+        height: '61vh'
     });
     $('.hismodal-skroll').slimScroll({
-        height: '72.5vh'
+        height: '72vh'
     });
 
     $('.full-skroll').slimScroll({
-        height: '77.5vh'
+        height: '77vh'
     });
 
 

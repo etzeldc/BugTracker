@@ -390,6 +390,7 @@
     <Content Include="Views\Shared\ChangePasswordPartial.cshtml" />
     <Content Include="Views\Shared\UpdateUserInfoPartial.cshtml" />
     <Content Include="Views\Shared\CommentEditPartial.cshtml" />
+    <Content Include="Views\Shared\_SecondLayout.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
