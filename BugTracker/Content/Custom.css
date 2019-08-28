@@ -9,7 +9,7 @@
     right: 20vh;
     bottom: 10vh;
     left: 40vh;
-    height: 80vh;
+    max-height: 80vh;
 }
 
 .modal-body {
@@ -50,7 +50,7 @@
 }
 
 .full-box {
-    max-height: 77vh;
+    height: 79.5vh;
 }
 
 .copy {
@@ -73,7 +73,7 @@ td {
 }
 .tick {
     text-align: unset;
-    padding-left: 3vh !important;
+    padding-left: 2vh !important;
 }
 .members {
     text-align: unset;

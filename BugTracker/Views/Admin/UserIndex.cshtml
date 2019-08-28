@@ -33,45 +33,47 @@
                         </div>
                     </div>
                     <div class="box-body full-box">
-                        <table class="userTable table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var user in Model)
-                                {
-                                    using (Html.BeginForm("UserIndex", "Admin", FormMethod.Post))
+                        <div class="body full-skroll">
+                            <table class="userTable table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in Model)
                                     {
-                                        @Html.AntiForgeryToken()
-                                        @Html.Hidden("userId", user.Id)
-                                        <tr>
-                                            <td class="members"><img src="@user.AvatarUrl" class="img-circle" style="height:25px" />  @user.FirstName @user.LastName</td>
-                                            <td>@user.Email</td>
-                                            <td>
-                                                @if (ticketHelper.MyTickets(user.Id, "Developer").Count() != 0)
-                                                {
-                                                <h5>Developer is actively assigned</h5>
-                                                }
-                                                else
-                                                {
-                                                @Html.DropDownList("roleName", null, roleHelper.ListUserRoles(user.Id).FirstOrDefault(), htmlAttributes: new { @class = "form-control", @style = "width:100%" })
-                                                }
-                                            </td>
-                                            <td class="edit-cell">
-                                                <div class="col-md-offset-1">
-                                                    <button type="submit" class="btn roleChange">Assign</button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                        using (Html.BeginForm("UserIndex", "Admin", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.Hidden("userId", user.Id)
+                                            <tr>
+                                                <td class="members"><img src="@user.AvatarUrl" class="img-circle" style="height:25px" />  @user.FirstName @user.LastName</td>
+                                                <td>@user.Email</td>
+                                                <td>
+                                                    @if (ticketHelper.MyTickets(user.Id, "Developer").Count() != 0)
+                                                    {
+                                                        <h5>Developer is actively assigned</h5>
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.DropDownList("roleName", null, roleHelper.ListUserRoles(user.Id).FirstOrDefault(), htmlAttributes: new { @class = "form-control", @style = "width:100%" })
+                                                    }
+                                                </td>
+                                                <td class="edit-cell">
+                                                    <div class="col-md-offset-1">
+                                                        <button type="submit" class="btn roleChange">Assign</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
                                     }
-                                }
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

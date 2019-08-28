@@ -56,11 +56,12 @@
                         </div>
                     </div>
                     <div class="box-body full-box">
-                        <div class="tab-content">
+                        <div class="body full-skroll">
+                            <div class="tab-content">
                             @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
                             {
                                 <div class="tab-pane" id="allProjects">
-                                    <div class="body">
+                                    <div class="body full-box full-skroll">
                                         <table class="userTable table table-bordered">
                                             <thead>
                                                 <tr>
@@ -97,7 +98,7 @@
                                                                 } )<br/>
                                                             }
                                                         </td>
-                                                        <td>
+                                                        <td class="date-width">
                                                             @allProjects.Created
                                                         </td>
                                                         <td class="tickets">
@@ -115,7 +116,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="myProjects">
-                                    <div class="body">
+                                    <div class="body full-box full-skroll">
                                         <table class="userTable table table-bordered">
                                             <thead>
                                                 <tr>
@@ -152,7 +153,7 @@
                                                                 } )<br />
                                                             }
                                                         </td>
-                                                        <td>
+                                                        <td class="date-width">
                                                             @Html.DisplayFor(modelItem => myProjects.Created)
                                                         </td>
                                                         <td class="tickets">
@@ -180,7 +181,7 @@
                                 if (User.IsInRole("Admin"))
                                 {
                                     <div class="tab-pane active" id="allTickets">
-                                        <div class="body">
+                                        <div class="body full-skroll">
                                             <table class="userTable table table-bordered">
                                                 <thead>
                                                     <tr>
@@ -198,7 +199,7 @@
                                                     @foreach (var allTickets in db.Tickets.ToList().OrderBy(t => t.TicketPriority.Id))
                                                     {
                                                         <tr>
-                                                            <td class="tickets">
+                                                            <td class="tick">
                                                                 <i class="fa fa-circle @ticketHelper.TicketsByPriority(allTickets.TicketPriority.Name)"></i>
                                                                 <a href="@Url.Action("Details", "Tickets", new { Id = allTickets.Id })" class="btn btn-default btn-xs">
                                                                      @allTickets.Title
@@ -207,10 +208,10 @@
                                                             <td class="descript">
                                                                 @allTickets.Description
                                                             </td>
-                                                            <td>
+                                                            <td class="date-width">
                                                                 @allTickets.TicketStatus.Name
                                                             </td>
-                                                            <td>
+                                                            <td class="date-width">
                                                                 @allTickets.TicketType.Name
                                                             </td>
                                                             <td>
@@ -239,10 +240,10 @@
                                                                     <br />
                                                                 }
                                                             </td>
-                                                            <td>
+                                                            <td class="date-width">
                                                                 @allTickets.Created
                                                             </td>
-                                                            <td>
+                                                            <td class="date-width">
                                                                 @allTickets.Updated
                                                             </td>
                                                         </tr>
@@ -255,7 +256,7 @@
                                 else
                                 {
                                     <div class="tab-pane active myTickets">
-                                        <div class="box-body">
+                                        <div class="body full-box full-skroll">
                                             <table class="userTable table table-bordered">
                                                 <thead>
                                                     <tr>
@@ -269,13 +270,13 @@
                                                         <th>Updated</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody class="">
+                                                <tbody>
                                                     @foreach (var myTickets in ticketHelper.MyTickets(user.Id, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
                                                     {
                                                         if (User.IsInRole("Admin") || projectHelper.UsersInRoleOnProject(myTickets.Project.Id, "Project Manager").Contains(userId) || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
                                                         {
                                                             <tr>
-                                                                <td class="tickets">
+                                                                <td class="tick">
                                                                     <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i>
                                                                     <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })" class="btn btn-default btn-xs">
                                                                         @myTickets.Title
@@ -284,10 +285,10 @@
                                                                 <td class="descript">
                                                                     @myTickets.Description
                                                                 </td>
-                                                                <td>
+                                                                <td class="date-width">
                                                                     @myTickets.TicketStatus.Name
                                                                 </td>
-                                                                <td>
+                                                                <td class="date-width">
                                                                     @myTickets.TicketType.Name
                                                                 </td>
                                                                 <td>
@@ -316,8 +317,8 @@
                                                                         <br />
                                                                     }
                                                                 </td>
-                                                                <td>@myTickets.Created</td>
-                                                                <td>@myTickets.Updated</td>
+                                                                <td class="date-width">@myTickets.Created</td>
+                                                                <td class="date-width">@myTickets.Updated</td>
                                                             </tr>
                                                         }
                                                     }
@@ -330,7 +331,7 @@
                             else
                             {
                                 <div class="tab-pane active myTickets">
-                                    <div class="box-body">
+                                    <div class="body full-box full-skroll">
                                         <table class="userTable table table-bordered">
                                             <thead>
                                                 <tr>
@@ -344,7 +345,7 @@
                                                     <th>Updated</th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="">
+                                            <tbody>
                                                 @foreach (var myTickets in ticketHelper.MyTickets(user.Id, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
                                                 {
                                                     if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
@@ -359,10 +360,10 @@
                                                             <td class="descript">
                                                                 @myTickets.Description
                                                             </td>
-                                                            <td>
+                                                            <td class="date-width">
                                                                 @myTickets.TicketStatus.Name
                                                             </td>
-                                                            <td>
+                                                            <td class="date-width">
                                                                 @myTickets.TicketType.Name
                                                             </td>
                                                             <td>
@@ -391,8 +392,8 @@
                                                                     <br />
                                                                 }
                                                             </td>
-                                                            <td>@myTickets.Created</td>
-                                                            <td>@myTickets.Updated</td>
+                                                            <td class="date-width">@myTickets.Created</td>
+                                                            <td class="date-width">@myTickets.Updated</td>
                                                         </tr>
                                                     }
                                                 }
@@ -401,7 +402,7 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="myProjects">
-                                    <div class="box-body">
+                                    <div class="body full-box full-skroll">
                                         <table class="userTable table table-bordered">
                                             <thead>
                                                 <tr>
@@ -438,7 +439,7 @@
                                                                 } )<br />
                                                             }
                                                         </td>
-                                                        <td>
+                                                        <td class="date-width">
                                                             @Html.DisplayFor(modelItem => myProjects.Created)
                                                         </td>
                                                         <td class="tickets">
@@ -464,6 +465,7 @@
                                     </div>
                                 </div>
                             }
+                        </div>
                         </div>
                     </div>
                 </div>

@@ -59,7 +59,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="back modal-skroll">
+                <div class="back hismodal-skroll">
                     <ul class="timeline">
                         @foreach (var date in Model.TicketHistories.OrderByDescending(t => t.Updated).GroupBy(t => t.Updated.ToString("dd, MMM yyyy")))
                         {

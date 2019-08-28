@@ -32,50 +32,61 @@
         <!-- Google Font -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     </head>
-    <body class="hold-transition login-page">
-        <div class="login-box">
-            <div class="login-logo">
-                <b>BUG TRACKER</b>
-            </div>
-            <!-- /.login-logo -->
-            <div class="login-box-body">
-                <p class="login-box-msg">Sign in to start your session</p>
-                @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { role = "form" }))
-                {
-                    @Html.AntiForgeryToken()
-                    @Html.ValidationSummary("", new { @class = "text-danger" })
-                <div class="form-group has-feedback">
-                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email" })
-                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                </div>
-                <div class="form-group has-feedback">
-                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
-                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                </div>
-                    <div class="row">
-                        <div class="col-xs-8">
-                            <div class="checkbox icheck">
-                                @Html.CheckBoxFor(m => m.RememberMe)
-                                @Html.LabelFor(m => m.RememberMe)
+    <body class="hold-transition login-page" style="background-image: url('/Images/Emerald.JPG'); background-size:cover;">
+        <div class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div style="height: 91vh; background-image: url('/Images/semitransparentWhite-25.png');">
+                        <section class="contain">
+                            <div class="login-box">
+                                <div class="login-logo">
+                                    <b>BUG TRACKER</b>
+                                </div>
+                                <!-- /.login-logo -->
+                                <div class="login-box-body">
+                                    <p class="login-box-msg">Sign in to start your session</p>
+                                    @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { role = "form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary("", new { @class = "text-danger" })
+                                        <div class="form-group has-feedback">
+                                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email" })
+                                            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="form-group has-feedback">
+                                            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
+                                            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-8">
+                                                <div class="checkbox icheck">
+                                                    @Html.CheckBoxFor(m => m.RememberMe)
+                                                    @Html.LabelFor(m => m.RememberMe)
+                                                </div>
+                                            </div>
+                                            <!-- /.col -->
+                                            <div class="col-xs-4">
+                                                <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                                            </div>
+                                            <!-- /.col -->
+                                        </div>
+                                    }
+
+                                    <a href="@Url.Action("ForgotPassword", "Account")">I forgot my password</a><br>
+                                    <a href="@Url.Action("Register")" class="text-center">Register a new membership</a><br />
+                                    <a href="@Url.Action("DemoUser")" class="text-center">Log in as a demo user?</a>
+
+                                </div>
+                                <!-- /.login-box-body -->
                             </div>
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-xs-4">
-                            <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
-                        </div>
-                        <!-- /.col -->
+                        </section>
                     </div>
-                }
-
-                <a href="@Url.Action("ForgotPassword", "Account")">I forgot my password</a><br>
-                <a href="@Url.Action("Register")" class="text-center">Register a new membership</a><br />
-                <a href="@Url.Action("DemoUser")" class="text-center">Log in as a demo user?</a>
-
+                </div>
             </div>
-            <!-- /.login-box-body -->
         </div>
+        
         <!-- /.login-box -->
         <!-- jQuery 3 -->
         <script src="~/Scripts/jquery.min.js"></script>

@@ -134,12 +134,16 @@ $(function () {
     });
 
     $('.modal-skroll').slimScroll({
-        height: '59vh'
+        height: '61.5vh'
+    });
+    $('.hismodal-skroll').slimScroll({
+        height: '72.5vh'
     });
 
     $('.full-skroll').slimScroll({
-        height: '75vh'
+        height: '77.5vh'
     });
+
 
   /* Morris.js Charts */
   // Sales chart

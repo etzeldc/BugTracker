@@ -1,11 +1,15 @@
 ﻿using BugTracker.Helpers;
 using BugTracker.Models;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
+using System.Threading.Tasks;
 using System.Web;
+using System.Web.Configuration;
 using System.Web.Mvc;
 
 namespace BugTracker.Controllers
@@ -68,28 +72,15 @@ namespace BugTracker.Controllers
             return View(model);
         }
 
-        // POST: /Home/UpdateUserInfo
-        [HttpPost]
-        [Authorize]
-        [ValidateAntiForgeryToken]
-        public ActionResult UpdateUserInfo([Bind(Include = "Id,DisplayName,FirstName,LastName,Email")]UserProfileViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = db.Users.Find(model.Id);
-                user.DisplayName = model.DisplayName;
-                user.FirstName = model.FirstName;
-                user.LastName = model.LastName;
-                user.Email = model.Email;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            };
-            return View(model);
-        }
 
+        public ActionResult UpdateUserInfoPartial()
+        {
+            return PartialView();
+        }
         public ActionResult DemoUser()
         {
             return View();
         }
+
     }
 }

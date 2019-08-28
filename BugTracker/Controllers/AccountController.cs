@@ -21,9 +21,11 @@ namespace BugTracker.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         public AccountController()
         {
+
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -177,7 +179,7 @@ namespace BugTracker.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model, HttpPostedFileBase avatar)
+        public async Task<ActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -346,6 +348,26 @@ namespace BugTracker.Controllers
         public ActionResult ResetPasswordConfirmation()
         {
             return View();
+        }
+
+        // POST: /Account/UpdateUserInfo
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateUserInfo([Bind(Include = "Id,DisplayName,FirstName,LastName,Email")] UserProfileViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = db.Users.Find(model.Id);
+                user.DisplayName = model.DisplayName;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                user.UserName = model.Email;
+                user.Email = model.Email;
+                db.SaveChanges();
+                return RedirectToAction("Index", "Home");
+            };
+            return View(model);
         }
 
         //
