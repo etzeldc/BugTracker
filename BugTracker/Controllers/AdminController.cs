@@ -16,7 +16,6 @@ namespace BugTracker.Controllers
         private ProjectHelper projectHelper = new ProjectHelper();
 
         // GET USER INDEX
-
         public ActionResult UserIndex()
         {
             var users = db.Users.Select(u => new UserProfileViewModel

@@ -36,18 +36,6 @@ namespace BugTracker.Controllers
             return View();
         }
 
-        [Authorize]
-        public ActionResult UserProfile()
-        {
-            var userId = User.Identity.GetUserId();
-            var user = new UserProfileViewModel
-            {
-                Id = userId,
-                AvatarUrl = db.Users.Find(userId).AvatarUrl
-            };
-            return View(user);
-        }
-
         //
         // POST: /Home/UpdateAvatarUrl
         [HttpPost]

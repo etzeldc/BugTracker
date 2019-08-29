@@ -10,10 +10,10 @@
             <strong>Comments</strong>
         </h3>
         <div class="box-tools pull-right">
-            <button type="button" class="btn btn-sm" data-widget="collapse">
+            <button type="button" class="btn btn-sm" data-widget="collapse" @*onclick="$('#comScroll').scrollTop(function () { return this.scrollHeight; });"*@>
                 <i class="fa fa-plus"></i>
             </button>
-            <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#comModal">
+            <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#comModal" @*onclick="$('#comModScroll').scrollTop(function () { return this.scrollHeight; });"*@>
                 <i class="fa fa-expand"></i>
             </button>
             <button type="button" class="btn btn-sm" data-widget="remove">
@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="content chat-box back">
+        <div class="content chat-box back" id="comScroll">
             @foreach (var comment in Model.TicketComments)
             {
             <div class="item">
@@ -72,7 +72,6 @@
             <!---->
             <!---->
             <!---->
-            <div id="invisible"></div>
         </div>
     </div>
     <div class="box-footer">
@@ -105,7 +104,7 @@
             </button>
         </div>
         <div class="modal-body">
-            <div class="back modal-skroll" id="down">
+            <div class="back modal-skroll" id="comModScroll">
                 @foreach (var comment in Model.TicketComments)
                 {
                 <div class="item">

@@ -17,27 +17,6 @@ namespace BugTracker.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
         private TicketHelper ticketHelper = new TicketHelper();
 
-        // GET: TicketComments
-        public ActionResult Index()
-        {
-            var ticketComments = db.TicketComments.Include(t => t.Author).Include(t => t.Ticket);
-            return View(ticketComments.ToList());
-        }
-
-        // GET: TicketComments/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            TicketComment ticketComment = db.TicketComments.Find(id);
-            if (ticketComment == null)
-            {
-                return HttpNotFound();
-            }
-            return View(ticketComment);
-        }
 
         // GET: TicketComments/Create
         public ActionResult Create()

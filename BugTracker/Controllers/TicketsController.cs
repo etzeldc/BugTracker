@@ -20,26 +20,6 @@ namespace BugTracker.Controllers
         private ProjectHelper projectHelper = new ProjectHelper();
         private TicketHelper ticketHelper = new TicketHelper();
 
-        // GET: Tickets
-        [Authorize]
-        public ActionResult Index()
-        {
-            var tickets = db.Tickets.Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            return View(tickets.ToList());
-        }
-
-        public ActionResult Dashboard(int id)
-        {
-            var ticket = db.Tickets.Find(id);
-
-            if (ticket == null)
-            {
-                return HttpNotFound();
-            }
-
-            return View(ticket);
-        }
-
 
         // Get My Tickets
         [Authorize(Roles = "Project Manager, Developer, Submitter")]
