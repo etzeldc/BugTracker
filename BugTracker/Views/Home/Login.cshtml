@@ -6,7 +6,7 @@
 
 <br />
 <br />
-<p style="text-align:center">Sign in to start your session</p>
+<p class="second-center">Sign in to start your session</p>
 @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { role = "form" }))
 {
     @Html.AntiForgeryToken()
@@ -41,8 +41,7 @@
     </div>
 }
 <br />
-<div class="row" style="text-align:center">
-
+<div class="row second-center">
     <a href="@Url.Action("ForgotPassword", "Account")">I forgot my password</a><br>
     <a href="@Url.Action("Register")" class="text-center">Register a new membership</a><br />
     <a href="@Url.Action("DemoUser")" class="text-center">Log in as a demo user</a>

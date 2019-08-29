@@ -147,12 +147,13 @@ namespace BugTracker.Controllers
         // POST: TicketAttachments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int pk)
         {
-            TicketAttachment ticketAttachment = db.TicketAttachments.Find(id);
+            var ticketAttachment = db.TicketAttachments.Find(pk);
+            var ticketId = ticketAttachment.TicketId;
             db.TicketAttachments.Remove(ticketAttachment);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("Details", "Tickets", new { id = ticketId });
         }
 
         protected override void Dispose(bool disposing)

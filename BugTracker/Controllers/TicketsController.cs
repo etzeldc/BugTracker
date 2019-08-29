@@ -156,15 +156,6 @@ namespace BugTracker.Controllers
             var allDevelopers = rolesHelper.UsersInRole("Developer");
             if (ModelState.IsValid)
             {
-                //these are all thats needed for "Best Edit" (no need for developer string)
-                //db.Tickets.Attach(ticket);
-                //db.Entry(ticket).Property(x => x.Title).IsModified = true;
-                //db.Entry(ticket).Property(x => x.Description).IsModified = true;
-                //db.Entry(ticket).Property(x => x.TicketTypeId).IsModified = true;
-                //db.Entry(ticket).Property(x => x.TicketPriorityId).IsModified = true;
-                //db.Entry(ticket).Property(x => x.TicketStatusId).IsModified = true;
-                //if (ticket.AssignedToUserId != null)
-                //    db.Entry(ticket).Property(x => x.AssignedToUserId).IsModified = true;
                 var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
                 var newTicket = db.Tickets.Find(ticket.Id);
                 newTicket.AssignedToUserId = developer;

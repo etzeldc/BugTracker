@@ -49,9 +49,16 @@
                             <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")<br />
                             @if (User.IsInRole("Admin") || ticketHelper.IsUserOnTicket(User.Identity.GetUserId(), attachment.TicketId))
                             {
-                                @Html.ActionLink("Delete", "Delete", "TicketAttachments", new { Id = attachment.Id })
+                                using (Html.BeginForm("Delete", "TicketAttachments", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.Hidden("pk", attachment.Id)
+                                    <input class="btn btn-xs" value="Delete" type="submit" />
+                                }
+
                             }
                         </small>
+                        <br />
                     </div>
                 </div>
                 <hr />
@@ -112,8 +119,19 @@
                         <small class="pull-right">
                             <i class="fa fa-user"></i> @attachment.User.DisplayName<br />
                             <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt")<br />
-                            <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")
+                            <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")<br />
+                            @if (User.IsInRole("Admin") || ticketHelper.IsUserOnTicket(User.Identity.GetUserId(), attachment.TicketId))
+                            {
+                                using (Html.BeginForm("Delete", "TicketAttachments", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.Hidden("pk", attachment.Id)
+                                    <input class="btn btn-xs" value="Delete" type="submit" />
+                                }
+
+                            }
                         </small>
+                        <br />
                     </div>
                 </div>
                 <hr />

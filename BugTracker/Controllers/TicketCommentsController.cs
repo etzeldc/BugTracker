@@ -102,15 +102,14 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,TicketId,AuthorId,CommentBody,Created")] TicketComment ticketComment)
+        public ActionResult Edit([Bind(Include = "Id,TicketId,AuthorId,CommentBody,Created")] TicketComment ticketComment, int pk, int fk)
         {
-            var ticketId = ticketComment.TicketId;
+            var newComment = db.TicketComments.Find(pk);
             if (ModelState.IsValid)
             {
-                db.TicketComments.Attach(ticketComment);
-                db.Entry(ticketComment).Property(x => x.CommentBody).IsModified = true;
+                newComment.CommentBody = ticketComment.CommentBody;
                 db.SaveChanges();
-                return RedirectToAction("Details", "Tickets", new { ticketId });
+                return RedirectToAction("Details", "Tickets", new { id = fk });
             }
             ViewBag.AuthorId = new SelectList(db.Users, "Id", "FirstName", ticketComment.AuthorId);
             ViewBag.TicketId = new SelectList(db.Tickets, "Id", "OwnerUserId", ticketComment.TicketId);
@@ -124,7 +123,7 @@ namespace BugTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TicketComment ticketComment = db.TicketComments.Find(id);
+            var ticketComment = db.TicketComments.Find(id);
             if (ticketComment == null)
             {
                 return HttpNotFound();
@@ -135,12 +134,13 @@ namespace BugTracker.Controllers
         // POST: TicketComments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id, int ticketId)
+        public ActionResult DeleteConfirmed(int pk)
         {
-            TicketComment ticketComment = db.TicketComments.Find(id);
+            var ticketComment = db.TicketComments.Find(pk);
+            var ticketId = ticketComment.TicketId;
             db.TicketComments.Remove(ticketComment);
             db.SaveChanges();
-            return RedirectToAction("Details", "Tickets", new { ticketId });
+            return RedirectToAction("Details", "Tickets", new { id = ticketId });
         }
 
         protected override void Dispose(bool disposing)

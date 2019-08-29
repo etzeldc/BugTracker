@@ -56,7 +56,10 @@
                     }
                 </ul>
             </li>
-            <li class="header">Earlier</li>
+            @if (TicketHelper.GetReadUserNotificationCount() != 0)
+            {
+                <li class="header">Earlier</li>
+            }
             <li>
                 <ul class="menu">
                     @foreach (var notification in TicketHelper.GetReadNotifications().OrderByDescending(t => t.Created).Take(5 - TicketHelper.GetNewUserNotificationCount()))

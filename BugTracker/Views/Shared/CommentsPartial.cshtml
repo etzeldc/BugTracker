@@ -25,46 +25,54 @@
         <div class="content chat-box back">
             @foreach (var comment in Model.TicketComments)
             {
-                var target1 = comment.Created.ToString().Replace(" ", "").Replace(",", "");
-                var target2 = target1.Reverse();
-                <div class="item">
-                    <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> 
-                    <strong>@comment.Author.DisplayName</strong>
-                    <small class="pull-right">
-                        <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")
-                        <br />@comment.Created.ToString("M/dd/yyy")<br />
-                        @if (User.Identity.GetUserId() == comment.AuthorId)
+            <div class="item">
+                <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px">
+                <strong>@comment.Author.DisplayName</strong>
+                <small class="pull-right">
+                    <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />
+                    <i class="fa fa-calendar"></i> @comment.Created.ToString("M/dd/yyy")<br />
+                    @if (User.Identity.GetUserId() == comment.AuthorId)
+                    {
+                        using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
                         {
-                            <button class="btn btn-xs comToggle">Edit</button>
-                            @*<button class="btn btn-xs" onclick="@Html.Action("Delete", "TicketComments", new { Id = comment.Id, ticketId = comment.TicketId})">Delete</button>*@
-                            @*@Html.ActionLink("Delete", "Delete", "TicketComments", FormMethod.Post, new { Id = comment.Id, ticketId = comment.TicketId })//make this DeleteConfirm*@
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("pk", comment.Id)
+                            <input class="btn btn-xs" value="Delete" type="submit" />
                         }
-                        else if (User.IsInRole("Admin"))
+                    }
+                    else if (User.IsInRole("Admin"))
+                    {
+                        using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
                         {
-                            @*<button class="btn btn-xs" onclick="@Html.Action("Delete", "TicketComments", new { Id = comment.Id, ticketId = comment.TicketId})">Delete</button>*@
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("pk", comment.Id)
+                            <input class="btn btn-xs" value="Delete" type="submit" />
                         }
-                    </small>
-                    <div class="@target1 show">
+                    }
+                </small>
+                <br />
+                @if (User.Identity.GetUserId() == comment.AuthorId)
+                {
+                    <div>
+                        @Html.Partial("CommentEditPartial", new TicketComment { Id = comment.Id, CommentBody = comment.CommentBody, TicketId = comment.TicketId })
+                    </div>
+                }
+                else
+                {
+                    <div>
                         <p>
                             @comment.CommentBody
                         </p>
                     </div>
-                    <div class="@target2 hide">
-                        @Html.Partial("CommentEditPartial", new TicketComment { Id = comment.Id, CommentBody = comment.CommentBody, TicketId = comment.TicketId})
-                    </div>
-                    </div>
-                    <script>
-                        $(".comToggle").click(function () {
-                            $(".@target1").hide();
-                            $(".@target2").show();
-                        })
-                        $(".comCancel").click(function () {
-                            $(".@target2").hide();
-                            $(".@target1").show();
-                        })
-                    </script>
-                    <hr />
                 }
+            </div>
+            <hr />
+            }
+            <!---->
+            <!---->
+            <!---->
+            <!---->
+            <div id="invisible"></div>
         </div>
     </div>
     <div class="box-footer">
@@ -97,31 +105,54 @@
             </button>
         </div>
         <div class="modal-body">
-            <div class="back modal-skroll">
+            <div class="back modal-skroll" id="down">
                 @foreach (var comment in Model.TicketComments)
                 {
                 <div class="item">
-                    <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px"> 
+                    <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px">
                     <strong>@comment.Author.DisplayName</strong>
                     <small class="pull-right">
-                        <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />@comment.Created.ToString("M/dd/yyy")
-                        @*@if (User.Identity.GetUserId() == comment.Author.Id)
+                        <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />
+                        <i class="fa fa-calendar"></i> @comment.Created.ToString("M/dd/yyy")<br />
+                        @if (User.Identity.GetUserId() == comment.AuthorId)
                         {
-                            <br />@Html.ActionLink("Edit", "Edit", "TicketComments", new { Id = comment.Id })
-                            @: | @Html.ActionLink("Delete", "Delete", "TicketComments", new { Id = comment.Id })
+                            using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("pk", comment.Id)
+                                <input class="btn btn-xs" value="Delete" type="submit" />
+                            }
                         }
                         else if (User.IsInRole("Admin"))
                         {
-                            <br />@Html.ActionLink("Delete", "Delete", "TicketComments", new { Id = comment.Id })
-                        }*@
+                            using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.Hidden("pk", comment.Id)
+                                <input class="btn btn-xs" value="Delete" type="submit" />
+                            }
+                        }
                     </small>
-                    <p>
-                        @comment.CommentBody
-                    </p>
+                    <br />
+                    <div>
+                        @if (User.Identity.GetUserId() == comment.AuthorId)
+                        {
+                            <div>
+                                @Html.Partial("CommentEditPartial", new TicketComment { Id = comment.Id, CommentBody = comment.CommentBody, TicketId = comment.TicketId })
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <p>
+                                    @comment.CommentBody
+                                </p>
+                            </div>
+                        }
+                    </div>
                 </div>
-                    <hr />
+                <hr />
                 }
-
             </div>
         </div>
         <div class="box-footer">

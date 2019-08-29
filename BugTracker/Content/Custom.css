@@ -67,18 +67,22 @@ td {
     text-align: unset;
     padding-left: 3vh !important;
 }
+
 .ticks {
     text-align: unset;
     padding-left: 7vh !important;
 }
+
 .tick {
     text-align: unset;
     padding-left: 2vh !important;
 }
+
 .members {
     text-align: unset;
     padding-left: 15vh !important;
 }
+
 .mems {
     text-align: unset;
     padding-left: 6vh !important;
@@ -101,4 +105,54 @@ td {
     border: none;
     background-color: rgb(36,52,56);
     color: rgb(83,140,138);
+}
+
+#second-background {
+    background-image:url('/Images/Emerald.JPG');
+    background-repeat:no-repeat;
+    background-position:center;
+    background-size:contain;
+}
+
+#second-div {
+    background-image: url('/Images/semitransparentWhite-25.png');
+    margin:27vh 10vh 27vh 10vh;
+    height:50vh;
+}
+
+#second-box {
+    margin:2vh 0 2vh 0;
+    height:45vh;
+}
+
+#second-header {
+    background-color:rgb(36,52,56);
+    color:rgb(86,204,200);
+}
+#second-title{
+    color: rgb(86,204,200);
+    text-align:center;
+    margin:1vh;
+}
+
+.second-center {
+    text-align: center;
+}
+
+.demo-a {
+    height: 13vh;
+}
+
+.demo-head {
+    text-align:center;
+    height:4vh;
+}
+
+.demo-back {
+    background-color:rgb(58,70,74);
+    padding:.5vh 0 .5vh 0;
+}
+
+.demo-img {
+    height: 70px;
 }

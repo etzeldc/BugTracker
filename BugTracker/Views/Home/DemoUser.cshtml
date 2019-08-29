@@ -9,13 +9,13 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.Hidden("DemoEmail", "DemoAdminEmail")
-                <a href="#" class="demoUser" style="height:13vh">
+                <a href="#" class="demoUser demo-a">
                     <div class="box">
-                        <div class="box-header" style="text-align:center; height:4vh;">
+                        <div class="box-header demo-head">
                             <h5>Demo Admin</h5>
                         </div>
-                        <div style="background-color:rgb(58,70,74); padding:.5vh 0 .5vh 0;">
-                            <img class="img-circle center-block" style="height:70px;" src="~/Avatar/bugtrackerfemale5.jpg" />
+                        <div class="demo-back">
+                            <img class="img-circle center-block demo-img" src="~/Avatar/bugtrackerfemale5.jpg" />
                         </div>
                     </div>
                 </a>
@@ -26,13 +26,13 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.Hidden("DemoEmail", "DemoProjectManagerEmail")
-                <a href="#" class="demoUser" style="height:13vh">
+                <a href="#" class="demoUser demo-a">
                     <div class="box">
-                        <div class="box-header" style="text-align:center; height:4vh;">
+                        <div class="box-header demo-head">
                             <h5 class="widget-user-username">Demo Project Manager</h5>
                         </div>
-                        <div style="background-color:rgb(58,70,74); padding:.5vh 0 .5vh 0;">
-                            <img class="img-circle center-block" style="height:70px" src="~/Avatar/bugtrackermale5.jpg" />
+                        <div class="demo-back">
+                            <img class="img-circle center-block demo-img" src="~/Avatar/bugtrackermale5.jpg" />
                         </div>
                     </div>
                 </a>
@@ -46,13 +46,13 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.Hidden("DemoEmail", "DemoDeveloperEmail")
-                <a href="#" class="demoUser" style="height:13vh">
+                <a href="#" class="demoUser demo-a">
                     <div class="box">
-                        <div class="box-header" style="text-align:center; height:4vh;">
+                        <div class="box-header demo-head">
                             <h5>Demo Developer</h5>
                         </div>
-                        <div style="background-color:rgb(58,70,74); padding:.5vh 0 .5vh 0;">
-                            <img class="img-circle center-block" style="height:70px" src="~/Avatar/bugtrackerfemale6.jpg" />
+                        <div class="demo-back">
+                            <img class="img-circle center-block demo-img" src="~/Avatar/bugtrackerfemale6.jpg" />
                         </div>
                     </div>
                 </a>
@@ -63,19 +63,19 @@
             {
                 @Html.AntiForgeryToken()
                 @Html.Hidden("DemoEmail", "DemoSubmitterEmail")
-                <a href="#" class="demoUser" style="height:13vh">
+                <a href="#" class="demoUser demo-a">
                     <div class="box">
-                        <div class="box-header" style="text-align:center; height:4vh;">
+                        <div class="box-header demo-head">
                             <h5>Demo Submitter</h5>
                         </div>
-                        <div style="background-color:rgb(58,70,74); padding:.5vh 0 .5vh 0;">
-                            <img class="img-circle center-block" style="height:70px" src="~/Avatar/bugtrackermale6.jpg" />
+                        <div class="demo-back">
+                            <img class="img-circle center-block demo-img" src="~/Avatar/bugtrackermale6.jpg" />
                         </div>
                     </div>
                 </a>
             }
         </div>
     </div>
-        <div class="row" style="text-align:center">
-            <a href="@Url.Action("Login")" class="text-center">I already have a membership</a>
-        </div>
+    <div class="row second-center">
+        <a href="@Url.Action("Login")" class="text-center">I already have a membership</a>
+    </div>

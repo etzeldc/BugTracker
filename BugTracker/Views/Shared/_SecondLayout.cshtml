@@ -5,7 +5,7 @@
 
 <!DOCTYPE html>
 
-<html style="background-image:url('/Images/Emerald.JPG'); background-repeat:no-repeat; background-position:center; background-size:contain">
+<html id="second-background">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -51,17 +51,16 @@
 
 <body style="background-color:transparent">
 
-    <div style="background-image: url('/Images/semitransparentWhite-25.png'); margin:27vh 10vh 27vh 10vh; height:50vh">
+    <div id="second-div">
         <div class="row">
             <div class="col-md-offset-4 col-md-4">
-                <div class="box" style="margin:2vh 0 2vh 0; height:45vh">
-                    <div class="box-header" style="background-color:rgb(36,52,56); color:rgb(86,204,200);">
-                        <h3 style="color: rgb(86,204,200); text-align:center; margin:1vh"><strong>BUG TRACKER</strong></h3>
+                <div class="box" id="second-box">
+                    <div class="box-header" id="second-header">
+                        <h3 id="second-title"><strong>BUG TRACKER</strong></h3>
                     </div>
-                    <div class="box-body" style="height:38vh">
+                    <div class="box-body" style="height:38.5vh">
                         <div class="back" style="height:36vh">
-
-                @RenderBody()
+                            @RenderBody()
                         </div>
                     </div>
                 </div>
@@ -69,15 +68,6 @@
         </div>
 
     </div>
-
-
-
-
-
-
-
-
-
 
     <!-- jQuery 3 -->
     <script src="~/Scripts/jquery.min.js"></script>
@@ -114,6 +104,11 @@
     <script src="~/Scripts/dataTables.bootstrap.js"></script>
     <script src="~/Scripts/dashboard.js"></script>
     <script src="~/Scripts/Custom.js"></script>
+    <script>
+        $(".demoUser").click(function () {
+            $(this).closest("form").submit();
+        });
+    </script>
 </body>
 </html>
 @RenderSection("scripts", required: false)
