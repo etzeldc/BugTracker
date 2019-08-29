@@ -104,12 +104,13 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,TicketId,AuthorId,CommentBody,Created")] TicketComment ticketComment)
         {
+            var ticketId = ticketComment.TicketId;
             if (ModelState.IsValid)
             {
                 db.TicketComments.Attach(ticketComment);
                 db.Entry(ticketComment).Property(x => x.CommentBody).IsModified = true;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Tickets", new { ticketId });
             }
             ViewBag.AuthorId = new SelectList(db.Users, "Id", "FirstName", ticketComment.AuthorId);
             ViewBag.TicketId = new SelectList(db.Tickets, "Id", "OwnerUserId", ticketComment.TicketId);

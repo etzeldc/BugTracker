@@ -4,26 +4,26 @@
 
 @model BugTracker.Models.LoginViewModel
 
-
-<!-- /.login-logo -->
+<br />
+<br />
 <p style="text-align:center">Sign in to start your session</p>
 @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { role = "form" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary("", new { @class = "text-danger" })
-<div class="row">
-    <div class="col-xs-offset-1 col-xs-10">
-        <div class="row has-feedback">
-            @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email" })
-            <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+    <div class="row">
+        <div class="col-xs-offset-1 col-xs-10">
+            <div class="row has-feedback">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email" })
+                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+            <div class="row has-feedback">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
+                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
         </div>
-        <div class="row has-feedback">
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
-            <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-        </div>
-    </div>
     </div>
     <br />
     <div class="row">
@@ -41,13 +41,11 @@
     </div>
 }
 <br />
-<br />
-<br />
 <div class="row" style="text-align:center">
 
-<a href="@Url.Action("ForgotPassword", "Account")">I forgot my password</a><br>
-<a href="@Url.Action("Register")" class="text-center">Register a new membership</a><br />
-<a href="@Url.Action("DemoUser")" class="text-center">Log in as a demo user</a>
+    <a href="@Url.Action("ForgotPassword", "Account")">I forgot my password</a><br>
+    <a href="@Url.Action("Register")" class="text-center">Register a new membership</a><br />
+    <a href="@Url.Action("DemoUser")" class="text-center">Log in as a demo user</a>
 </div>
 
 <!-- /.login-box-body -->

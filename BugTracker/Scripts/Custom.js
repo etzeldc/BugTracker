@@ -19,3 +19,13 @@
 //        })
 //    });
 //});
+
+//$(".comToggle").click(function () {
+//    $(".").hide();
+//    $(".tickEd").show();
+//})
+
+//$(".comCancel").click(function () {
+//    $(".tickEd").hide();
+//    $(".tickCom").show();
+//})

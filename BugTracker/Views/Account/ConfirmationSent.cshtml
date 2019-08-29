@@ -1,11 +1,12 @@
-﻿
-@{
-    ViewBag.Title = "ConfirmationSent";
+﻿@{
+    ViewBag.Title = "/Views/Shared/_SecondLayout.cshtml";
 }
 
-<h2>ConfirmationSent</h2>
-<div>
-    <p>
-        Thank you for confirming your email. Please @Html.ActionLink("Click here to Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
-    </p>
-</div>
+
+<p style="text-align:center">
+    <br />
+    <br />
+    Thank you for confirming your email. Please click
+    @Html.ActionLink("here", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "btn btn-xs" })
+    to Log in
+</p>

@@ -1,9 +1,19 @@
 ﻿@model BugTracker.Models.TicketComment
 
-@using (Html.BeginForm("Edit", "TicketComments", FormMethod.Post))
-{
-    @Html.AntiForgeryToken();
-    @Html.HiddenFor(model => model.Id)
-    @Html.TextBoxFor(model => model.CommentBody, null, new { @class = "form-control" })
-    <input type="submit" value="Save" />
-}
+<div class="row">
+    @using (Html.BeginForm("Edit", "TicketComments", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken();
+        <div class="col-xs-8">
+            @Html.HiddenFor(model => model.Id)
+            @Html.HiddenFor(model => model.TicketId)
+            @Html.TextBoxFor(model => model.CommentBody, null, new { @class = "form-control" })
+        </div>
+        <div class="col-xs-offset-1 col-xs-1">
+                <input class="btn pull-right" type="submit" value="Save" />
+        </div>
+    }
+    <div class="col-xs-1">
+        <button class="btn comCancel pull-left">Cancel</button>
+    </div>
+</div>
