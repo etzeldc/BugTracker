@@ -77,15 +77,6 @@ namespace BugTracker.Controllers
                 notification.Read = true;
             }
             db.SaveChanges();
-            return RedirectToLocal(returnUrl);
-        }
-
-        private ActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
             return RedirectToAction("Index", "TicketNotifications");
         }
 

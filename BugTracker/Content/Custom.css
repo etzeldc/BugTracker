@@ -50,7 +50,11 @@
 }
 
 .full-box {
-    height: 79.5vh;
+    height: 65vh;
+}
+
+#user-box {
+    height: 79vh;
 }
 
 .copy {
@@ -80,7 +84,7 @@ td {
 
 .members {
     text-align: unset;
-    padding-left: 15vh !important;
+    padding-left: 10vh !important;
 }
 
 .mems {
@@ -129,6 +133,7 @@ td {
     background-color:rgb(36,52,56);
     color:rgb(86,204,200);
 }
+
 #second-title{
     color: rgb(86,204,200);
     text-align:center;

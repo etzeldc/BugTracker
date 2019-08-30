@@ -20,456 +20,349 @@
         <strong>Dashboard</strong>
     </h3>
 </div>
-<div class="body">
+<div class="body skroll">
     <section class="content render-box">
         <div class="row">
-            <div class="col-md-12">
-                <div class="box box-solid">
-                    <div class="box-header">
-                        <i class="fa fa-inbox"></i>
-                        <h3 class="box-title">
-                            <strong> Projects - @user.Projects.Count()  |  </strong>
-                        </h3>
-                        <i class="fa fa-ticket"></i>
-                        <h3 class="box-title">
-                            <strong> Tickets - @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count()</strong>
-                        </h3>
-                        <div class="box-tools pull-right">
-                            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-                            {
-                                <button href="#allProjects" type="button" class="btn btn-sm" data-toggle="tab">All Projects</button>
-                                <button id="click" href="#myProjects" type="button" class="btn btn-sm" data-toggle="tab">My Projects</button>
-                                if (User.IsInRole("Admin"))
-                                {
-                                    <button href="#allTickets" type="button" class="btn btn-sm" data-toggle="tab">All Tickets</button>
-                                }
-                                else
-                                {
-                                    <button href=".myTickets" type="button" class="btn btn-sm" data-toggle="tab">My Tickets</button>
-                                }
-                            }
-                            else
-                            {
-                                <button href="#myProjects" type="button" class="btn btn-sm" data-toggle="tab">My Projects</button>
-                                <button href=".myTickets" type="button" class="btn btn-sm" data-toggle="tab">My Tickets</button>
-                            }
+            <div class="col-md-12 connectedSortable">
+                @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                {
+                    <!--ALL PROJECTS-->
+                    <div class="box box-solid collapsed-box">
+                        <div class="box-header">
+                            <i class="fa fa-inbox"></i>
+                            <h3 class="box-title">
+                                <strong> All Projects - @db.Projects.Count()</strong>
+                            </h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-sm" data-widget="collapse">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm" data-widget="remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body full-box">
+                            <div class="body full-skroll">
+                                <table class="userTable table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Project</th>
+                                            <th>Description</th>
+                                            <th>Project Members</th>
+                                            <th>Created</th>
+                                            <th>Tickets</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var allProjects in db.Projects.ToList())
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <a href="@Url.Action("Details", "Projects", new { Id = allProjects.Id })" class="btn btn-default btn-xs">@Html.DisplayFor(modelItem => allProjects.Name)</a>
+                                                </td>
+                                                <td class="descript">
+                                                    @Html.DisplayFor(modelItem => allProjects.Description)
+                                                </td>
+                                                <td class="members">
+                                                    @foreach (var users in userProjectsHelper.ListUsersOnProject(allProjects.Id).ToList())
+                                                    {
+                                                        <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
+                                                        {
+                                                            if (roleHelper.IsUserInRole(users.Id, "Admin"))
+                                                            {
+                                                                @:Admin / Project Manager
+                                                            }
+                                                            else
+                                                            {
+                                                                @role
+                                                            }
+                                                        } )<br />
+                                                    }
+                                                </td>
+                                                <td class="date-width">
+                                                    @allProjects.Created
+                                                </td>
+                                                <td class="tickets">
+                                                    @foreach (var tick in ticketHelper.TicketsOnProject(allProjects.Id).OrderBy(t => t.TicketPriority.Id))
+                                                    {
+                                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i>
+                                                        <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })" class="btn btn-default btn-xs">
+                                                            @tick.Title
+                                                        </a><br />}
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    <div class="box-body full-box">
-                        <div class="body full-skroll">
-                            <div class="tab-content">
-                            @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
-                            {
-                                <div class="tab-pane" id="allProjects">
-                                    <div class="body full-box full-skroll">
-                                        <table class="userTable table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Project</th>
-                                                    <th>Description</th>
-                                                    <th>Project Members</th>
-                                                    <th>Created</th>
-                                                    <th>Tickets</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var allProjects in db.Projects.ToList())
-                                                {
-                                                    <tr>
-                                                        <td>
-                                                            <a href="@Url.Action("Details", "Projects", new { Id = allProjects.Id })" class="btn btn-default btn-xs">@Html.DisplayFor(modelItem => allProjects.Name)</a>
-                                                        </td>
-                                                        <td class="descript">
-                                                            @Html.DisplayFor(modelItem => allProjects.Description)
-                                                        </td>
-                                                        <td class="members">
-                                                            @foreach (var users in userProjectsHelper.ListUsersOnProject(allProjects.Id).ToList())
-                                                            {
-                                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach(var role in roleHelper.ListUserRoles(users.Id))
-                                                                {
-                                                                    if (roleHelper.IsUserInRole(users.Id, "Admin"))
-                                                                    {
-                                                                        @:Admin / Project Manager
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        @role
-                                                                    }
-                                                                } )<br/>
-                                                            }
-                                                        </td>
-                                                        <td class="date-width">
-                                                            @allProjects.Created
-                                                        </td>
-                                                        <td class="tickets">
-                                                            @foreach (var tick in ticketHelper.TicketsOnProject(allProjects.Id).OrderBy(t => t.TicketPriority.Id))
-                                                            {
-                                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i>
-                                                                <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })" class="btn btn-default btn-xs">
-                                                                    @tick.Title
-                                                                </a><br />}
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="tab-pane" id="myProjects">
-                                    <div class="body full-box full-skroll">
-                                        <table class="userTable table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Project</th>
-                                                    <th>Description</th>
-                                                    <th>Project Members</th>
-                                                    <th>Created</th>
-                                                    <th>Tickets</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var myProjects in user.Projects.ToList())
-                                                {
-                                                    <tr>
-                                                        <td>
-                                                            <a href="@Url.Action("Details", "Projects", new { Id = myProjects.Id })" class="btn btn-default btn-xs">@Html.DisplayFor(modelItem => myProjects.Name)</a>
-                                                        </td>
-                                                        <td class="descript">
-                                                            @Html.DisplayFor(modelItem => myProjects.Description)
-                                                        </td>
-                                                        <td class="members">
-                                                            @foreach (var users in userProjectsHelper.ListUsersOnProject(myProjects.Id).ToList())
-                                                            {
-                                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
-                                                                {
-                                                                    if (roleHelper.IsUserInRole(users.Id, "Admin"))
-                                                                    {
-                                                                        @:Admin / Project Manager
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        @role
-                                                                    }
-                                                                } )<br />
-                                                            }
-                                                        </td>
-                                                        <td class="date-width">
-                                                            @Html.DisplayFor(modelItem => myProjects.Created)
-                                                        </td>
-                                                        <td class="tickets">
-                                                            @foreach (var tick in ticketHelper.TicketsOnProject(myProjects.Id).OrderBy(t => t.TicketPriority.Id))
-                                                            {
-                                                                if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == tick.AssignedToUserId || User.IsInRole("Submitter") && user.Id == tick.OwnerUserId)
-                                                                {
-                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i>
-                                                                    <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })" class="btn btn-default btn-xs">
-                                                                         @Html.DisplayFor(modelItem => tick.Title)
-                                                                    </a><br />
-                                                                }
-                                                                else
-                                                                {
-                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i> @Html.DisplayFor(modelItem => tick.Title)<br />
-                                                                }
-                                                            }
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                if (User.IsInRole("Admin"))
-                                {
-                                    <div class="tab-pane active" id="allTickets">
-                                        <div class="body full-skroll">
-                                            <table class="userTable table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Ticket</th>
-                                                        <th>Description</th>
-                                                        <th>Status</th>
-                                                        <th>Type</th>
-                                                        <th>Project</th>
-                                                        <th>Project Members</th>
-                                                        <th>Created</th>
-                                                        <th>Updated</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var allTickets in db.Tickets.ToList().OrderBy(t => t.TicketPriority.Id))
+                }
+                @if (User.IsInRole("Project Manager") || User.IsInRole("Developer") || User.IsInRole("Submitter"))
+                {
+                    <!--MY PROJECTS-->
+                    <div class="box box-solid collapsed-box">
+                        <div class="box-header">
+                            <i class="fa fa-inbox"></i>
+                            <h3 class="box-title">
+                                <strong> My Projects - @user.Projects.Count()</strong>
+                            </h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-sm" data-widget="collapse">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm" data-widget="remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body full-box">
+                            <div class="body full-skroll">
+                                <table class="userTable table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Project</th>
+                                            <th>Description</th>
+                                            <th>Project Members</th>
+                                            <th>Created</th>
+                                            <th>Tickets</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="">
+                                        @foreach (var myProjects in user.Projects.ToList())
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <a href="@Url.Action("Details", "Projects", new { Id = myProjects.Id })" class="btn btn-default btn-xs">@Html.DisplayFor(modelItem => myProjects.Name)</a>
+                                                </td>
+                                                <td class="descript">
+                                                    @Html.DisplayFor(modelItem => myProjects.Description)
+                                                </td>
+                                                <td class="members">
+                                                    @foreach (var users in userProjectsHelper.ListUsersOnProject(myProjects.Id).ToList())
                                                     {
-                                                        <tr>
-                                                            <td class="tick">
-                                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(allTickets.TicketPriority.Name)"></i>
-                                                                <a href="@Url.Action("Details", "Tickets", new { Id = allTickets.Id })" class="btn btn-default btn-xs">
-                                                                     @allTickets.Title
-                                                                </a>
-                                                            </td>
-                                                            <td class="descript">
-                                                                @allTickets.Description
-                                                            </td>
-                                                            <td class="date-width">
-                                                                @allTickets.TicketStatus.Name
-                                                            </td>
-                                                            <td class="date-width">
-                                                                @allTickets.TicketType.Name
-                                                            </td>
-                                                            <td>
-                                                                <a href="@Url.Action("Details", "Projects", new { Id = allTickets.Project.Id })" class="btn btn-default btn-xs">
-                                                                    @allTickets.Project.Name
-                                                                </a>
-                                                            </td>
-                                                            <td class="mems">
-                                                                @foreach (var users in projectHelper.UsersOnProject(allTickets.Project.Id))
-                                                                {
-                                                                    <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
-                                                                    {
-                                                                        if (roleHelper.IsUserInRole(users.Id, "Admin"))
-                                                                        {
-                                                                            @:Admin / Project Manager
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @role
-                                                                        }
-                                                                    } )
-                                                                    if (users.Id == allTickets.AssignedToUserId)
-                                                                    {
-                                                                        @: - Assignee
-                                                                    }
-                                                                    <br />
-                                                                }
-                                                            </td>
-                                                            <td class="date-width">
-                                                                @allTickets.Created
-                                                            </td>
-                                                            <td class="date-width">
-                                                                @allTickets.Updated
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class="tab-pane active myTickets">
-                                        <div class="body full-box full-skroll">
-                                            <table class="userTable table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Ticket</th>
-                                                        <th>Description</th>
-                                                        <th>Status</th>
-                                                        <th>Type</th>
-                                                        <th>Project</th>
-                                                        <th>Project Members</th>
-                                                        <th>Created</th>
-                                                        <th>Updated</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var myTickets in ticketHelper.MyTickets(user.Id, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
-                                                    {
-                                                        if (User.IsInRole("Admin") || projectHelper.UsersInRoleOnProject(myTickets.Project.Id, "Project Manager").Contains(userId) || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
+                                                        <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
                                                         {
-                                                            <tr>
-                                                                <td class="tick">
-                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i>
-                                                                    <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })" class="btn btn-default btn-xs">
-                                                                        @myTickets.Title
-                                                                    </a>
-                                                                </td>
-                                                                <td class="descript">
-                                                                    @myTickets.Description
-                                                                </td>
-                                                                <td class="date-width">
-                                                                    @myTickets.TicketStatus.Name
-                                                                </td>
-                                                                <td class="date-width">
-                                                                    @myTickets.TicketType.Name
-                                                                </td>
-                                                                <td>
-                                                                    <a href="@Url.Action("Details", "Projects", new { Id = myTickets.Project.Id })" class="btn btn-default btn-xs">
-                                                                        @myTickets.Project.Name
-                                                                    </a>
-                                                                </td>
-                                                                <td class="mems">
-                                                                    @foreach (var users in projectHelper.UsersOnProject(myTickets.Project.Id))
-                                                                    {
-                                                                        <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
-                                                                        {
-                                                                            if (roleHelper.IsUserInRole(users.Id, "Admin"))
-                                                                            {
-                                                                                @:Admin / Project Manager
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                @role
-                                                                            }
-                                                                        } )
-                                                                        if (users.Id == myTickets.AssignedToUserId)
-                                                                        {
-                                                                            @: - Assigned User
-                                                                        }
-                                                                        <br />
-                                                                    }
-                                                                </td>
-                                                                <td class="date-width">@myTickets.Created</td>
-                                                                <td class="date-width">@myTickets.Updated</td>
-                                                            </tr>
+                                                            if (roleHelper.IsUserInRole(users.Id, "Admin"))
+                                                            {
+                                                                @:Admin / Project Manager
+                                                            }
+                                                            else
+                                                            {
+                                                                @role
+                                                            }
+                                                        } )<br />
+                                                    }
+                                                </td>
+                                                <td class="date-width">
+                                                    @Html.DisplayFor(modelItem => myProjects.Created)
+                                                </td>
+                                                <td class="tickets">
+                                                    @foreach (var tick in ticketHelper.TicketsOnProject(myProjects.Id).OrderBy(t => t.TicketPriority.Id))
+                                                    {
+                                                        if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && userId == tick.AssignedToUserId || User.IsInRole("Submitter") && userId == tick.OwnerUserId)
+                                                        {
+                                                            <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i>
+                                                            <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })" class="btn btn-default btn-xs">
+                                                                @Html.DisplayFor(modelItem => tick.Title)
+                                                            </a><br />
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i> @Html.DisplayFor(modelItem => tick.Title)<br />
                                                         }
                                                     }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <div class="tab-pane active myTickets">
-                                    <div class="body full-box full-skroll">
-                                        <table class="userTable table table-bordered">
-                                            <thead>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!--MY TICKETS-->
+                    <div class="box box-solid">
+                        <div class="box-header">
+                            <i class="fa fa-ticket"></i>
+                            <h3 class="box-title">
+                                <strong> My Tickets - @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count()</strong>
+                            </h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-sm" data-widget="collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm" data-widget="remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body full-box">
+                            <div class="body full-skroll">
+                                <table class="userTable table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Ticket</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                            <th>Type</th>
+                                            <th>Project</th>
+                                            <th>Project Members</th>
+                                            <th>Created</th>
+                                            <th>Updated</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var myTickets in ticketHelper.MyTickets(user.Id, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
+                                        {
+                                            if (User.IsInRole("Admin") || projectHelper.UsersInRoleOnProject(myTickets.Project.Id, "Project Manager").Contains(userId) || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
+                                            {
                                                 <tr>
-                                                    <th>Ticket</th>
-                                                    <th>Description</th>
-                                                    <th>Status</th>
-                                                    <th>Type</th>
-                                                    <th>Projects</th>
-                                                    <th>Project Members</th>
-                                                    <th>Created</th>
-                                                    <th>Updated</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach (var myTickets in ticketHelper.MyTickets(user.Id, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).OrderBy(t => t.TicketPriority.Id))
-                                                {
-                                                    if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && user.Id == myTickets.AssignedToUserId || User.IsInRole("Submitter") && user.Id == myTickets.OwnerUserId)
-                                                    {
-                                                        <tr>
-                                                            <td class="tick">
-                                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i>
-                                                                <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })" class="btn btn-default btn-xs">
-                                                                    @myTickets.Title
-                                                                </a>
-                                                            </td>
-                                                            <td class="descript">
-                                                                @myTickets.Description
-                                                            </td>
-                                                            <td class="date-width">
-                                                                @myTickets.TicketStatus.Name
-                                                            </td>
-                                                            <td class="date-width">
-                                                                @myTickets.TicketType.Name
-                                                            </td>
-                                                            <td>
-                                                                <a href="@Url.Action("Details", "Projects", new { Id = myTickets.Project.Id })" class="btn btn-default btn-xs">
-                                                                    @myTickets.Project.Name
-                                                                </a>
-                                                            </td>
-                                                            <td class="mems">
-                                                                @foreach (var users in projectHelper.UsersOnProject(myTickets.Project.Id))
-                                                                {
-                                                                    <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
-                                                                    {
-                                                                        if (roleHelper.IsUserInRole(users.Id, "Admin"))
-                                                                        {
-                                                                            @:Admin / Project Manager
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @role
-                                                                        }
-                                                                    } )
-                                                                    if (users.Id == myTickets.AssignedToUserId)
-                                                                    {
-                                                                        @: - Assigned User
-                                                                    }
-                                                                    <br />
-                                                                }
-                                                            </td>
-                                                            <td class="date-width">@myTickets.Created</td>
-                                                            <td class="date-width">@myTickets.Updated</td>
-                                                        </tr>
-                                                    }
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="tab-pane" id="myProjects">
-                                    <div class="body full-box full-skroll">
-                                        <table class="userTable table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <th>Project</th>
-                                                    <th>Description</th>
-                                                    <th>Project Members</th>
-                                                    <th>Created</th>
-                                                    <th>Tickets</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="">
-                                                @foreach (var myProjects in user.Projects.ToList())
-                                                {
-                                                    <tr>
-                                                        <td>
-                                                            <a href="@Url.Action("Details", "Projects", new { Id = myProjects.Id })" class="btn btn-default btn-xs">@Html.DisplayFor(modelItem => myProjects.Name)</a>
-                                                        </td>
-                                                        <td class="descript">
-                                                            @Html.DisplayFor(modelItem => myProjects.Description)
-                                                        </td>
-                                                        <td class="members">
-                                                            @foreach (var users in userProjectsHelper.ListUsersOnProject(myProjects.Id).ToList())
+                                                    <td class="tick">
+                                                        <i class="fa fa-circle @ticketHelper.TicketsByPriority(myTickets.TicketPriority.Name)"></i>
+                                                        <a href="@Url.Action("Details", "Tickets", new { Id = myTickets.Id })" class="btn btn-default btn-xs">
+                                                            @myTickets.Title
+                                                        </a>
+                                                    </td>
+                                                    <td class="descript">
+                                                        @myTickets.Description
+                                                    </td>
+                                                    <td class="date-width">
+                                                        @myTickets.TicketStatus.Name
+                                                    </td>
+                                                    <td class="date-width">
+                                                        @myTickets.TicketType.Name
+                                                    </td>
+                                                    <td>
+                                                        <a href="@Url.Action("Details", "Projects", new { Id = myTickets.Project.Id })" class="btn btn-default btn-xs">
+                                                            @myTickets.Project.Name
+                                                        </a>
+                                                    </td>
+                                                    <td class="mems">
+                                                        @foreach (var users in projectHelper.UsersOnProject(myTickets.Project.Id))
+                                                        {
+                                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
                                                             {
-                                                            <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @: ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
+                                                                if (roleHelper.IsUserInRole(users.Id, "Admin"))
                                                                 {
-                                                                    if (roleHelper.IsUserInRole(users.Id, "Admin"))
-                                                                    {
-                                                                        @:Admin / Project Manager
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        @role
-                                                                    }
-                                                                } )<br />
-                                                            }
-                                                        </td>
-                                                        <td class="date-width">
-                                                            @Html.DisplayFor(modelItem => myProjects.Created)
-                                                        </td>
-                                                        <td class="tickets">
-                                                            @foreach (var tick in ticketHelper.TicketsOnProject(myProjects.Id).OrderBy(t => t.TicketPriority.Id))
-                                                            {
-                                                                if (User.IsInRole("Admin") || User.IsInRole("Project Manager") || User.IsInRole("Developer") && userId == tick.AssignedToUserId || User.IsInRole("Submitter") && userId == tick.OwnerUserId)
-                                                                {
-                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i>
-                                                                    <a href="@Url.Action("Details", "Tickets", new { Id = tick.Id })" class="btn btn-default btn-xs">
-                                                                        @Html.DisplayFor(modelItem => tick.Title)
-                                                                    </a><br />
+                                                                    @:Admin / Project Manager
                                                                 }
                                                                 else
                                                                 {
-                                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(tick.TicketPriority.Name)"></i> @Html.DisplayFor(modelItem => tick.Title)<br />
+                                                                    @role
                                                                 }
+                                                            } )
+                                                            if (users.Id == myTickets.AssignedToUserId)
+                                                            {
+                                                                @: - Assigned User
                                                             }
-                                                        </td>
-                                                    </tr>
-                                                }
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            }
-                        </div>
+                                                            <br />
+                                                        }
+                                                    </td>
+                                                    <td class="date-width">@myTickets.Created</td>
+                                                    <td class="date-width">@myTickets.Updated</td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
-=            </div>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <!--ALL TICKETS-->
+                    <div class="box box-solid">
+                        <div class="box-header">
+                            <i class="fa fa-ticket"></i>
+                            <h3 class="box-title">
+                                <strong> All Tickets - @db.Tickets.Count()</strong>
+                            </h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-sm" data-widget="collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm" data-widget="remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body full-box">
+                            <div class="body full-skroll">
+                                <table class="userTable table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Ticket</th>
+                                            <th>Description</th>
+                                            <th>Status</th>
+                                            <th>Type</th>
+                                            <th>Project</th>
+                                            <th>Project Members</th>
+                                            <th>Created</th>
+                                            <th>Updated</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var allTickets in db.Tickets.ToList().OrderBy(t => t.TicketPriority.Id))
+                                        {
+                                            <tr>
+                                                <td class="tick">
+                                                    <i class="fa fa-circle @ticketHelper.TicketsByPriority(allTickets.TicketPriority.Name)"></i>
+                                                    <a href="@Url.Action("Details", "Tickets", new { Id = allTickets.Id })" class="btn btn-default btn-xs">
+                                                        @allTickets.Title
+                                                    </a>
+                                                </td>
+                                                <td class="descript">
+                                                    @allTickets.Description
+                                                </td>
+                                                <td class="date-width">
+                                                    @allTickets.TicketStatus.Name
+                                                </td>
+                                                <td class="date-width">
+                                                    @allTickets.TicketType.Name
+                                                </td>
+                                                <td>
+                                                    <a href="@Url.Action("Details", "Projects", new { Id = allTickets.Project.Id })" class="btn btn-default btn-xs">
+                                                        @allTickets.Project.Name
+                                                    </a>
+                                                </td>
+                                                <td class="mems">
+                                                    @foreach (var users in projectHelper.UsersOnProject(allTickets.Project.Id))
+                                                    {
+                                                        <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName @:  ( @foreach (var role in roleHelper.ListUserRoles(users.Id))
+                                                        {
+                                                            if (roleHelper.IsUserInRole(users.Id, "Admin"))
+                                                            {
+                                                                @:Admin / Project Manager
+                                                            }
+                                                            else
+                                                            {
+                                                                @role
+                                                            }
+                                                        } )
+                                                        if (users.Id == allTickets.AssignedToUserId)
+                                                        {
+                                                            @: - Assignee
+                                                        }
+                                                        <br />
+                                                    }
+                                                </td>
+                                                <td class="date-width">
+                                                    @allTickets.Created
+                                                </td>
+                                                <td class="date-width">
+                                                    @allTickets.Updated
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
         </div>
-    </section>
+</section>
 </div>

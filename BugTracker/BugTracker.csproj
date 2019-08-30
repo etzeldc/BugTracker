@@ -182,6 +182,7 @@
     <Compile Include="Helpers\ProjectHelper.cs" />
     <Compile Include="Helpers\TicketHelper.cs" />
     <Compile Include="Helpers\UserProjectsHelper.cs" />
+    <Compile Include="Models\ProjectNotification.cs" />
     <Compile Include="Models\TicketViewModel.cs" />
     <Compile Include="Models\UserProfileViewModel.cs" />
     <Compile Include="Global.asax.cs">
@@ -333,6 +334,7 @@
     <Content Include="Views\Shared\UpdateUserInfoPartial.cshtml" />
     <Content Include="Views\Shared\CommentEditPartial.cshtml" />
     <Content Include="Views\Shared\_SecondLayout.cshtml" />
+    <Content Include="Views\Shared\ProjectNotificationsPartial.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

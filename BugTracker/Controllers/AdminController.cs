@@ -75,7 +75,6 @@ namespace BugTracker.Controllers
                 foreach (var projectId in projectIds)
                 {
                     projectHelper.AddUserToProject(userId, projectId);
-
                 }
             }
             return RedirectToAction("AssignProjects");
@@ -88,6 +87,8 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Admin, Project Manager")]
         public ActionResult ManageProjectUsers(int projectId, List<string>Admins, List<string> ProjectManagers, List<string> Developers, List<string> Submitters)
         {
+            var newUsers = new List<string>();
+            var project = db.Projects.AsNoTracking().FirstOrDefault(p => p.Id == projectId);
             foreach (var user in projectHelper.UsersNotOnProject(projectId).ToList())
             {
                 projectHelper.RemoveUserFromProject(user.Id, projectId);
@@ -97,6 +98,8 @@ namespace BugTracker.Controllers
                 foreach (var adminId in Admins)
                 {
                     projectHelper.AddUserToProject(adminId, projectId);
+                    newUsers.Add(adminId);
+
                 }
             }
             if (ProjectManagers != null)
@@ -104,6 +107,7 @@ namespace BugTracker.Controllers
                 foreach (var projectManagerId in ProjectManagers)
                 {
                     projectHelper.AddUserToProject(projectManagerId, projectId);
+                    newUsers.Add(projectManagerId);
                 }
             }
             if (Developers != null)
@@ -111,6 +115,7 @@ namespace BugTracker.Controllers
                 foreach (var developerId in Developers)
                 {
                     projectHelper.AddUserToProject(developerId, projectId);
+                    newUsers.Add(developerId);
                 }
             }
             if (Submitters != null)
@@ -118,10 +123,13 @@ namespace BugTracker.Controllers
                 foreach (var submitterId in Submitters)
                 {
                     projectHelper.AddUserToProject(submitterId, projectId);
+                    newUsers.Add(submitterId);
                 }
             }
+            projectHelper.GenerateProjectAssignmentNotification(project, newUsers);
             return RedirectToAction("Details", "Projects", new { id = projectId });
         }
+
 
         // POST REMOVE USERS FROM PROJECT
 

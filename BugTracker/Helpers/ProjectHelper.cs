@@ -12,7 +12,7 @@ namespace BugTracker.Helpers
 {
     public class ProjectHelper
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private static ApplicationDbContext db = new ApplicationDbContext();
         private UserRolesHelper roleHelper = new UserRolesHelper();
 
         public List<string> UsersInRoleOnProject(int projectId, string roleName)
@@ -65,6 +65,7 @@ namespace BugTracker.Helpers
 
                 proj.Users.Remove(delUser);
                 db.Entry(proj).State = EntityState.Modified;
+                GenerateProjectUnassignmentNotification(userId, projectId);
                 db.SaveChanges();
             }
         }
@@ -100,5 +101,73 @@ namespace BugTracker.Helpers
             }
             return newProjects;
         }
+
+        public void GenerateProjectAssignmentNotification(Project project, List<string> users)
+        {
+            foreach (var user in users)
+            {
+                var notification = new ProjectNotification
+                {
+                    Created = DateTime.Now,
+                    Subject = $"assigned you to a project.",
+                    Read = false,
+                    RecipientId = user,
+                    SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                    NotificationBody = $"You have been assigned to {project.Name}.",
+                    ProjectId = project.Id
+                };
+                db.ProjectNotifications.Add(notification);
+            }
+            db.SaveChanges();
+        }
+        public void GenerateProjectUnassignmentNotification(string userId, int projectId)
+        {
+            var project = db.Projects.Find(projectId);
+            var notification = new ProjectNotification
+            {
+                Created = DateTime.Now,
+                Subject = $"has removed you from a project.",
+                Read = false,
+                RecipientId = userId,
+                SenderId = HttpContext.Current.User.Identity.GetUserId(),
+                NotificationBody = $"You have been removed from {project.Name}.",
+                ProjectId = projectId
+            };
+            db.ProjectNotifications.Add(notification);
+            db.SaveChanges();
+        }
+
+        #region Dashboard Notification
+        public static int GetNewUserNotificationCount()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.ProjectNotifications.AsNoTracking().Where(t => t.RecipientId == userId && !t.Read).Count();
+        }
+        public static int GetReadUserNotificationCount()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.ProjectNotifications.AsNoTracking().Where(t => t.RecipientId == userId && t.Read).Count();
+        }
+        public static int GetAllUserNotificationCount()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.ProjectNotifications.AsNoTracking().Where(t => t.RecipientId == userId).Count();
+        }
+        public static List<ProjectNotification> GetUnreadNotifications()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.ProjectNotifications.AsNoTracking().Where(t => t.RecipientId == userId && !t.Read).ToList();
+        }
+        public static List<ProjectNotification> GetReadNotifications()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.ProjectNotifications.AsNoTracking().Where(t => t.RecipientId == userId && t.Read).ToList();
+        }
+        public static List<ProjectNotification> GetAllUserNotifications()
+        {
+            var userId = HttpContext.Current.User.Identity.GetUserId();
+            return db.ProjectNotifications.AsNoTracking().Where(t => t.RecipientId == userId).ToList();
+        }
+        #endregion
     }
 }

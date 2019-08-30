@@ -37,7 +37,10 @@
                         <th>Priority</th>
                         <th>Type</th>
                         <th>Created</th>
-                        <th></th>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && projectHelper.IsUserOnProject(userId, Model.Project.Id) || User.IsInRole("Developer") && userId == Model.AssignedToUserId || User.IsInRole("Submitter") && userId == Model.OwnerUserId)
+                        {
+                            <th></th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -75,7 +78,7 @@
                             </tr>
                         }
                     }
-                    else
+                    else if (User.IsInRole("Developer") && userId == Model.AssignedToUserId || User.IsInRole("Submitter") && userId == Model.OwnerUserId)
                     {
                         //using (Ajax.BeginForm("Edit", "Tickets", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "tix" }))
                         using (Html.BeginForm("Edit", "Tickets"))
@@ -124,6 +127,28 @@
                                 </td>
                             </tr>
                         }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td class="tick-width">
+                                @Model.Title
+                            </td>
+                            <td>@Model.Description</td>
+                            <td>@Model.OwnerUser.FullName</td>
+                            @if (Model.AssignedToUserId == null)
+                            {
+                                <td>Unassigned</td>
+                            }
+                            else
+                            {
+                                <td>@Model.AssignedToUser.FullName</td>
+                            }
+                            <td>@Model.TicketStatus.Name</td>
+                            <td>@Model.TicketPriority.Name</td>
+                            <td>@Model.TicketType.Name</td>
+                            <td>@Model.Created</td>
+                        </tr>
                     }
                 </tbody>
                 </table>

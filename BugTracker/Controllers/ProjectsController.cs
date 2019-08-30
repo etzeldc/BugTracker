@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
 using BugTracker.Helpers;
+using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Controllers
 {
@@ -157,6 +158,37 @@ namespace BugTracker.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        public ActionResult ProjectNotificationsPartial()
+        {
+            return PartialView();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult MarkAsRead(int? notificationId, string userId)
+        {
+            var notification = db.ProjectNotifications.Find(notificationId);
+            notification.Read = true;
+            db.SaveChanges();
+            if (projectHelper.IsUserOnProject(userId, notification.ProjectId) || User.IsInRole("Admin"))
+            {
+                return RedirectToAction("Details", "Projects", new { notification.Project.Id });
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home");
+            }
+        }
+        public ActionResult MarkAllAsRead(string returnUrl)
+        {
+            foreach (var notification in db.ProjectNotifications)
+            {
+                notification.Read = true;
+            }
+            db.SaveChanges();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

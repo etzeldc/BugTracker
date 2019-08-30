@@ -32,8 +32,8 @@
                         </button>
                         </div>
                     </div>
-                    <div class="box-body full-box">
-                        <div class="body full-skroll">
+                    <div class="box-body" id="user-box">
+                        <div class="body" id="user-skroll">
                             <table class="userTable table table-bordered">
                                 <thead>
                                     <tr>
@@ -52,7 +52,7 @@
                                             @Html.Hidden("userId", user.Id)
                                             <tr>
                                                 <td class="members"><img src="@user.AvatarUrl" class="img-circle" style="height:25px" />  @user.FirstName @user.LastName</td>
-                                                <td>@user.Email</td>
+                                                <td><a href="mailto:@user.Email">@user.Email</a></td>
                                                 <td>
                                                     @if (ticketHelper.MyTickets(user.Id, "Developer").Count() != 0)
                                                     {

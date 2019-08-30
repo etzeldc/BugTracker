@@ -143,6 +143,10 @@ $(function () {
     });
 
     $('.full-skroll').slimScroll({
+        height: '63vh'
+    });
+
+    $('#user-skroll').slimScroll({
         height: '77vh'
     });
 

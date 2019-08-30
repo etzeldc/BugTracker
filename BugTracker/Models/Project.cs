@@ -18,10 +18,13 @@ namespace BugTracker.Models
         //virtual nav
         public virtual ICollection<Ticket> Tickets { get; set; }
         public virtual ICollection<ApplicationUser> Users { get; set; }
+        public virtual ICollection<ProjectNotification> ProjectNotifications { get; set; }
+
         public Project()
         {
             Tickets = new HashSet<Ticket>();
             Users = new HashSet<ApplicationUser>();
+            ProjectNotifications = new HashSet<ProjectNotification>();
         }
     }
 }

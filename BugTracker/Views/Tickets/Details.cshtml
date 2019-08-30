@@ -114,7 +114,7 @@
                                 @foreach (var users in userProjectsHelper.ListUsersOnProject(Model.Project.Id))
                                 {
                                     <tr>
-                                        <td class="mems">
+                                        <td class="tick">
                                             <img src="@users.AvatarUrl" class="img-circle" style="height:20px" /> @users.FullName
                                             @if (users.Id == Model.AssignedToUserId)
                                             {

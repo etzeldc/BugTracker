@@ -12,11 +12,11 @@ namespace BugTracker.Models
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class ApplicationUser : IdentityUser
     {
-        [StringLength(50, ErrorMessage = "The Name must be between {2} and {1} characters long.", MinimumLength = 5)]
+        [StringLength(50, ErrorMessage = "The Name must be between {2} and {1} characters long.", MinimumLength = 1)]
         public string FirstName { get; set; }
-        [StringLength(50, ErrorMessage = "The Name must be between {2} and {1} characters long.", MinimumLength = 5)]
+        [StringLength(50, ErrorMessage = "The Name must be between {2} and {1} characters long.", MinimumLength = 1)]
         public string LastName { get; set; }
-        [StringLength(50, ErrorMessage = "The Name must be between {2} and {1} characters long.", MinimumLength = 5)]
+        [StringLength(50, ErrorMessage = "The Name must be between {2} and {1} characters long.", MinimumLength = 1)]
         public string DisplayName { get; set; }
         public string AvatarUrl { get; set; }
 
@@ -65,6 +65,7 @@ namespace BugTracker.Models
         }
 
         public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectNotification> ProjectNotifications { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<TicketAttachment> TicketAttachments { get; set; }
         public DbSet<TicketComment> TicketComments { get; set; }
