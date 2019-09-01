@@ -49,7 +49,7 @@ namespace BugTracker.Controllers
                 }
                 db.TicketAttachments.Add(ticketAttachment);
                 db.SaveChanges();
-                if (ticketAttachment.UserId != ticket.AssignedToUserId)
+                if (ticketAttachment.UserId != ticketAttachment.Ticket.AssignedToUserId)
                 {
                     TicketHelper.CreateAttachmentNotification(newTicket);
                 }

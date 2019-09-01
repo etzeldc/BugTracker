@@ -122,12 +122,12 @@ $(function () {
 
   // SLIMSCROLL FOR CHAT WIDGET
     $('.chat-box').slimScroll({
-        height: '35vh',
+        height: '30vh',
         start: 'bottom'
     });
 
     $('.his-box').slimScroll({
-        height: '47.5vh'
+        height: '35.5vh'
     });
 
     $('.skroll').slimScroll({
@@ -146,7 +146,7 @@ $(function () {
         height: '63vh'
     });
 
-    $('#user-skroll').slimScroll({
+    $('.user-skroll').slimScroll({
         height: '77vh'
     });
 

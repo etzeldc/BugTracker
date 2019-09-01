@@ -3,7 +3,7 @@
 
 @model BugTracker.Models.Ticket
 
-<div class="box box-solid collapsed-box chat-body">
+<div class="box box-solid chat-body">
     <div class="box-header">
         <i class="fa fa-comments"></i>
         <h3 class="box-title">
@@ -11,7 +11,7 @@
         </h3>
         <div class="box-tools pull-right">
             <button type="button" class="btn btn-sm" data-widget="collapse" @*onclick="$('#comScroll').scrollTop(function () { return this.scrollHeight; });"*@>
-                <i class="fa fa-plus"></i>
+                <i class="fa fa-minus"></i>
             </button>
             <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#comModal" @*onclick="$('#comModScroll').scrollTop(function () { return this.scrollHeight; });"*@>
                 <i class="fa fa-expand"></i>
@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="box-body">
-        <div class="content chat-box back" id="comScroll">
+        <div class="content chat-box back">
             @foreach (var comment in Model.TicketComments)
             {
             <div class="item">
@@ -31,24 +31,6 @@
                 <small class="pull-right">
                     <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />
                     <i class="fa fa-calendar"></i> @comment.Created.ToString("M/dd/yyy")<br />
-                    @if (User.Identity.GetUserId() == comment.AuthorId)
-                    {
-                        using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.Hidden("pk", comment.Id)
-                            <input class="btn btn-xs" value="Delete" type="submit" />
-                        }
-                    }
-                    else if (User.IsInRole("Admin"))
-                    {
-                        using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
-                        {
-                            @Html.AntiForgeryToken()
-                            @Html.Hidden("pk", comment.Id)
-                            <input class="btn btn-xs" value="Delete" type="submit" />
-                        }
-                    }
                 </small>
                 <br />
                 @if (User.Identity.GetUserId() == comment.AuthorId)
@@ -59,11 +41,20 @@
                 }
                 else
                 {
-                    <div>
-                        <p>
-                            @comment.CommentBody
-                        </p>
-                    </div>
+            <div>
+                <p>
+                    @comment.CommentBody
+                    @if (User.IsInRole("Admin"))
+                    {
+                        using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("pk", comment.Id)
+                            <a class="btn pull-right" href="#" onclick="$(this).closest('form').submit();">Delete</a>
+                        }
+                    }
+                </p>
+            </div>
                 }
             </div>
             <hr />
@@ -113,24 +104,6 @@
                     <small class="pull-right">
                         <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />
                         <i class="fa fa-calendar"></i> @comment.Created.ToString("M/dd/yyy")<br />
-                        @if (User.Identity.GetUserId() == comment.AuthorId)
-                        {
-                            using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
-                            {
-                                @Html.AntiForgeryToken()
-                                @Html.Hidden("pk", comment.Id)
-                                <input class="btn btn-xs" value="Delete" type="submit" />
-                            }
-                        }
-                        else if (User.IsInRole("Admin"))
-                        {
-                            using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
-                            {
-                                @Html.AntiForgeryToken()
-                                @Html.Hidden("pk", comment.Id)
-                                <input class="btn btn-xs" value="Delete" type="submit" />
-                            }
-                        }
                     </small>
                     <br />
                     <div>
@@ -145,6 +118,15 @@
                             <div>
                                 <p>
                                     @comment.CommentBody
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.Hidden("pk", comment.Id)
+                                            <a class="btn pull-right" href="#" onclick="$(this).closest('form').submit();">Delete</a>
+                                        }
+                                    }
                                 </p>
                             </div>
                         }

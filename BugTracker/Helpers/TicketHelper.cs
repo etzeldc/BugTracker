@@ -524,5 +524,7 @@ namespace BugTracker.Helpers
             return db.TicketHistories.AsNoTracking().Where(t => t.UserId == userId).ToList();
         }
         #endregion
+
+
     }
 }

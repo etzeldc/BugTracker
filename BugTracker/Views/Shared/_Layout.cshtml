@@ -76,12 +76,7 @@
                 </a>
                 <!-- SIDENAV MENU -->
                 <div class="navbar-custom-menu">
-                    <ul class="nav navbar-nav">
-                        <!-- PROJECT NOTIFICATIONS -->
-                        @if (ProjectHelper.GetNewUserNotificationCount() != 0)
-                        {
-                            @Html.Partial("ProjectNotificationsPartial")
-                        }
+                    <ul class="nav navbar-nav">                    
                         <!-- TICKET NOTIFICATIONS -->
                         @Html.Partial("NotificationsPartial")
                         <!-- TICKETS DROPDOWN -->
@@ -99,9 +94,9 @@
                             <ul class="dropdown-menu">
                                 @if (User.IsInRole("Admin"))
                                 {
-                                <li class="header">
-                                    There are @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() open tickets.
-                                </li>
+                                    <li class="header">
+                                        There are @ticketHelper.MyTickets(userId, roleHelper.ListUserRoles(user.Id).FirstOrDefault()).Count() open tickets.
+                                    </li>
                                 }
                                 else
                                 {
@@ -114,17 +109,14 @@
                                     <li>
                                         <ul class="menu">
                                             <li>
-                                                <a href="@Url.Action("Details", "Tickets", new { Id = ticket.Id })">
+                                                <a href="@Url.Action("Details", "Tickets" , new { Id=ticket.Id })">
                                                     <h3>
                                                         @ticket.Title
                                                         <i class="fa fa-circle pull-left @ticketHelper.TicketsByPriority(ticket.TicketPriority.Name)"></i>
                                                         <small class="label label-default pull-right">@ticket.TicketStatus.Name</small>
                                                     </h3>
                                                     <div>
-                                                        @ticket.Project.Name -
-
-                                                        @ticket.TicketPriority.Name
-
+                                                        @ticket.Project.Name - @ticket.TicketPriority.Name
                                                     </div>
                                                 </a>
                                             </li>
@@ -132,11 +124,101 @@
                                     </li>
                                 }
                                 <li class="footer">
-                                    <a href="@Url.Action("Index", "Home")">View all tickets </a>
+                                    <a href="@Url.Action(" Index", "Home" )">View all tickets </a>
                                 </li>
                             </ul>
                         </li>
-                        <!-- LOF OFF -->
+                        <!-- PROJECTS DROPDOWN -->
+                        <li class="dropdown tasks-menu">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-inbox"></i>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <span class="label">
+                                        @db.Projects.Count()
+                                    </span>
+                                }
+                                @if (projectHelper.ListUserProjects(user.Id).Count() != 0)
+                                {
+                                    <span class="label">
+                                        @projectHelper.ListUserProjects(user.Id).Count()
+                                    </span>
+                                }
+                            </a>
+                            <!--Generate a project list here-->
+                            <ul class="dropdown-menu">
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li class="header">
+                                        There are @db.Projects.Count() current projects.
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="header">
+                                        You have @projectHelper.ListUserProjects(user.Id).Count() Projects.
+                                    </li>
+                                }
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    foreach (var project in db.Projects.OrderByDescending(p => p.Created).Take(10))
+                                    {
+                                        <li>
+                                            <ul class="menu">
+                                                <li>
+                                                    <a href="@Url.Action("Details", "Projects", new { Id = project.Id })">
+                                                        <h3>
+                                                            @project.Name
+                                                            <i class="fa fa-dot-circle-o pull-left"></i>
+                                                            <small class="label label-default pull-right">
+                                                                @projectHelper.TicketsOnProject(project.Id).Count() Tickets<br />
+                                                            </small>
+                                                        </h3>
+                                                        <div>
+                                                            @foreach (var ticket in ticketHelper.TicketsOnProject(project.Id).OrderByDescending(t => t.TicketPriorityId))
+                                                            {
+                                                                <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticket.TicketPriority.Name) pull-right" data-toggle="popover" title="@ticket.Title - @ticket.TicketPriority.Name"></i>
+                                                            }
+                                                            <br />
+                                                        </div>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    }
+
+                                }
+                                @foreach (var project in projectHelper.ListUserProjects(user.Id).OrderByDescending(p => p.Created).Take(10))
+                                {
+                                    <li>
+                                        <ul class="menu">
+                                            <li>
+                                                <a href="@Url.Action("Details", "Projects", new { Id = project.Id })">
+                                                    <h3>
+                                                        @project.Name
+                                                        <i class="fa fa-dot-circle-o pull-left"></i>
+                                                        <small class="label label-default pull-right">
+                                                            @projectHelper.TicketsOnProject(project.Id).Count() Tickets<br />
+                                                        </small>
+                                                    </h3>
+                                                    <div>
+                                                        @foreach (var ticket in ticketHelper.TicketsOnProject(project.Id).OrderByDescending(t => t.TicketPriorityId))
+                                                        {
+                                                            <i class="fa fa-circle @ticketHelper.TicketsByPriority(ticket.TicketPriority.Name) pull-right" data-toggle="popover" title="@ticket.Title - @ticket.TicketPriority.Name"></i>
+                                                        }
+                                                        <br />
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                }
+                                <li class="footer">
+                                    <a href="@Url.Action("Index", "Home")">View all projects </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- LOG OFF -->
                         <li class="dropdown-toggle">
                             @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { role = "form" }))
                             {
@@ -345,24 +427,24 @@
                 </section>
             </aside>
 
-            <!-- PAGE CONTENT -->
-            <div class="content-wrapper" style="margin-top:50px; background-image: url('/Images/Emerald.JPG'); background-size:cover;">
-                <div class="content">
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <div style="height: 91vh; margin-bottom: 0; background-image: url('/Images/semitransparentWhite-25.png');">
-                                <section class="contain">
-                                    @RenderBody()
-                                </section>
-                            </div>
+        <!-- PAGE CONTENT -->
+        <div class="content-wrapper" style="margin-top:50px; background-image: url('/Images/Emerald.JPG'); background-size:cover;">
+            <div class="content">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div style="height: 91vh; margin-bottom: 0; background-image: url('/Images/semitransparentWhite-25.png');">
+                            <section class="contain">
+                                @RenderBody()
+                            </section>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- OTHER SIDENAV -->
-        <aside class="control-sidebar control-sidebar-dark control-sidebar-bg" style="display: none;">
+    <!-- OTHER SIDENAV -->
+    <aside class="control-sidebar control-sidebar-dark control-sidebar-bg" style="display: none;">
             <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
                 <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-user"></i></a></li>
                 <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-lock"></i></a></li>
@@ -377,42 +459,42 @@
             </div>
         </aside>
         
-        <!-- SCRIPTS -->
-        <!-- jQuery 3 -->
-        <script src="~/Scripts/jquery.min.js"></script>
-        <!--jQuery UI 1.11.4 -->
-        <script src="~/Scripts/jquery-ui.min.js"></script>
-        <!--Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-        <script>$.widget.bridge('uibutton', $.ui.button);</script>
-        <!-- Bootstrap 3.3.7 -->
-        <script src="~/Scripts/bootstrap.min.js"></script>
-        <!--Morris.js charts -->
-        <script src="~/Scripts/raphael.min.js"></script>
-        <script src="~/Scripts/morris.min.js"></script>
-        <!-- Sparkline -->
-        <script src="~/Scripts/jquery.sparkline.min.js"></script>
-        <!--jvectormap-->
-        <script src="~/Scripts/jquery-jvectormap-1.2.2.min.js"></script>
-        <script src="~/Scripts/jquery-jvectormap-world-mill-en.js" ></script>
-        <!--jQuery Knob Chart -->
-        <script src="~/Scripts/jquery.knob.min.js"></script>
-        <!--daterangepicker-->
-        <script src="~/Scripts/moment.min.js"></script>
-        <script src="~/Scripts/daterangepicker.js"></script>
-        <!--datepicker-->
-        <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
-        <!-- Bootstrap WYSIHTML5 -->
-        <script src="~/Scripts/bootstrap3-wysihtml5.all.min.js"></script>
-        <!--Slimscroll-->
-        <script src="~/Scripts/jquery.slimscroll.min.js"></script>
-        <!-- FastClick -->
-        <script src="~/Scripts/fastclick.js"></script>
-        <!--AdminLTE App -->
-        <script src="~/Scripts/adminlte.min.js"></script>
-        <script src="~/Scripts/jquery.dataTables.min.js"></script>
-        <script src="~/Scripts/dataTables.bootstrap.js"></script>
-        <script src="~/Scripts/dashboard.js"></script>
-        <script src="~/Scripts/Custom.js"></script>
+    <!-- SCRIPTS -->
+    <!-- jQuery 3 -->
+    <script src="~/Scripts/jquery.min.js"></script>
+    <!--jQuery UI 1.11.4 -->
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    <!--Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+    <script>$.widget.bridge('uibutton', $.ui.button);</script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <!--Morris.js charts -->
+    <script src="~/Scripts/raphael.min.js"></script>
+    <script src="~/Scripts/morris.min.js"></script>
+    <!-- Sparkline -->
+    <script src="~/Scripts/jquery.sparkline.min.js"></script>
+    <!--jvectormap-->
+    <script src="~/Scripts/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="~/Scripts/jquery-jvectormap-world-mill-en.js" ></script>
+    <!--jQuery Knob Chart -->
+    <script src="~/Scripts/jquery.knob.min.js"></script>
+    <!--daterangepicker-->
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/daterangepicker.js"></script>
+    <!--datepicker-->
+    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
+    <!-- Bootstrap WYSIHTML5 -->
+    <script src="~/Scripts/bootstrap3-wysihtml5.all.min.js"></script>
+    <!--Slimscroll-->
+    <script src="~/Scripts/jquery.slimscroll.min.js"></script>
+    <!-- FastClick -->
+    <script src="~/Scripts/fastclick.js"></script>
+    <!--AdminLTE App -->
+    <script src="~/Scripts/adminlte.min.js"></script>
+    <script src="~/Scripts/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/dataTables.bootstrap.js"></script>
+    <script src="~/Scripts/dashboard.js"></script>
+    <script src="~/Scripts/Custom.js"></script>
     </body>
 </html>
 

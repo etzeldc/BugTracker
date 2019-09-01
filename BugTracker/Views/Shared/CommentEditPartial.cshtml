@@ -4,14 +4,22 @@
     @using (Html.BeginForm("Edit", "TicketComments", FormMethod.Post))
     {
         @Html.AntiForgeryToken();
-    <div class="col-xs-9" style="padding-right:0">
-        @Html.Hidden("Id", Model.Id)
-        @Html.Hidden("TicketId", Model.TicketId)
-        @Html.TextBoxFor(model => model.CommentBody, null, new { @class = "form-control" })
-    </div>
-        <div class="col-xs-1">
-                <input class="btn" style="margin-left:0" type="submit" value="Edit" />
+        <div class="col-xs-9" style="padding-right:0">
+            @Html.Hidden("Id", Model.Id)
+            @Html.Hidden("TicketId", Model.TicketId)
+            @Html.TextBoxFor(model => model.CommentBody, null, new { @class = "form-control" })
         </div>
+        <div class="col-xs-1">
+            <input class="btn" style="margin-left:0" type="submit" value="Edit" />
+        </div>
+    }
+    @using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
+    {
+<div class="col-xs-1">
+    @Html.AntiForgeryToken()
+    @Html.Hidden("pk", Model.Id)
+    <input class="btn" style="margin-left:0" type="submit" value="Delete" />
+</div>
     }
 
 </div>

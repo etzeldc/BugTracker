@@ -160,19 +160,15 @@ namespace BugTracker.Controllers
             base.Dispose(disposing);
         }
 
-        public ActionResult ProjectNotificationsPartial()
-        {
-            return PartialView();
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult MarkAsRead(int? notificationId, string userId)
+        public ActionResult MarkAsRead(int? notificationId)
         {
             var notification = db.ProjectNotifications.Find(notificationId);
             notification.Read = true;
+            var user = db.Users.Find(User.Identity.GetUserId());
             db.SaveChanges();
-            if (projectHelper.IsUserOnProject(userId, notification.ProjectId) || User.IsInRole("Admin"))
+            if (notification.Project.Users.Contains(user))
             {
                 return RedirectToAction("Details", "Projects", new { notification.Project.Id });
             }
@@ -188,6 +184,15 @@ namespace BugTracker.Controllers
                 notification.Read = true;
             }
             db.SaveChanges();
+            return RedirectToLocal(returnUrl);
+        }
+
+        private ActionResult RedirectToLocal(string returnUrl)
+        {
+            if (Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
             return RedirectToAction("Index", "Home");
         }
     }

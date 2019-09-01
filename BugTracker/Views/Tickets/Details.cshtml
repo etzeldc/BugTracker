@@ -28,7 +28,8 @@
         </div>
         <div class="row">
             <div class="col-md-6 connectedSortable">
-                @Html.Partial("HistoryPartial")
+                @Html.Partial("AttachmentsPartial")
+                @Html.Partial("CommentsPartial")
             </div>
             <div class="col-md-6 connectedSortable">
                 <div class="box box-solid collapsed-box">
@@ -131,8 +132,7 @@
                         </table>
                     </div>
                 </div>
-                @Html.Partial("AttachmentsPartial")
-                @Html.Partial("CommentsPartial")
+                @Html.Partial("HistoryPartial")
                 @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && projectHelper.IsUserOnProject(userId, Model.ProjectId))
                 {
                     <div class="box box-solid collapsed-box">

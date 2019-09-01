@@ -169,5 +169,6 @@ namespace BugTracker.Helpers
             return db.ProjectNotifications.AsNoTracking().Where(t => t.RecipientId == userId).ToList();
         }
         #endregion
+
     }
 }

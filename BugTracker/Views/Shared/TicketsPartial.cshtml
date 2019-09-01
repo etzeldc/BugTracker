@@ -93,7 +93,7 @@
                                 <td class="tick-width">
                                     @Html.TextBoxFor(model => model.Title, new { @class = "form-control", })
                                 </td>
-                                <td>@Model.Description</td>
+                                <td class="descript">@Model.Description</td>
                                 <td>@Model.OwnerUser.FullName</td>
                                 @if (Model.AssignedToUserId == null)
                                 {
