@@ -236,9 +236,11 @@
     <Content Include="favicon-16x16.png" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Images\css.png" />
     <Content Include="Images\doc.png" />
     <Content Include="Images\docx.png" />
     <Content Include="Images\Emerald.JPG" />
+    <Content Include="Images\html.png" />
     <Content Include="Images\other.png" />
     <Content Include="Images\PatongSunset.JPG" />
     <Content Include="Images\pdf.png" />

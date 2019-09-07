@@ -36,7 +36,7 @@
                         <li class="@target collapse in">
                             <div class="timeline-item">
                                 <img src="@item.User.AvatarUrl" class="img-circle pull-left" style="height:30px;">
-                                <span class="time"><i class="fa fa-clock-o"></i> @item.Updated.ToString("h:mm tt")</span>
+                                <span class="time"><i class="fa fa-clock-o"></i> @item.Updated.AddHours(-4).ToString("h:mm tt")</span>
                                 <h3 class="timeline-header"> @item.User.FirstName @item.User.LastName</h3>
                                 <div class="timeline-body">
                                     @item.User.FirstName changed the @item.PropertyName from "@item.OldValue" to "@item.NewValue".
@@ -72,7 +72,7 @@
                                 <li class="@target collapse in">
                                     <div class="timeline-item">
                                         <img src="@item.User.AvatarUrl" class="img-circle pull-left" style="height:30px;">
-                                        <span class="time"><i class="fa fa-clock-o"></i> @item.Updated.ToString("h:mm tt")</span>
+                                        <span class="time"><i class="fa fa-clock-o"></i> @item.Updated.AddHours(-4).ToString("h:mm tt")</span>
                                         <h3 class="timeline-header"> @item.User.FirstName @item.User.LastName</h3>
                                         <div class="timeline-body">
                                             @item.User.FirstName changed the @item.PropertyName from "@item.OldValue" to "@item.NewValue".

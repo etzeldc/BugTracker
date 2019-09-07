@@ -1,9 +1,5 @@
 ﻿@model BugTracker.Models.Ticket
 
-@{
-    ViewBag.Title = "Delete";
-}
-
 <div class="box-header">
     <i class="fa fa-trash"></i>
     <h3 class="box-title">
@@ -29,7 +25,14 @@
                                 </dt>
 
                                 <dd>
-                                    @Html.DisplayFor(model => model.AssignedToUser.FullName)
+                                    @if (Model.AssignedToUserId == null)
+                                    {
+                                        @:Unassigned
+                                    }
+                                    else
+                                    {
+                                        @Html.DisplayFor(model => model.AssignedToUser.FullName)
+                                    }
                                 </dd>
 
                                 <dt>
@@ -93,7 +96,7 @@
                                 </dt>
 
                                 <dd>
-                                    @Html.DisplayFor(model => model.Created)
+                                    @Html.DisplayFor(model => model.Created.AddHours(-4))
                                 </dd>
 
                                 <dt>

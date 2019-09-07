@@ -37,7 +37,7 @@
                         <th>Priority</th>
                         <th>Type</th>
                         <th>Created</th>
-                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && projectHelper.IsUserOnProject(userId, Model.Project.Id) || User.IsInRole("Developer") && userId == Model.AssignedToUserId || User.IsInRole("Submitter") && userId == Model.OwnerUserId)
+                        @if (User.IsInRole("Admin") || User.IsInRole("Project Manager") && projectHelper.IsUserOnProject(userId, Model.Project.Id))
                         {
                             <th></th>
                         }
@@ -53,29 +53,38 @@
                             @Html.HiddenFor(model => model.Id);
                             @Html.HiddenFor(model => model.ProjectId);
                             @Html.HiddenFor(model => model.Created);
-                            <tr>
-                                <td class="tick-width">
-                                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control", })
-                                </td>
-                                <td>
-                                    @Html.TextAreaFor(model => model.Description, 4, 20, new { @class = "form-control", })
-                                </td>
-                                <td>@Model.OwnerUser.FullName</td>
-                                <td class="tick-width">@Html.DropDownList("Developer", null, ticketHelper.TicketAssignee(Model.Id), new { @class = "form-control" })</td>
-                                <td class="tick-width">
-                                    @Html.DropDownList("TicketStatusId", null, new { @class = "form-control" })
-                                </td>
-                                <td class="tick-width">
-                                    @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control" })
-                                </td>
-                                <td class="tick-width">
-                                    @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
-                                </td>
-                                <td class="date-width">@Model.Created</td>
-                                <td class="edit-cell">
-                                    <button type="submit" class="btn ticketBtn">Edit</button>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td class="tick-width">
+                                @Html.TextBoxFor(model => model.Title, new { @class = "form-control", })
+                            </td>
+                            <td>
+                                @Html.TextAreaFor(model => model.Description, 4, 20, new { @class = "form-control", })
+                            </td>
+                            <td>@Model.OwnerUser.FullName</td>
+                            <td class="tick-width">
+                                @if (Model.AssignedToUserId == null)
+                                {
+                                    @Html.DropDownList("Developer", null, "-- Unassigned --", new { @class = "form-control" })
+                                }
+                                else
+                                {
+                                    @Html.DropDownList("Developer", null, ticketHelper.TicketAssignee(Model.Id), new { @class = "form-control" })
+                                }
+                            </td>
+                            <td class="tick-width">
+                                @Html.DropDownList("TicketStatusId", null, new { @class = "form-control" })
+                            </td>
+                            <td class="tick-width">
+                                @Html.DropDownList("TicketPriorityId", null, new { @class = "form-control" })
+                            </td>
+                            <td class="tick-width">
+                                @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
+                            </td>
+                            <td class="date-width">@Model.Created.AddHours(-4)</td>
+                            <td class="edit-cell">
+                                <button type="submit" class="btn">Edit</button>
+                            </td>
+                        </tr>
                         }
                     }
                     else if (User.IsInRole("Developer") && userId == Model.AssignedToUserId || User.IsInRole("Submitter") && userId == Model.OwnerUserId)
@@ -93,7 +102,9 @@
                                 <td class="tick-width">
                                     @Html.TextBoxFor(model => model.Title, new { @class = "form-control", })
                                 </td>
-                                <td class="descript">@Model.Description</td>
+                                <td class="descript">
+                                    @Html.TextAreaFor(model => model.Description, 4, 20, new { @class = "form-control", })
+                                </td>
                                 <td>@Model.OwnerUser.FullName</td>
                                 @if (Model.AssignedToUserId == null)
                                 {
@@ -112,18 +123,15 @@
                                     <td class="tick-width">
                                         @Html.DropDownList("TicketTypeId", null, new { @class = "form-control" })
                                     </td>
-                                    <td>
-                                        @Html.TextBoxFor(model => model.Description, new { @class = "form-control" })
-                                    </td>
                                 }
                                 else
                                 {
                                     <td>@Model.TicketPriority.Name</td>
                                     <td>@Model.TicketType.Name</td>
                                 }
-                                <td>@Model.Created</td>
+                                <td>@Model.Created.AddHours(-4)</td>
                                 <td>
-                                    <button type="submit" class="btn ticketBtn">Edit</button>
+                                    <button type="submit" class="btn">Edit</button>
                                 </td>
                             </tr>
                         }
@@ -134,7 +142,7 @@
                             <td class="tick-width">
                                 @Model.Title
                             </td>
-                            <td>@Model.Description</td>
+                            <td class="descript">@Model.Description</td>
                             <td>@Model.OwnerUser.FullName</td>
                             @if (Model.AssignedToUserId == null)
                             {
@@ -147,7 +155,7 @@
                             <td>@Model.TicketStatus.Name</td>
                             <td>@Model.TicketPriority.Name</td>
                             <td>@Model.TicketType.Name</td>
-                            <td>@Model.Created</td>
+                            <td>@Model.Created.AddHours(-4)</td>
                         </tr>
                     }
                 </tbody>

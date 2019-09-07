@@ -150,14 +150,14 @@
                                 @if (User.IsInRole("Admin"))
                                 {
                                     <li class="header">
-                                        There are @db.Projects.Count() current projects.
+                                        There are @db.Projects.AsNoTracking().Count() current projects.
                                     </li>
                                 }
                                 else
                                 {
-                                    <li class="header">
-                                        You have @projectHelper.ListUserProjects(user.Id).Count() Projects.
-                                    </li>
+                            <li class="header">
+                                You have @projectHelper.ListUserProjects(user.Id).Count() Projects.
+                            </li>
                                 }
                                 @if (User.IsInRole("Admin"))
                                 {
@@ -234,6 +234,7 @@
                 </div>
             </nav>
         </header>
+
         <aside class="main-sidebar" style=" position:fixed">
             <section class="sidebar">
                 <!-- SIDENAV USER PANEL -->
@@ -250,11 +251,11 @@
                 <ul class="sidebar-menu" data-widget="tree">
                     <li class="header">MAIN NAVIGATION</li>
                     <!-- UNASSIGNED USERS TAB -->
-                    @if (User.IsInRole("Admin") && roleHelper.UsersInRole("None").Count != 0)
+                    @*@if (User.IsInRole("Admin") && roleHelper.UsersInRole("None").Count != 0)
                     {
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-exclamation-triangle"></i> <span>Unassigned Users</span>
+                                <i class="fa fa-exclamation-triangle text-yellow"></i> <span>Unassigned Users</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -264,19 +265,35 @@
                                 {
                                     <li>
                                         <a href="@Url.Action("UserIndex", "Admin")">
-                                            <i class="fa fa-exclamation-triangle text-yellow"></i> @users.FullName
+                                            <i class="fa fa-exclamation-triangle"></i> @users.FullName
                                         </a>
                                     </li>
                                 }
                             </ul>
                         </li>
+                    }*@
+                    <!-- USER ROLE MANAGEMENT LINK -->
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="treeview">
+                            <a href="@Url.Action("UserIndex", "Admin")">
+                                @if (roleHelper.UsersInRole("None").Count() != 0)
+                                {
+                                    <i class="fa fa-exclamation-triangle text-yellow"></i> <span>User Role Manager</span>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-user-circle"></i> <span>User Role Manager</span>
+                                }
+                            </a>
+                        </li>
                     }
-                    <!--UNASSIGNED PROJECTS TAB -->
+                    <!-- UNASSIGNED PROJECTS TAB -->
                     @if (User.IsInRole("Admin") && projectHelper.UnassignedProjects().Count() != 0 || User.IsInRole("Project Manager") && projectHelper.UnassignedProjects().Count() != 0)
                     {
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-exclamation-triangle"></i> <span>Unassigned Projects</span>
+                                <i class="fa fa-exclamation-triangle text-yellow"></i> <span>Unassigned Projects</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -286,7 +303,7 @@
                                 {
                                     <li>
                                         <a href="@Url.Action("Details", "Projects", new { Id = newProjects.Id })">
-                                            <i class="fa fa-exclamation-triangle text-yellow"></i> @newProjects.Name
+                                            <i class="fa fa-exclamation-triangle"></i> @newProjects.Name
                                         </a>
                                     </li>
                                 }
@@ -298,7 +315,7 @@
                     {
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-exclamation-triangle"></i> <span>Unassigned Tickets</span>
+                                <i class="fa fa-exclamation-triangle text-yellow"></i> <span>Unassigned Tickets</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -308,7 +325,7 @@
                                 {
                                     <li class="treeview">
                                         <a href="@Url.Action("Details", "Tickets", new { Id = unTicket.Id })">
-                                            <i class="fa fa-exclamation-triangle text-yellow"></i> @unTicket.Title
+                                            <i class="fa fa-exclamation-triangle"></i> @unTicket.Title
                                         </a>
                                     </li>
                                 }
@@ -320,7 +337,7 @@
                     {
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-exclamation-triangle"></i> <span>Unassigned Tickets</span>
+                                <i class="fa fa-exclamation-triangle text-yellow"></i> <span>Unassigned Tickets</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -335,15 +352,6 @@
                                     </li>
                                 }
                             </ul>
-                        </li>
-                    }
-                    <!-- USER ROLE MANAGEMENT LINK -->
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <li class="treeview">
-                            <a href="@Url.Action("UserIndex", "Admin")">
-                                <i class="fa fa-user-circle"></i> <span>User Role Manager</span>
-                            </a>
                         </li>
                     }
                     <!-- MY PROJECTS TAB -->

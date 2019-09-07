@@ -173,7 +173,7 @@
                                             @Html.DisplayNameFor(model => model.Created)
                                         </dt>
                                         <dd>
-                                            @Html.DisplayFor(model => model.Created)
+                                            @Model.Created.AddHours(-4)
                                         </dd>
                                     </dl>
                                 </div>

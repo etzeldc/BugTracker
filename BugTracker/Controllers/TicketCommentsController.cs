@@ -32,7 +32,7 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public ActionResult Create([Bind(Include = "TicketId,CommentBody")] TicketComment ticketComment, Ticket ticket, int ticketId)
+        public ActionResult Create([Bind(Include = "TicketId,CommentBody")] TicketComment ticketComment, int ticketId)
         {
             if (ModelState.IsValid)
             {

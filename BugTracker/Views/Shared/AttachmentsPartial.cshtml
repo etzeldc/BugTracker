@@ -4,92 +4,96 @@
 @model BugTracker.Models.Ticket
 
 @{ 
-    var ticketHelper = new TicketHelper();
+    var projectHelper = new ProjectHelper();
 }
 
-<div class="box box-solid collapsed-box">
-    <div class="box-header">
-        <i class="fa fa-file"></i>
-        <h3 class="box-title">
-            <strong>Attachments</strong>
-        </h3>
-        <div class="box-tools pull-right">
-            <button type="button" class="btn btn-sm" data-widget="collapse">
-                <i class="fa fa-plus"></i>
-            </button>
-            <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#attModal">
-                <i class="fa fa-expand"></i>
-            </button>
-            <button type="button" class="btn btn-sm" data-widget="remove">
-                <i class="fa fa-times"></i>
-            </button>
-        </div>
-    </div>
-    <div class="box-body">
-            <div class="content back chat-box">
-            @foreach (var attachment in Model.TicketAttachments)
-            {
-                <div class="row item">
-                    <div class="col-md-1">
-                        <img src="@FileHelper.GetIconPath(attachment.AttachmentUrl)" style="max-height:50px; max-width:50px" />
-                    </div>
-                    <div class="col-md-offset-1 col-md-7">
-                        <div class="row">
-                            <strong>@attachment.Title : </strong>
-                            @attachment.Description
-                        </div>
-                        <div class="row">
-                            <a target="_blank" href="@attachment.AttachmentUrl">@Path.GetFileNameWithoutExtension(attachment.AttachmentUrl)</a>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <small class="pull-right" style="color:rgb(83, 140, 138);">
-                            <i class="fa fa-user"></i> @attachment.User.DisplayName<br />
-                            <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt")<br />
-                            <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")<br />
-                            @if (User.IsInRole("Admin") || ticketHelper.IsUserOnTicket(User.Identity.GetUserId(), attachment.TicketId))
-                            {
-                                using (Html.BeginForm("Delete", "TicketAttachments", FormMethod.Post))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    @Html.Hidden("pk", attachment.Id)
-                                    <input class="btn btn-xs" value="Delete" type="submit" />
-                                }
-
-                            }
-                        </small>
-                        <br />
-                    </div>
-                </div>
-                <hr />
-            }
+    <div class="box box-solid collapsed-box">
+        <div class="box-header">
+            <i class="fa fa-file"></i>
+            <h3 class="box-title">
+                <strong>Attachments</strong>
+            </h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-sm" data-widget="collapse">
+                    <i class="fa fa-plus"></i>
+                </button>
+                <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#attModal">
+                    <i class="fa fa-expand"></i>
+                </button>
+                <button type="button" class="btn btn-sm" data-widget="remove">
+                    <i class="fa fa-times"></i>
+                </button>
             </div>
-    </div>
-    <div class="box-footer">
-        @if (User.Identity.IsAuthenticated)
+        </div>
+        <div class="box-body">
+            <div class="content back chat-box">
+                @foreach (var attachment in Model.TicketAttachments)
+                {
+                    <div class="row item">
+                        <div class="col-md-1">
+                            <img src="@FileHelper.GetIconPath(attachment.AttachmentUrl)" style="max-height:50px; max-width:50px" />
+                        </div>
+                        <div class="col-md-offset-1 col-md-7">
+                            <div class="row">
+                                <strong>@attachment.Title : </strong>
+                                @attachment.Description
+                            </div>
+                            <div class="row">
+                                <a target="_blank" href="@attachment.AttachmentUrl">@Path.GetFileNameWithoutExtension(attachment.AttachmentUrl)</a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="pull-right" style="color:rgb(83, 140, 138);">
+                                <i class="fa fa-user"></i> @attachment.User.DisplayName<br />
+                                <i class="fa fa-clock-o"></i> @attachment.Created.AddHours(-4).ToString("h:mm tt")<br />
+                                <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")<br />
+                                @if (User.IsInRole("Admin") || User.Identity.GetUserId() == attachment.UserId)
+                                {
+                                    using (Html.BeginForm("Delete", "TicketAttachments", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.Hidden("pk", attachment.Id)
+                                        <a class="btn-xs pull-right" href="#" onclick="$(this).closest('form').submit();">Delete</a>
+                                    }
+
+                                }
+                            </small>
+                            <br />
+                        </div>
+                    </div>
+                    <hr />
+                }
+            </div>
+        </div>
+        @if (User.IsInRole("Admin") || projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.ProjectId))
         {
-            using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "Multipart/form-data" }))
-            {
-                @Html.AntiForgeryToken()
-                @Html.Hidden("TicketId", Model.Id);
-                <div class="row">
-                    <div class="col-md-6" style="padding-right:5px">
-                        @Html.TextBox("AttachmentTitle", null, new { @class = "form-control col-fill-input pophead", placeholder = "Attachement Title" })
-                    </div>
-                    <div class="col-md-6" style="padding-left:5px">
-                        @Html.TextBox("AttachmentDescription", null, new { @class = "form-control col-fill-textarea pophead", placeholder = "Attachment Description" })
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-md-12">
-                        <input class="pull-left" type="file" name="attachment" /><button class="btn btn-small pull-right" type="submit">ADD ATTACHMENT</button>
-                    </div>
-                </div>
-            }
+            <div class="box-footer">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "Multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("TicketId", Model.Id);
+                        <div class="row">
+                            <div class="col-md-6" style="padding-right:5px">
+                                @Html.TextBox("AttachmentTitle", null, new { @class = "form-control col-fill-input pophead", placeholder = "Attachement Title" })
+                            </div>
+                            <div class="col-md-6" style="padding-left:5px">
+                                @Html.TextBox("AttachmentDescription", null, new { @class = "form-control col-fill-textarea pophead", placeholder = "Attachment Description" })
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input class="pull-left" type="file" name="attachment" /><button class="btn btn-small pull-right" type="submit">ADD ATTACHMENT</button>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
         }
+
     </div>
-</div>
 
 <!--MODAL-->
 <div id="attModal" class="modal fade">
@@ -99,69 +103,72 @@
             <h3 class="box-title"><strong>Attachments</strong></h3>
             <button type="button" class="btn btn-xs pull-right" data-dismiss="modal">
                 <i class="fa fa-times"></i>
-            </button>      
+            </button>
         </div>
         <div class="modal-body">
             <div class="back modal-skroll">
-            @foreach (var attachment in Model.TicketAttachments)
-            {
-                <div class="row item">
-                    <div class="col-md-1">
-                        <img src="@FileHelper.GetIconPath(attachment.AttachmentUrl)" style="height:50px" />
-                    </div>
-                    <div class="col-md-8">
-                        <div class="row">
-                            <p><strong> @attachment.Title : </strong> @attachment.Description</p>
-                            <a target="_blank" href="@attachment.AttachmentUrl"><p>@Path.GetFileNameWithoutExtension(attachment.AttachmentUrl)</p></a>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <small class="pull-right">
-                            <i class="fa fa-user"></i> @attachment.User.DisplayName<br />
-                            <i class="fa fa-clock-o"></i> @attachment.Created.ToString("h:mm tt")<br />
-                            <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")<br />
-                            @if (User.IsInRole("Admin") || ticketHelper.IsUserOnTicket(User.Identity.GetUserId(), attachment.TicketId))
-                            {
-                                using (Html.BeginForm("Delete", "TicketAttachments", FormMethod.Post))
-                                {
-                                    @Html.AntiForgeryToken()
-                                    @Html.Hidden("pk", attachment.Id)
-                                    <input class="btn btn-xs" value="Delete" type="submit" />
-                                }
-
-                            }
-                        </small>
-                        <br />
-                    </div>
-                </div>
-                <hr />
-            }
-                </div>
-        </div>
-        <div class="box-footer">
-            @if (User.Identity.IsAuthenticated)
-            {
-                using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "Multipart/form-data" }))
+                @foreach (var attachment in Model.TicketAttachments)
                 {
-                    @Html.AntiForgeryToken()
-                    @Html.HiddenFor(model => model.Id);
-                    @Html.Hidden("TicketId", Model.Id);
-                    <div class="row">
-                        <div class="col-md-6" style="padding-right:5px">
-                            @Html.TextBox("AttachmentTitle", null, new { @class = "form-control", placeholder = "Attachement Title" })
+                    <div class="row item">
+                        <div class="col-md-1">
+                            <img src="@FileHelper.GetIconPath(attachment.AttachmentUrl)" style="height:50px" />
                         </div>
-                        <div class="col-md-6" style="padding-left:5px">
-                            @Html.TextBox("AttachmentDescription", null, new { @class = "form-control", placeholder = "Attachment Description" })
+                        <div class="col-md-8">
+                            <div class="row">
+                                <p><strong> @attachment.Title : </strong> @attachment.Description</p>
+                                <a target="_blank" href="@attachment.AttachmentUrl"><p>@Path.GetFileNameWithoutExtension(attachment.AttachmentUrl)</p></a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="pull-right">
+                                <i class="fa fa-user"></i> @attachment.User.DisplayName<br />
+                                <i class="fa fa-clock-o"></i> @attachment.Created.AddHours(-4).ToString("h:mm tt")<br />
+                                <i class="fa fa-calendar"></i> @attachment.Created.ToString("M/dd/yyy")<br />
+                                @if (User.IsInRole("Admin") || User.Identity.GetUserId() == attachment.UserId)
+                                {
+                                    using (Html.BeginForm("Delete", "TicketAttachments", FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        @Html.Hidden("pk", attachment.Id)
+                                        <a class="btn-xs pull-right" href="#" onclick="$(this).closest('form').submit();">Delete</a>
+                                    }
+
+                                }
+                            </small>
+                            <br />
                         </div>
                     </div>
-                    <br />
-                    <div class="row">
-                        <div class="col-md-12">
-                            <input class="pull-left" type="file" name="attachment" /><button class="btn btn-small pull-right" type="submit">ADD ATTACHMENT</button>
-                        </div>
-                    </div>
+                    <hr />
                 }
-            }
+            </div>
         </div>
+        @if (User.IsInRole("Admin") || projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.ProjectId))
+        {
+            <div class="box-footer">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    using (Html.BeginForm("Create", "TicketAttachments", FormMethod.Post, new { enctype = "Multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.Id);
+                        @Html.Hidden("TicketId", Model.Id);
+                        <div class="row">
+                            <div class="col-md-6" style="padding-right:5px">
+                                @Html.TextBox("AttachmentTitle", null, new { @class = "form-control", placeholder = "Attachement Title" })
+                            </div>
+                            <div class="col-md-6" style="padding-left:5px">
+                                @Html.TextBox("AttachmentDescription", null, new { @class = "form-control", placeholder = "Attachment Description" })
+                            </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input class="pull-left" type="file" name="attachment" /><button class="btn btn-small pull-right" type="submit">ADD ATTACHMENT</button>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
     </div>
 </div>

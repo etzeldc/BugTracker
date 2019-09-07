@@ -131,6 +131,8 @@ namespace BugTracker.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Project Manager, Submitter, Developer")]
+
         public async Task<ActionResult> Edit([Bind(Include = "Id,Title,Description,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket, string developer)
         {
             var allDevelopers = rolesHelper.UsersInRole("Developer");
@@ -138,7 +140,10 @@ namespace BugTracker.Controllers
             {
                 var oldTicket = db.Tickets.AsNoTracking().FirstOrDefault(t => t.Id == ticket.Id);
                 var newTicket = db.Tickets.Find(ticket.Id);
-                newTicket.AssignedToUserId = developer;
+                if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
+                {
+                    newTicket.AssignedToUserId = developer;
+                }
                 newTicket.TicketTypeId = ticket.TicketTypeId;
                 newTicket.TicketPriorityId = ticket.TicketPriorityId;
                 newTicket.TicketStatusId = ticket.TicketStatusId;

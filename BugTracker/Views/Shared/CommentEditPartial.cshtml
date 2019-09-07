@@ -13,13 +13,4 @@
             <input class="btn" style="margin-left:0" type="submit" value="Edit" />
         </div>
     }
-    @using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
-    {
-<div class="col-xs-1">
-    @Html.AntiForgeryToken()
-    @Html.Hidden("pk", Model.Id)
-    <input class="btn" style="margin-left:0" type="submit" value="Delete" />
-</div>
-    }
-
 </div>

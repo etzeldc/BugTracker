@@ -72,7 +72,7 @@ namespace BugTracker.Helpers
                 case ".tif":
                 case ".icon":
                 case ".jpg":
-                case ".jpeg":
+                case ".jpeg":        
                     return filePath;
                 case ".pdf":
                     return "/Images/pdf.png";
@@ -86,6 +86,14 @@ namespace BugTracker.Helpers
                     return "/Images/xlsx.png";
                 case ".zip":
                     return "/Images/zip.png";
+                case ".html":
+                    return "/Images/html.png";
+                case ".css":
+                    return "/Images/css.png";
+                //case ".cs":
+                //    return "/Images/cs.png";
+                //case ".json":
+                //    return "/Images/json.png";
                 default:
                     return "/Images/other.png";
             }

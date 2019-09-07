@@ -6,3 +6,16 @@
     'info': true,
     'autoWidth': false,
 });
+
+$(function () {
+    $(".comCan").hide();
+
+    $(".comEdit").click(function () {
+        $("a.comEdit").hide();
+        $("a.comCan").show();
+    })
+    $(".comCan").click(function () {
+        $("a.comEdit").show();
+        $("a.comCan").hide();
+    })
+})

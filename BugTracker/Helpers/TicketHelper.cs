@@ -44,6 +44,7 @@ namespace BugTracker.Helpers
         public List<Ticket> MyTickets(string userId, string roleName)
         {
             var myTickets = new List<Ticket>();
+            var user = db.Users.Find(userId);
             switch (roleName)
             {
                 case "Developer":
@@ -53,6 +54,8 @@ namespace BugTracker.Helpers
                     myTickets = db.Tickets.AsNoTracking().Where(t => t.OwnerUserId == userId).ToList();
                     break;
                 case "Project Manager":
+                    //myTickets = db.Users.AsNoTracking().Where(u => u.Id == userId).Projects.SelectMany(t => t.Tickets).ToList();
+
                     myTickets = db.Users.Find(userId).Projects.SelectMany(t => t.Tickets).ToList();
                     break;
                 case "Admin":

@@ -1,7 +1,12 @@
 ﻿@using Microsoft.AspNet.Identity;
+@using BugTracker.Helpers;
 @using BugTracker.Models;
 
 @model BugTracker.Models.Ticket
+
+@{
+    var projectHelper = new ProjectHelper();
+}
 
 <div class="box box-solid chat-body">
     <div class="box-header">
@@ -10,10 +15,10 @@
             <strong>Comments</strong>
         </h3>
         <div class="box-tools pull-right">
-            <button type="button" class="btn btn-sm" data-widget="collapse" @*onclick="$('#comScroll').scrollTop(function () { return this.scrollHeight; });"*@>
+            <button type="button" class="btn btn-sm" data-widget="collapse">
                 <i class="fa fa-minus"></i>
             </button>
-            <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#comModal" @*onclick="$('#comModScroll').scrollTop(function () { return this.scrollHeight; });"*@>
+            <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#comModal">
                 <i class="fa fa-expand"></i>
             </button>
             <button type="button" class="btn btn-sm" data-widget="remove">
@@ -29,59 +34,68 @@
                 <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px">
                 <strong>@comment.Author.DisplayName</strong>
                 <small class="pull-right">
-                    <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />
+                    <i class="fa fa-clock-o"></i> @comment.Created.AddHours(-4).ToString("h:mm tt")<br />
                     <i class="fa fa-calendar"></i> @comment.Created.ToString("M/dd/yyy")<br />
-                </small>
-                <br />
-                @if (User.Identity.GetUserId() == comment.AuthorId)
-                {
-                    <div>
-                        @Html.Partial("CommentEditPartial", new TicketComment { Id = comment.Id, CommentBody = comment.CommentBody, TicketId = comment.TicketId })
-                    </div>
-                }
-                else
-                {
-            <div>
-                <p>
-                    @comment.CommentBody
-                    @if (User.IsInRole("Admin"))
+                    @if (User.IsInRole("Admin") || User.Identity.GetUserId() == comment.AuthorId)
                     {
                         using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
                         {
                             @Html.AntiForgeryToken()
                             @Html.Hidden("pk", comment.Id)
-                            <a class="btn pull-right" href="#" onclick="$(this).closest('form').submit();">Delete</a>
+                            <a class="btn-xs pull-right" href="#" onclick="$(this).closest('form').submit();">Delete</a>
                         }
                     }
-                </p>
-            </div>
+                    @if (User.Identity.GetUserId() == comment.AuthorId)
+                    {
+                        <a class="btn-xs pull-right comEdit" data-toggle="tab" href=".target2">Edit</a><br />
+                        <a class="btn-xs pull-right comCan" data-toggle="tab" href=".target1">Cancel</a>
+                    }
+                </small>
+                <br />
+                @if (User.Identity.GetUserId() == comment.AuthorId)
+                {
+                    <div class="tab-content">
+                        <div class="active tab-pane target1">
+                            @comment.CommentBody
+                        </div>
+                        <div class="tab-pane target2">
+                            @Html.Partial("CommentEditPartial", new TicketComment { Id = comment.Id, CommentBody = comment.CommentBody, TicketId = comment.TicketId })
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <p>
+                            @comment.CommentBody
+                        </p>
+                    </div>
                 }
             </div>
-            <hr />
+                <hr />
             }
-            <!---->
-            <!---->
-            <!---->
-            <!---->
         </div>
     </div>
-    <div class="box-footer">
-        @if (User.Identity.IsAuthenticated)
-        {
-            using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
+    @if (User.IsInRole("Admin") || projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.ProjectId))
+    {
+        <div class="box-footer">
+            @if (User.Identity.IsAuthenticated)
             {
-                @Html.AntiForgeryToken()
-                @Html.Hidden("TicketId", Model.Id);
-                <div class="row">
-                    <div class="col-md-12">
-                        <input class="form-control" name="CommentBody" placeholder="Add comment..." />
-                        <br />
-                        <button type="submit" class="btn pull-right"><i class="fa fa-comment-o"></i></button>
+                using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.Hidden("TicketId", Model.Id);
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input class="form-control" name="CommentBody" placeholder="Add comment..." />
+                            <br />
+                            <button type="submit" class="btn pull-right"><i class="fa fa-comment-o"></i></button>
+                        </div>
                     </div>
-                </div>
+                }
             }
-        }
-    </div>
+        </div>
+    }
 </div>
 
 <!--MODAL-->
@@ -98,62 +112,77 @@
             <div class="back modal-skroll" id="comModScroll">
                 @foreach (var comment in Model.TicketComments)
                 {
-                <div class="item">
-                    <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px">
-                    <strong>@comment.Author.DisplayName</strong>
-                    <small class="pull-right">
-                        <i class="fa fa-clock-o"></i> @comment.Created.ToString("h:mm tt")<br />
-                        <i class="fa fa-calendar"></i> @comment.Created.ToString("M/dd/yyy")<br />
-                    </small>
-                    <br />
-                    <div>
-                        @if (User.Identity.GetUserId() == comment.AuthorId)
-                        {
-                            <div>
-                                @Html.Partial("CommentEditPartial", new TicketComment { Id = comment.Id, CommentBody = comment.CommentBody, TicketId = comment.TicketId })
-                            </div>
-                        }
-                        else
-                        {
-                            <div>
-                                <p>
-                                    @comment.CommentBody
-                                    @if (User.IsInRole("Admin"))
-                                    {
-                                        using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
-                                        {
-                                            @Html.AntiForgeryToken()
-                                            @Html.Hidden("pk", comment.Id)
-                                            <a class="btn pull-right" href="#" onclick="$(this).closest('form').submit();">Delete</a>
-                                        }
-                                    }
-                                </p>
-                            </div>
-                        }
+                    var target1 = comment.Created.ToString().Replace(" ", "").Replace(",", "");
+                    var target2 = target1.Reverse();
+                    <div class="item">
+                        <img src="@comment.Author.AvatarUrl" class="img-circle" style="height:40px">
+                        <strong>@comment.Author.DisplayName</strong>
+                        <small class="pull-right">
+                            <i class="fa fa-clock-o"></i> @comment.Created.AddHours(-4).ToString("h:mm tt")<br />
+                            <i class="fa fa-calendar"></i> @comment.Created.ToString("M/dd/yyy")<br />
+                            @if (User.IsInRole("Admin") || User.Identity.GetUserId() == comment.AuthorId)
+                            {
+                                using (Html.BeginForm("Delete", "TicketComments", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.Hidden("pk", comment.Id)
+                                    <a class="btn-xs pull-right" href="#" onclick="$(this).closest('form').submit();">Delete</a>
+                                }
+                            }
+                            @if (User.Identity.GetUserId() == comment.AuthorId)
+                            {
+                                <a class="btn-xs pull-right comEdit" data-toggle="tab" href=".target2">Edit</a><br />
+                                <a class="btn-xs pull-right comCan" data-toggle="tab" href=".target1">Cancel</a>
+                            }
+                        </small>
+                        <br />
+                        <div>
+                            @if (User.Identity.GetUserId() == comment.AuthorId)
+                            {
+                                <div class="tab-content">
+                                    <div class="active tab-pane target1">
+                                        @comment.CommentBody
+                                    </div>
+                                    <div class="tab-pane target2">
+                                        @Html.Partial("CommentEditPartial", new TicketComment { Id = comment.Id, CommentBody = comment.CommentBody, TicketId = comment.TicketId })
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div>
+                                    <p>
+                                        @comment.CommentBody
+                                    </p>
+                                </div>
+                            }
+                        </div>
                     </div>
-                </div>
-                <hr />
+                    <hr />
                 }
             </div>
         </div>
-        <div class="box-footer">
-            @if (User.Identity.IsAuthenticated)
-            {
-                using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
+        @if (User.IsInRole("Admin") || projectHelper.IsUserOnProject(User.Identity.GetUserId(), Model.ProjectId))
+        {
+            <div class="box-footer">
+                @if (User.Identity.IsAuthenticated)
                 {
-                    @Html.AntiForgeryToken()
-                    @Html.HiddenFor(model => model.Id);
-                    @Html.Hidden("TicketId", Model.Id);
-                    <div class="row">
-                        <div class="col-md-12">
-                            <input class="form-control" name="CommentBody" placeholder="Add comment..." />
-                            <br />
-                            <button type="submit" class="btn pull-right"><i class="fa fa-comment-o"></i></button>
+                    using (Html.BeginForm("Create", "TicketComments", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.Id);
+                        @Html.Hidden("TicketId", Model.Id);
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input class="form-control" name="CommentBody" placeholder="Add comment..." />
+                                <br />
+                                <button type="submit" class="btn pull-right"><i class="fa fa-comment-o"></i></button>
+                            </div>
                         </div>
-                    </div>
+                    }
                 }
-            }
-        </div>
+            </div>
+        }
     </div>
 </div>
 
