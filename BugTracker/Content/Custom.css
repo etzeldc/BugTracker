@@ -1,6 +1,6 @@
 ﻿select[multiple], select[size] {
-    height: 100px;
-    width: 235px;
+    height: 15vh;
+    width: 26vh;
     position: center;
 }
 

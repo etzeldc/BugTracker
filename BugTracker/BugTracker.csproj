@@ -206,6 +206,8 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Attachments\weatherApp.css" />
+    <Content Include="Attachments\weatherApp.html" />
     <Content Include="Avatar\bugtrackerfemale1.jpg" />
     <Content Include="Avatar\bugtrackerfemale2.jpg" />
     <Content Include="Avatar\bugtrackerfemale3.jpg" />
@@ -306,7 +308,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Attachments\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\fontawesome-webfont.ttf" />

@@ -104,7 +104,7 @@
                                     }
                                 </td>
                                     <td>
-                                        @Html.DisplayFor(model => model.Created.AddHours(-4))
+                                        @Model.Created.AddHours(-4)
                                     </td>
 
                                 </tr>
@@ -117,7 +117,7 @@
         <div class="row">
             @if (User.IsInRole("Admin") || User.IsInRole("Project Manager"))
             {
-                <div class="col-md-7">
+                <div class="col-md-7 connectedSortable">
                     <div class="box box-solid">
                         <div class="box-header">
                             <i class="fa fa-user-plus"></i>
@@ -173,112 +173,106 @@
                     </div>
                 </div>
                 <div class="col-md-5 connectedSortable">
-                <!--EDIT-->
-                <div class="box box-solid collapsed-box">
-                    <div class="box-header">
-                        <i class="fa fa-edit"></i>
-                        <h3 class="box-title">
-                            <strong> Edit @Model.Name</strong>
-                        </h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-sm" data-widget="collapse">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm" data-widget="remove">
-                                <i class="fa fa-times"></i>
-                            </button>
+                    <!--EDIT-->
+                    <div class="box box-solid collapsed-box">
+                        <div class="box-header">
+                            <i class="fa fa-edit"></i>
+                            <h3 class="box-title">
+                                <strong> Edit @Model.Name</strong>
+                            </h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-sm" data-widget="collapse">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm" data-widget="remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                        <div class="box-body">
-                    @using (Html.BeginForm())
-                    {
-                                    @Html.AntiForgeryToken()
-                            <div class="content back edit-box">
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
-                                        <div class="col-md-10">
-                                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                            <div class="box-body">
+                        @using (Html.BeginForm())
+                        {
+                                        @Html.AntiForgeryToken()
+                                <div class="content back edit-box">
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-                                        <div class="col-md-10">
-                                            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
-                                            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                        <div class="form-group">
+                                            @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                                            <div class="col-md-10">
+                                                @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                            </div>
                                         </div>
-                                    </div>
+                                </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                        <div class="pull-right">
+                                            <input type="submit" value="Save" class="btn" />
+                                        </div>
+                                </div>
                             </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                    <div class="pull-right">
-                                        <input type="submit" value="Save" class="btn" />
-                                    </div>
-                            </div>
+                        }
                         </div>
-                    }
-                    </div>
-                    </div>
-                <!--DELETE-->
-                <div class="box box-solid collapsed-box">
-                    <div class="box-header">
-                        <i class="fa fa-trash"></i>
-                        <h3 class="box-title">
-                            <strong>Delete</strong>
-                        </h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-sm" data-widget="collapse">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                            <button type="button" class="btn btn-sm" data-widget="remove">
-                                <i class="fa fa-times"></i>
-                            </button>
                         </div>
-                    </div>
-                <div class="box-body">
-                    @using (Html.BeginForm("Delete", "Projects", FormMethod.Get))
-                    {
-                        @Html.AntiForgeryToken()
-                        @Html.HiddenFor(model => model.Id)
-                    <div class="content back edit-box">
-                        <dl class="dl-horizontal">
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Name)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.Name)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Description)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.Description)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Created)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.Created.AddHours(-4))
-                            </dd>
-                        </dl>
-                    </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <input type="submit" value="Delete" class="btn pull-right" />
-                            </div>
-                        </div>
-                           }
-                    </div>
-                </div>
-            </div>
-            }
-            @*@if (User.IsInRole("Submitter"))
-            {
-                <div class="col-md-6">
-                    @Html.Partial("CreateTicketPartial", "Tickets");
                     
+                    <!--DELETE-->
+                    <div class="box box-solid collapsed-box">
+                        <div class="box-header">
+                            <i class="fa fa-trash"></i>
+                            <h3 class="box-title">
+                                <strong>Delete</strong>
+                            </h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-sm" data-widget="collapse">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm" data-widget="remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    <div class="box-body">
+                        @using (Html.BeginForm("Delete", "Projects", FormMethod.Get))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(model => model.Id)
+                        <div class="content back edit-box">
+                            <dl class="dl-horizontal">
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Name)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Name)
+                                </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Description)
+                                </dt>
+                                <dd>
+                                    @Html.DisplayFor(model => model.Description)
+                                </dd>
+                                <dt>
+                                    @Html.DisplayNameFor(model => model.Created)
+                                </dt>
+                                <dd>
+                                    @Model.Created.AddHours(-4)
+                                </dd>
+                            </dl>
+                        </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <input type="submit" value="Delete" class="btn pull-right" />
+                                </div>
+                            </div>
+                               }
+                        </div>
+                    </div>
                 </div>
-            }*@
+            }
         </div>
             
     </section>

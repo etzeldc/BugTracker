@@ -1,0 +1,38 @@
+body { /* styling the entire page's background a nice light blue color */
+    background-color: lightblue;
+}
+
+#boulder { /* styling the boulder-id'ed container with a landscape background image, text modification, and centering */
+    background-image: url(http://www.arrowphotos.com/Colorado/Boulder/i-hZLTxGn/1/L/Colorado-Flatirons-Meeker-NCAR-0888-L.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    color: beige;
+    text-shadow: 1px 1px black;
+    text-align: center;
+}
+
+#denver { /* styling the denver-id'ed container with a landscape background image, text modification, and centering */
+    background-image: url(http://cdn.c.photoshelter.com/img-get2/I0000xL6pgt6tXoY/fit=1000x750/0701017-denver-skyline.jpg);
+    background-repeat: no-repeat;
+    background-position: center;
+    color: beige;
+    text-shadow: 1px 1px black;
+    text-align: center;
+}
+
+#colorado { /* centering the state flag image at the bottom of the page */
+    text-align: center;
+}
+
+span { /* styles the titular lines of each div container to a little more than their h1 tags do */
+    text-decoration: underline;
+}
+
+.temp { /* styles the temperature line of each div to stand out a bit more since its the most commonly sought piece of information */
+    font-size: 25px;
+    font-weight: bold;
+}
+
+img { /* styling a border on the state flag, just because */
+    border: 5px solid white;
+}

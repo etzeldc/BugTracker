@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="./weatherApp.css">
+	<script
+		src="https://code.jquery.com/jquery-3.1.1.js"
+		integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+		crossorigin="anonymous"
+	></script>
+	<!-- WEATHER ASSIGNMENT:
+	-
+	Your goal: Build a simple weather website using data from an api. 
+	-
+	Using jquery, build out the html and content of your page to display the weather data from at least one location (there are ten in the API) but feel free to go wild and do the rest. 
+	-
+	here is the link to the api: 
+	http://api.geonames.org/weatherJSON?north=41&south=39&east=-104&west=-106&username=ertyseidohl
+	-
+	The beginnings of this code are located below:-->
+</head>
+<body>
+	<div id="boulder"></div> <!-- this establishes a container with a specific id (boulder) to append things specific to boulder to -->
+	<div id="denver"></div> <!-- this establishes a container with a specific id (denver) to append things specific to denver to -->
+	<div id="colorado"> <!-- this establishes a container with a specific id (colorado) to append an image of the state flag to at the bottom of the page -->
+		<img src="data:image/png;base64,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" alt="colorado flag">
+	</div>
+	<script>
+		function adjustStationName(station) { // declares a function to homogenize the stations' name's syntax, using those names as string values in the argument
+			station = station.toLowerCase(); // first, converting the string in the argument to lower case
+			var stationName = station.split(" "); // then declaring a var array to spit the string into by the spaces
+			return stationName[0].toUpperCase().charAt(0) + stationName[0].slice(1, stationName[0].length); // then return the zero index of the array as the station name after capitalizing the first letter
+		} // ends the function
+
+		function whatIfNA(nawww) { // declares a function to deal with responses that may be "n/a", using those responses as the argument
+			if (nawww === "n/a") { // if, in fact, the response is "n/a", do the following...
+				return "Conditions not currently available"; // return this string instead
+			} // ends the if statement
+		} // ends the function
+
+		// the function below separates the 0-360 numerical wind direction value into 8 45 degree sections to assign (sub)/directions
+		// ***Considering further separation into 16 22.5 degree sections for more specific wind directions
+		function whichDir(direction) { // declares function with 0-360 as an argument
+			if (direction > 11.25 && direction <= 33.75) { // if within this range...
+				return "NNE"; // return this direction
+			} else if (direction > 33.75 && direction <= 56.25) { // if within this range...
+				return "NE"; // return this direction
+			} else if (direction > 56.25 && direction <= 78.75) { // if within this range...
+				return "ENE"; // return this direction
+			} else if (direction > 78.75 && direction <= 101.25) { // if within this range...
+				return "E"; // return this direction
+			} else if (direction > 101.25 && direction <= 123.75) { // if within this range...
+				return "ESE"; // return this direction
+			} else if (direction > 123.75 && direction <= 146.25) { // if within this range...
+				return "SE"; // return this direction
+			} else if (direction > 146.25 && direction <= 168.75) { // if within this range...
+				return "SSE"; // return this direction
+			} else if (direction > 168.75 && direction <= 191.25) { // if within this range...
+				return "S"; // return this direction
+			} else if (direction > 191.25 && direction <= 213.75) { // if within this range...
+				return "SSW"; // return this direction
+			} else if (direction > 213.75 && direction <= 236.25) { // if within this range...
+				return "SW"; // return this direction
+			} else if (direction > 236.25 && direction <= 258.75) { // if within this range...
+				return "WSW"; // return this direction
+			} else if (direction > 258.75 && direction <= 281.25) { // if within this range...
+				return "W"; // return this direction
+			} else if (direction > 281.25 && direction <= 303.75) { // if within this range...
+				return "WNW"; // return this direction
+			} else if (direction > 303.75 && direction <= 326.25) { // if within this range...
+				return "NW"; // return this direction
+			} else if (direction > 326.25 && direction <= 348.75) { // if within this range...
+				return "NNW"; // return this direction
+			} else if (direction > 348.75 && direction <= 360 || direction >= 0 && direction <=11.25) { // if within this range...
+				return "N"; // return this direction
+			} // ends if statement
+		} // ends function
+
+		function getFahrenheit(celsius) { // declares a function to convert the argument, a celsius value, into fahrenheit
+			celsius = (celsius * (9 / 5)) + 32; // sets celsius to the value of celsius multiplied by 9/5's and added to 32 (C->F formula)
+			return celsius.toFixed(1); // returns that new value after rounding it to one decimal place
+		} // ends function
+
+		$(document).ready(function() { // this waits for the page to load (or the "document is ready") before carrying out this function...
+			$.get('http://api.geonames.org/weatherJSON?north=41&south=39&east=-104&west=-106&username=ertyseidohl', function(res){ // this reaches out to the server to establish where information will be requested from and begins a function that takes in the server's response and appends it with the following information to the body of the document
+				$('#boulder').append('<h1><span>Station</span>: ' + adjustStationName(res.weatherObservations[2].stationName) + '</h1>') // this attaches the string value response, next to id text, from the object "stationName" from within the second item (Boulder) in the array within the object "weatherObservation" and styles it inline
+				$('#boulder').append('<p>Conditions: ' + whatIfNA(res.weatherObservations[2].weatherCondition) + '</p>') // this attaches the string value response, next to id text, from the object "weatherCondition" from within the second item (Boulder) in the array within the object "weatherObservation" 
+				$('#boulder').append('<p>Wind Direction: ' + whichDir(res.weatherObservations[2].windDirection) + '</p>') // this attaches the string value response, next to id text, from the object "windDirection" from within the second item (Boulder) in the array within the object "weatherObservation" 
+				$('#boulder').append('<p>Wind Speed: ' + res.weatherObservations[2].windSpeed + ' mph</p>') // this attaches the string value response, next to id text, from the object "windSpeed" from within the second item (Boulder) in the array within the object "weatherObservation" 
+				$('#boulder').append('<p>Dew Point: ' + res.weatherObservations[2].dewPoint + '&deg;F</p>') // this attaches the string value response, next to id text, from the object "dewPoint" from within the second item (Boulder) in the array within the object "weatherObservation" 
+				$('#boulder').append('<p>Humidity: ' + res.weatherObservations[2].humidity + '%</p>') // this attaches the string value response, next to id text, from the object "humidity" from within the second item (Boulder) in the array within the object "weatherObservation" 
+				$('#boulder').append('<p class="temp">Temp: ' + getFahrenheit(res.weatherObservations[2].temperature) + '&deg;F</p>') // this attaches the string value response, next to id text, from the object "temperature" from within the second item (Boulder) in the array within the object "weatherObservation", converts to fahrenheit, adds a degree symbol, and styles it inline
+				$('#denver').append('<h1><span>Station</span>: ' + adjustStationName(res.weatherObservations[5].stationName) + '</h1>') // this attaches the string value response, next to id text, from the object "stationName" from within the second item (Denver) in the array within the object "weatherObservation" and styles it inline
+				$('#denver').append('<p>Conditions: ' + whatIfNA(res.weatherObservations[5].weatherCondition) + '</p>') // this attaches the string value response, next to id text, from the object "weatherCondition" from within the second item (Denver) in the array within the object "weatherObservation" 
+				$('#denver').append('<p>Wind Direction: ' + whichDir(res.weatherObservations[5].windDirection) + '</p>') // this attaches the string value response, next to id text, from the object "windDirection" from within the second item (Denver) in the array within the object "weatherObservation" 
+				$('#denver').append('<p>Wind Speed: ' + res.weatherObservations[5].windSpeed + ' mph</p>') // this attaches the string value response, next to id text, from the object "windSpeed" from within the second item (Denver) in the array within the object "weatherObservation" 
+				$('#denver').append('<p>Dew Point: ' + res.weatherObservations[5].dewPoint + '&deg;F</p>') // this attaches the string value response, next to id text, from the object "dewPoint" from within the second item (Denver) in the array within the object "weatherObservation" 
+				$('#denver').append('<p>Humidity: ' + res.weatherObservations[5].humidity + '%</p>') // this attaches the string value response, next to id text, from the object "humidty" from within the second item (Denver) in the array within the object "weatherObservation" 
+				$('#denver').append('<p class="temp">Temp: ' + getFahrenheit(res.weatherObservations[5].temperature) + '&deg;F</p>') // this attaches the string value response, next to id text, from the object "temperature" from within the second item (Boulder) in the array within the object "weatherObservation", converts to fahrenheit, adds a degree symbol, and styles it inline
+			}) // ends the function that operates on the responses the server provides
+		}) // ends the overall jquery function performed when the page finished loading
+	</script>
+</body>
+</html>

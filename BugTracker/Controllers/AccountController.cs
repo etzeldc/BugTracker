@@ -188,7 +188,7 @@ namespace BugTracker.Controllers
                     var svc = new PersonalEmail();
                     await svc.SendAsync(email);
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("ConfirmationSent", "Account");
                 }
                 AddErrors(result);
             }

@@ -47,8 +47,10 @@
                     }
                     @if (User.Identity.GetUserId() == comment.AuthorId)
                     {
-                        <a class="btn-xs pull-right comEdit" data-toggle="tab" href=".target2">Edit</a><br />
-                        <a class="btn-xs pull-right comCan" data-toggle="tab" href=".target1">Cancel</a>
+                        <div class="tab-content">
+                            <a class="btn-xs pull-right active tab-pane target1" data-toggle="tab" href=".target2">Edit</a><br />
+                            <a class="btn-xs pull-right tab-pane target2" data-toggle="tab" href=".target1">Cancel</a>
+                        </div>
                     }
                 </small>
                 <br />
@@ -131,8 +133,10 @@
                             }
                             @if (User.Identity.GetUserId() == comment.AuthorId)
                             {
-                                <a class="btn-xs pull-right comEdit" data-toggle="tab" href=".target2">Edit</a><br />
-                                <a class="btn-xs pull-right comCan" data-toggle="tab" href=".target1">Cancel</a>
+                                <div class="tab-content">
+                                    <a class="btn-xs pull-right active tab-pane target1" data-toggle="tab" href=".target2">Edit</a><br />
+                                    <a class="btn-xs pull-right tab-pane target2" data-toggle="tab" href=".target1">Cancel</a>
+                                </div>
                             }
                         </small>
                         <br />

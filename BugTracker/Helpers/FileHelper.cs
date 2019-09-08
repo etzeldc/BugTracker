@@ -11,6 +11,7 @@ namespace BugTracker.Helpers
 {
     public class FileHelper
     {
+
         public static bool IsWebFriendlyImage(HttpPostedFileBase file)
         {
             if (file == null)

@@ -1,12 +1,9 @@
 ﻿@{
-    ViewBag.Title = "/Views/Shared/_SecondLayout.cshtml";
+    Layout = "/Views/Shared/_SecondLayout.cshtml";
 }
-
 
 <p class="second-center">
     <br />
     <br />
-    Thank you for confirming your email. Please click
-    @Html.ActionLink("here", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "btn btn-xs" })
-    to Log in
+    Please check your email to confirm your address.
 </p>
