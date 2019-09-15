@@ -220,6 +220,7 @@
     <Content Include="Avatar\bugtrackermale4.jpg" />
     <Content Include="Avatar\bugtrackermale5.jpg" />
     <Content Include="Avatar\bugtrackermale6.jpg" />
+    <Content Include="Avatar\DavidEtzelsquare.jpg" />
     <Content Include="Avatar\default_avatar.jpeg" />
     <Content Include="Content\AdminLTE.css" />
     <Content Include="Content\blue.css" />
@@ -327,7 +328,7 @@
     <None Include="Properties\PublishProfiles\DavidEtzelBugTracker - Web Deploy.pubxml" />
     <Content Include="Views\Shared\AttachmentsPartial.cshtml" />
     <Content Include="Views\Shared\CommentsPartial.cshtml" />
-    <Content Include="Views\Shared\TicketsPartial.cshtml" />
+    <Content Include="Views\Shared\TicketsEditPartial.cshtml" />
     <Content Include="Views\Shared\NotificationsPartial.cshtml" />
     <Content Include="Views\Shared\CreateProjectPartial.cshtml" />
     <Content Include="Views\Home\DemoUser.cshtml" />

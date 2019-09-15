@@ -5,8 +5,8 @@
     {
         @Html.AntiForgeryToken();
         <div class="col-xs-9" style="padding-right:0">
-            @Html.Hidden("Id", Model.Id)
-            @Html.Hidden("TicketId", Model.TicketId)
+            @Html.Hidden("pk", Model.Id)
+            @Html.Hidden("fk", Model.TicketId)
             @Html.TextBoxFor(model => model.CommentBody, null, new { @class = "form-control" })
         </div>
         <div class="col-xs-1">

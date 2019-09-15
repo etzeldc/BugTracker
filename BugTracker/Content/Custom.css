@@ -1,6 +1,6 @@
 ﻿select[multiple], select[size] {
-    height: 15vh;
-    width: 26vh;
+    height: 10vh;
+    width: 20vh;
     position: center;
 }
 
@@ -112,14 +112,14 @@ td {
 }
 
 #second-background {
+    background-color:rgb(83,140,138);
     background-image:url('/Images/Emerald.JPG');
-    background-repeat:no-repeat;
-    background-position:center;
-    background-size:contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
 }
 
 #second-div {
-    background-image: url('/Images/semitransparentWhite-25.png');
     margin:27vh 10vh 27vh 10vh;
     height:50vh;
 }

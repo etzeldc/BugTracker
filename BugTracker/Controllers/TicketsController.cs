@@ -164,7 +164,7 @@ namespace BugTracker.Controllers
             return View(ticket);
         }
 
-        public ActionResult TicketsPartial()
+        public ActionResult TicketsEditPartial()
         {
             return PartialView();
         }
